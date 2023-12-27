@@ -1,79 +1,78 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Sea Battle Paper
+<!-- [![Build](https://github.com/valentk777/MyChallenges/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/valentk777/MyChallenges/actions/workflows/main.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=valentk777_ChallengeTracker&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=valentk777_ChallengeTracker)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=valentk777_ChallengeTracker&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=valentk777_ChallengeTracker)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=valentk777_ChallengeTracker&metric=bugs)](https://sonarcloud.io/summary/new_code?id=valentk777_ChallengeTracker)
 
-# Getting Started
+<a href='https://play.google.com/store/apps/details?id=com.baitupasaulis.MyChallenges&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+  <img alt='Get it on Google Play' src='https://github.com/valentk777/MyChallenges/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/feature%20graphic.jpg'/>
+</a>
+-->
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## What is this?
+<div align="left">
+  <img alt='Logo' src='https://github.com/valentk777/SeaBattlePaper/blob/f0a422086034b20f818d739c66996d083c1cdf73/Design/Icon%20v1/Icon-v1.png' height="100"  />
+This is a mobile app with React Native as a simple alternative for paper version of sea battle. 
 
-## Step 1: Start the Metro Server
+Target features:
+- [❌] Play with friends with simple private game number
+- [❌] Create any form ship (you can make a square with 4 points ship)
+- [❌] Rules configuration
+- [❌] Anonymous login option (no login)
+- [❌] Google login option
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+</div> 
 
-To start Metro, run the following command from the _root_ of your React Native project:
+<!-- ## Screenshots -->
 
-```bash
-# using npm
-npm start
+<!-- <div align="center">
+  <img alt='screen' src='https://github.com/valentk777/MyChallenges/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347994.png' height="400" />
+  <img alt='screen' src='https://github.com/valentk777/MyChallenges/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347478.png' height="400" />
+  <img alt='screen' src='https://github.com/valentk777/MyChallenges/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347449.png' height="400" />
+  <img alt='screen' src='https://github.com/valentk777/MyChallenges/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347622.png' height="400" />
+  <img alt='screen' src='https://github.com/valentk777/MyChallenges/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347280.png' height="400" />
+</div> -->
 
-# OR using Yarn
-yarn start
-```
+## Tech stack:
 
-## Step 2: Start your Application
+- Node.Js v18.14.0
+- npm 9.8.1
+- Java 19.0.2
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+## Setting up environment:
+- `npx react-native info`
+- `git lfs install` (used for large files)
+- Install Node.Js v18.17.0
+- Install Android studio
 
-### For Android
+## Start an app
 
-```bash
-# using npm
-npm run android
+`npx react-native start --reset-cache`
+`npm run android`
 
-# OR using Yarn
-yarn android
-```
+## Versioning
+https://github.com/gustarus/react-native-version-up
+npm run version:up -- --patch
+`git tag -a v1.0.X -m 'release 1.0.X: increase versions and build numbers'`
+`git commit -m 'release 1.0.X: increase versions and build numbers'`
+`git push origin --tags`
+<!-- `npm install -g react-native-version`
+change version in packages.json. then run command
+`react-native-version --never-amend` 
 
-### For iOS
+# json to base64 in git bash
+cat google-services.json | base64
 
-```bash
-# using npm
-npm run ios
+Icons:
+https://www.svgrepo.com/
+https://developers.facebook.com/apps/1681157749072450/dashboard/
+-->
 
-# OR using Yarn
-yarn ios
-```
+## Release
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+### Andoid Play Store
+To release an application run this command under 'android' folder
+`./gradlew bundleRelease`
+Bundle appears in ...\SeaBattlePaper\android\app\build\outputs\bundle\release
+<!-- https://play.google.com/console/u/0/developers/6969098457648081136/app-list -->
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
