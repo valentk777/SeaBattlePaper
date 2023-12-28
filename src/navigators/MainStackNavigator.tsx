@@ -2,14 +2,13 @@ import React, { createNativeStackNavigator } from "@react-navigation/native-stac
 import UserScreen from "../screens/userScreen";
 import CreateGameScreen from "../screens/game/createGameScreen";
 import GameSetupScreen from "../screens/game/gameSetupScreen";
-import JoinGameScreen from "../screens/game/joinGameScreen";
 import PlayGameScreen from "../screens/game/playGameScreen";
 import HomeScreen from "../screens/homeScreen";
+import { View, useWindowDimensions } from "react-native";
 
 export type MainStackParamList = {
   Home: { };
   CreateGame: { };
-  JoinGame: { };
   GameSetup: { };
   PlayGame: { };
   User: { }; 
@@ -21,7 +20,7 @@ const MainStackNavigator = () => {
   return (
     <MainStack.Navigator
       screenOptions={{
-        headerShown: false,
+        // headerShown: false,
       }}
       initialRouteName="Home">
       <MainStack.Screen
@@ -31,10 +30,6 @@ const MainStackNavigator = () => {
       <MainStack.Screen
         name="CreateGame"
         component={CreateGameScreen}
-      />
-      <MainStack.Screen
-        name="JoinGame"
-        component={JoinGameScreen}
       />
       <MainStack.Screen
         name="GameSetup"

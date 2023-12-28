@@ -62,11 +62,6 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                 source={logo['app_logo.png']}
             />
             <Text style={styles.titleTextStyle}>Create Your Account!</Text>
-            {/* <View style={styles.descriptionContainer}>
-            <Text style={styles.descriptionTextStyle}>
-              Please fill in the form to continue
-            </Text>
-          </View> */}
         </Animated.View>
     );
 
@@ -95,16 +90,6 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                     onChangeText={setPassword}
                 />
             </View>
-            {/* <TouchableOpacity
-            style={styles.forgotButtonStyle}
-            onPress={handleForgotPassword}
-          >
-            <Text
-              style={styles.forgotPasswordTextStyle}
-            >
-               Forgot Password?
-            </Text>
-          </TouchableOpacity> */}
             <View style={styles.registerButtonContainer}>
                 <TouchableOpacity
                     style={styles.registerButtonStyle}

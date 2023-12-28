@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { useAuth } from '../../hooks/useAuth';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { UserAccount } from '../../entities/user';
@@ -19,6 +19,9 @@ export const PlayGameScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View>
+        <Text>PlayGameScreen</Text>
+      </View>
     </View>
   );
 };
@@ -27,6 +30,7 @@ const createStyles = (theme: AppTheme) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: 'green'
     }
   });
 

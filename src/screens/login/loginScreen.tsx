@@ -29,7 +29,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
         style={styles.image}
         source={logo['app_logo.png']}
       />
-      <Text style={styles.text}>My Challenges</Text>
+      <Text style={styles.text}>Sea Battle Paper</Text>
     </Animated.View>
   );
 

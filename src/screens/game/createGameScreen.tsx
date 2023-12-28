@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { useAuth } from '../../hooks/useAuth';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { UserAccount } from '../../entities/user';
@@ -17,8 +17,15 @@ export const CreateGameScreen = () => {
   const { t } = useTranslation('user-screen')
   const { changeLanguage, tTime } = useTranslations();
 
+  // generate game number 4 numbers
+  // this number should be stored in database and validated that this number does not exist yet. it can be incremental or random
+  
+
   return (
     <View style={styles.container}>
+      <View>
+        <Text>CreateGameScreen</Text>
+      </View>
     </View>
   );
 };
@@ -27,6 +34,7 @@ const createStyles = (theme: AppTheme) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: 'green'
     }
   });
 
