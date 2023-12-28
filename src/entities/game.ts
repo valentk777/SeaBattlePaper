@@ -3,6 +3,8 @@ import {ProgressStatus} from './progressStatus';
 export interface Game {
   id: string;
   title: string;
+  playerA: string;
+  playerB: string;
   // image: string;
   timeCreated: string;
   lastTimeUpdated: string;
@@ -11,4 +13,6 @@ export interface Game {
   // targetValue: number;
   // favorite: boolean;
   status: ProgressStatus;
+
+  // board: Board;
 }

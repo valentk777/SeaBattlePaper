@@ -1,5 +1,6 @@
 export enum ProgressStatus {
-  NotStarted = 1,
-  InProgress,
+  Created = 1,
+  PlayerMatched,
+  Started,
   Completed,
 }
