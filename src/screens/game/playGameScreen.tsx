@@ -7,8 +7,12 @@ import { useTheme } from '../../hooks/useTheme';
 import { AppTheme } from '../../styles/themeModels';
 import { useTranslation } from 'react-i18next';
 import { useTranslations } from '../../hooks/useTranslations';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { MainStackParamList } from '../../navigators/MainStackNavigator';
 
-export const PlayGameScreen = () => {
+type PlayGameScreenProps = NativeStackScreenProps<MainStackParamList, 'PlayGame'>;
+
+export const PlayGameScreen = ({ navigation }: PlayGameScreenProps) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
 
