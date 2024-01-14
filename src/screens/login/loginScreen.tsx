@@ -1,11 +1,13 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Animated } from 'react-native';
+import { StyleSheet, Text, View, Image, Animated } from 'react-native';
 import { AppTheme } from '../../styles/themeModels';
-import LinearGradient from 'react-native-linear-gradient'
 import { AuthStackParamList } from '../../navigators/AuthStackNavigator';
 import { logo } from '../../assets';
 import { useTheme } from '../../hooks/useTheme';
+import { Background } from '../../components/Background/BackgroundImage';
+import { PaperAreaWithGradient } from '../../components/Background/PaperAreaWithGradient';
+import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
 
 type LoginScreenProps = NativeStackScreenProps<AuthStackParamList, 'LoginScreen'>;
 
@@ -24,7 +26,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
   }, [fadeAnim]);
 
   const renderHeaderContainer = () => (
-    <Animated.View style={[styles.headerContainer, theme.shadows.primary, { opacity: fadeAnim }]}>
+    <Animated.View style={[styles.headerContainer, { opacity: fadeAnim }]}>
       <Image
         style={styles.image}
         source={logo['app_logo.png']}
@@ -35,28 +37,31 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
   return (
     <View style={styles.global}>
-      <LinearGradient
-        colors={styles.linearGradient.colors}
-        style={styles.linearGradient}
-      >
+      <Background />
+      <PaperAreaWithGradient style={{
+        width: '80%',
+        height: '80%',
+      }}>
         {renderHeaderContainer()}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.register}
+          <PaperAreaButton
+            areaStyle={styles.register}
             onPress={() => navigation.navigate('RegisterScreen', {})}
+            text={'Register'}
+            textStyle={styles.bottomText}
+            buttonColor={theme.colors.canvas}
           >
-            <Text style={styles.bottomText}>Register</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.signIn}
+          </PaperAreaButton>
+          <PaperAreaButton
+            areaStyle={styles.signIn}
             onPress={() => navigation.navigate('SingInScreen', {})}
+            text={'Sign In'}
+            textStyle={styles.bottomText}
+            buttonColor={theme.colors.canvas}
           >
-            <Text style={{ ...styles.bottomText, color: theme.colors.canvas }}>Sign In</Text>
-          </TouchableOpacity>
+          </PaperAreaButton>
         </View>
-      </LinearGradient>
+      </PaperAreaWithGradient>
     </View >
   );
 };
@@ -65,11 +70,8 @@ const createStyles = (theme: AppTheme) => {
   const styles = StyleSheet.create({
     global: {
       flex: 1,
-      backgroundColor: theme.colors.primary,
-    },
-    linearGradient: {
-      flex: 1,
-      colors: [theme.colors.primary, theme.colors.secondary]
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     headerContainer: {
       alignItems: 'center',
@@ -77,11 +79,11 @@ const createStyles = (theme: AppTheme) => {
       height: '70%',
     },
     buttonContainer: {
-      height: '8%',
-      marginLeft: '10%',
-      marginRight: '10%',
-      marginBottom: '20%',
-      flexDirection: 'row'
+      flex: 1,
+      paddingLeft: '10%',
+      paddingRight: '10%',
+      flexDirection: 'row',
+      justifyContent: 'space-around'
     },
     image: {
       width: '40%',
@@ -93,32 +95,24 @@ const createStyles = (theme: AppTheme) => {
       fontSize: 20,
       lineHeight: 30,
       fontFamily: theme.fonts.bold,
-      color: theme.colors.canvas,
+      color: theme.colors.tertiary,
       marginTop: 30,
     },
     register: {
-      width: '50%',
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingVertical: 16,
-      backgroundColor: theme.colors.canvas,
-      borderTopLeftRadius: 10,
-      borderBottomLeftRadius: 10,
+      height: 50,
+      width: '45%',
     },
     signIn: {
-      width: '50%',
+      height: 50,
+      width: '45%',
+    },
+    center: {
+      flex: 1,
       justifyContent: 'center',
-      alignItems: 'center',
-      paddingVertical: 16,
-      backgroundColor: 'transparent',
-      borderTopRightRadius: 10,
-      borderBottomRightRadius: 10,
-      borderWidth: 2,
-      borderColor: theme.colors.canvas,
     },
     bottomText: {
-      fontSize: 14,
-      color: theme.colors.primary,
+      fontSize: 18,
+      color: theme.colors.tertiary,
       fontFamily: theme.fonts.medium,
       fontWeight: '600'
     }

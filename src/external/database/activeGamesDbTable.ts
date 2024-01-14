@@ -91,6 +91,8 @@ export const addActiveGame = async (activeGame: Game) => {
       lastActiveGameId => lastActiveGameId + 1,
     );
 
+    console.log(lastActiveGameIdResult);
+
     if (lastActiveGameIdResult.snapshot.val() === undefined) {
       return {isSuccessfull: false, error: 'cannot create id'} as AppResponse;
     }
@@ -112,36 +114,29 @@ export const addActiveGame = async (activeGame: Game) => {
   }
 };
 
-// export const updateActiveGames = async (activeGame: Game) => {
-//   const databaseRef = database.ref(`activeGames/${activeGame.id}`);
+export const updateActiveGames = async (activeGame: Game) => {
+  if (activeGame === undefined) {
+    return {isSuccessfull: false, error: "cannot update empty game"} as AppResponse;
+  }
 
-//     databaseRef.update(activeGame).then((snapshot: any) => {
-//       if (snapshot.exists()) {
-//         const activeGames = snapshot.val();
+  try {
+    const databaseRef = database.ref(`activeGames/${activeGame.id}`);
 
-//         console.log('getAllActiveGames: ', activeGames);
-  
-//         if (activeGames === undefined) {
-//           return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
-//         }
-  
-//         return {
-//           isSuccessfull: true,
-//           result: activeGames as Game[],
-//         } as AppResponse;
-//       }else {
-//         console.log("not exist");
-//         return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
-//       }
-//     }).then(() => {
-//       console.log("not exist 2");
-//       return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
-//     }).catch((error) => {
-//       console.error(error);
+    activeGame.lastTimeUpdated = timeService.getCurrentDateString();
+    
+    await databaseRef.update(activeGame);
 
-//       return {isSuccessfull: false, error: error} as AppResponse;
-//     });
-// };
+    return {
+      isSuccessfull: true,
+      result: activeGame,
+    } as AppResponse;
+
+  } catch (error) {
+    console.error(error);
+
+    return {isSuccessfull: false, error: error} as AppResponse;
+  }
+};
 
 // export const removeActiveGame = async (
 //   gameId: string
@@ -169,7 +164,8 @@ const activeGamesDbTable = {
   getGame,
   getAllActiveGames,
   getActiveGame,
-  addActiveGame
+  addActiveGame,
+  updateActiveGames,
 };
 
 export default activeGamesDbTable;

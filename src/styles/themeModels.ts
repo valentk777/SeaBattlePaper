@@ -8,6 +8,7 @@ export interface Palette {
 }
 
 export interface Fonts {
+  extraBold: string;
   bold: string;
   semiBold: string;
   medium: string;

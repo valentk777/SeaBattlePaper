@@ -2,19 +2,19 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Animated, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { AppTheme } from '../../styles/themeModels';
-import LinearGradient from 'react-native-linear-gradient'
 import { AuthStackParamList } from '../../navigators/AuthStackNavigator';
 import { useAuth } from '../../hooks/useAuth';
 import { LoginUser } from '../../entities/user';
 import { icons, logo } from '../../assets';
 import { SignInButton } from '../../components/ButtonWrapper/SignInButton';
+import { Background } from '../../components/Background/BackgroundImage';
+import { PaperArea } from '../../components/Background/PaperArea';
+import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
+import createStyles from './signInAndRegisterStyles';
 
 type SingInScreenProps = NativeStackScreenProps<AuthStackParamList, 'SingInScreen'>;
 
 export const SingInScreen = ({ navigation }: SingInScreenProps) => {
-  const window = useWindowDimensions();
-
   const { theme } = useTheme();
   const styles = createStyles(theme);
 
@@ -55,65 +55,48 @@ export const SingInScreen = ({ navigation }: SingInScreenProps) => {
   }, [fadeAnim]);
 
   const renderHeaderContainer = () => (
-    <Animated.View style={[styles.headerContainer, theme.shadows.primary, { opacity: fadeAnim }]}>
-      <Image
-        style={styles.headerImage}
-        source={logo['app_logo.png']}
-      />
+    <Animated.View style={[styles.headerContainer, { opacity: fadeAnim }]}>
       <Text style={styles.titleTextStyle}>Welcome Back!</Text>
-      {/* <View style={styles.descriptionContainer}>
-        <Text style={styles.descriptionTextStyle}>
-          Please sign in to your account
-        </Text>
-      </View> */}
     </Animated.View>
   );
 
   const renderInputContainer = () => (
     <View style={styles.textInputContainer}>
-      <View style={styles.inputArea}>
-        <Text style={styles.inputText}>
-          Email
-        </Text>
-        <TextInput
-          placeholder="Enter your email..."
-          placeholderTextColor={theme.colors.canvasInverted}
-          style={styles.textInputStyle}
-          onChangeText={setEmail}
-        />
-      </View>
-      <View style={styles.inputArea}>
-        <Text style={styles.inputText}>
-          Password
-        </Text>
-        <TextInput
-          placeholder="Enter your password..."
-          placeholderTextColor={theme.colors.canvasInverted}
-          style={styles.textInputStyle}
-          secureTextEntry
-          onChangeText={setPassword}
-        />
-      </View>
-      {/* <TouchableOpacity
-        style={styles.forgotButtonStyle}
-        onPress={handleForgotPassword}
+      <PaperArea
+        style={styles.paperArea}
+        backgroundColor={theme.colors.canvas}
       >
-        <Text
-          style={styles.forgotPasswordTextStyle}
-        >
-           Forgot Password?
-        </Text>
-      </TouchableOpacity> */}
-      <View style={styles.signInButtonContainer}>
-        <TouchableOpacity
-          style={styles.signInButtonStyle}
-          onPress={handleSignInButton}
-        >
-          <Text style={styles.signInButtonTextStyle}>
-            Sign In
+        <View style={styles.inputArea}>
+          <Text style={styles.inputText}>
+            Email
           </Text>
-        </TouchableOpacity>
-      </View>
+          <TextInput
+            placeholder="Enter your email..."
+            placeholderTextColor={theme.colors.canvasInverted}
+            style={styles.textInputStyle}
+            onChangeText={setEmail}
+          />
+        </View>
+        <View style={styles.inputArea}>
+          <Text style={styles.inputText}>
+            Password
+          </Text>
+          <TextInput
+            placeholder="Enter your password..."
+            placeholderTextColor={theme.colors.canvasInverted}
+            style={styles.textInputStyle}
+            secureTextEntry
+            onChangeText={setPassword}
+          />
+        </View>
+        <View style={styles.signInButtonContainer}>
+          <PaperAreaButton
+            areaStyle={styles.signInButtonStyle}
+            // buttonStyle={}
+            textStyle={styles.signInButtonTextStyle}
+            onPress={handleSignInButton} text={'Sign In'}          />
+        </View>
+      </PaperArea>
     </View>
   );
 
@@ -148,139 +131,16 @@ export const SingInScreen = ({ navigation }: SingInScreenProps) => {
   );
 
   return (
-    <View style={{ ...styles.container, height: window.height }}>
-      <LinearGradient
-        colors={styles.linearGradient.colors}
-        style={styles.linearGradient}
-      >
-        <View style={styles.mainContainer}>
-          {renderHeaderContainer()}
-          {renderInputContainer()}
-          {renderExternalOptionsContainer()}
-          {renderSignUpButtonContainer()}
-        </View>
-      </LinearGradient>
+    <View style={styles.container}>
+      <Background />
+      <View style={styles.mainContainer}>
+        {renderHeaderContainer()}
+        {renderInputContainer()}
+        {renderExternalOptionsContainer()}
+        {renderSignUpButtonContainer()}
+      </View>
     </View >
   );
-};
-
-const createStyles = (theme: AppTheme) => {
-  const styles = StyleSheet.create({
-    container: {
-    },
-    linearGradient: {
-      flex: 1,
-      colors: [theme.colors.primary, theme.colors.secondary],
-      alignItems: "center",
-    },
-    mainContainer: {
-      flex: 1,
-      flexDirection: 'column',
-      width: '80%',
-      alignItems: "center",
-    },
-    headerContainer: {
-      width: '100%',
-      flex: 4,
-      alignItems: "center",
-      justifyContent: 'space-evenly',
-    },
-    headerImage: {
-      width: '40%',
-      height: undefined,
-      aspectRatio: 1,
-      borderRadius: 20,
-    },
-    titleTextStyle: {
-      fontFamily: theme.fonts.bold,
-      fontSize: 25,
-      color: theme.colors.canvas,
-      fontWeight: "600",
-    },
-    textInputContainer: {
-      flex: 3,
-      width: '100%',
-      justifyContent: 'space-evenly',
-      alignItems: "flex-start",
-    },
-    inputArea: {
-      flex: 1,
-      width: '100%',
-    },
-    inputText: {
-      fontFamily: theme.fonts.medium,
-      color: theme.colors.canvas,
-    },
-    textInputStyle: {
-      fontFamily: theme.fonts.light,
-      padding: 0,
-      borderBottomColor: theme.colors.canvas,
-      borderBottomWidth: 1,
-      color: theme.colors.canvas,
-    },
-    signInButtonContainer: {
-      flex: 1,
-      width: '100%',
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    signInButtonStyle: {
-      height: '60%',
-      width: '80%',
-      justifyContent: "center",
-      alignItems: "center",
-      borderRadius: 10,
-      backgroundColor: theme.colors.tertiary,
-    },
-    signInButtonTextStyle: {
-      fontFamily: theme.fonts.semiBold,
-      color: theme.colors.canvas,
-      fontWeight: "600",
-    },
-    externalOptionsContainer: {
-      flex: 2.5,
-      width: '100%',
-      alignItems: "center",
-    },
-    orTextArea: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingBottom: 18,
-    },
-    horizontalLine: {
-      flex: 1,
-      height: 1,
-      backgroundColor: theme.colors.canvas,
-    },
-    orTextStyle: {
-      fontSize: 12,
-      fontFamily: theme.fonts.light,
-      color: theme.colors.canvas,
-      paddingRight: 20,
-      paddingLeft: 20,
-    },
-    signUpButtonContainer: {
-      flex: 1,
-      width: '100%',
-      justifyContent: "center",
-      flexDirection: 'row',
-    },
-    signUpTextStyle: {
-      fontFamily: theme.fonts.light,
-      color: theme.colors.canvas,
-      fontSize: 14,
-    },
-    signUpButtonStyle: {
-      marginLeft: 20,
-    },
-    signUpButtonTextStyle: {
-      fontSize: 14,
-      fontFamily: theme.fonts.semiBold,
-      color: theme.colors.tertiary,
-    },
-  });
-
-  return styles;
 };
 
 export default SingInScreen;

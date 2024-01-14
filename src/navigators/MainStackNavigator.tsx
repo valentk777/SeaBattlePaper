@@ -4,47 +4,87 @@ import CreateGameScreen from "../screens/game/createGameScreen";
 import GameSetupScreen from "../screens/game/gameSetupScreen";
 import PlayGameScreen from "../screens/game/playGameScreen";
 import HomeScreen from "../screens/homeScreen";
-import { View, useWindowDimensions } from "react-native";
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Animated } from 'react-native';
+import { AppTheme } from '../styles/themeModels';
+import { useTheme } from "../hooks/useTheme";
+import { Button } from "react-native";
+import { CircleButton } from "../components/ButtonWrapper/CircleButton";
+import { LogOutButton } from "../components/LogOutButton";
 
 export type MainStackParamList = {
-  Home: { };
-  CreateGame: { };
-  GameSetup: { };
-  PlayGame: { };
-  User: { }; 
+  Home: {};
+  CreateGame: {};
+  GameSetup: {};
+  PlayGame: {};
+  User: {};
 };
 
 const MainStack = createNativeStackNavigator<MainStackParamList>()
 
 const MainStackNavigator = () => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
+
   return (
     <MainStack.Navigator
+      initialRouteName="Home"
       screenOptions={{
+        headerBackTitleVisible: false,
+        headerStyle: styles.headerStyle,
+        headerTitleStyle: styles.headerTitleStyle,
         // headerShown: false,
       }}
-      initialRouteName="Home">
+    >
       <MainStack.Screen
         name="Home"
         component={HomeScreen}
+        options={{
+          title: '',
+          headerTransparent: true,
+          headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
+          headerRight: () => (<LogOutButton />),
+        }}
       />
       <MainStack.Screen
         name="CreateGame"
         component={CreateGameScreen}
+        options={{
+          title: 'Create new game',
+        }}
       />
       <MainStack.Screen
         name="GameSetup"
         component={GameSetupScreen}
+        options={{ title: '' }}
       />
       <MainStack.Screen
         name="PlayGame"
         component={PlayGameScreen}
+        options={{ title: '' }}
       />
       <MainStack.Screen
         name="User"
         component={UserScreen}
+        options={{ title: '' }}
       />
     </MainStack.Navigator>
   )
 }
+
+const createStyles = (theme: AppTheme) => {
+  const styles = StyleSheet.create({
+    headerStyle: {
+      backgroundColor: theme.colors.secondary,
+    },
+    headerTitleStyle: {
+      fontFamily: theme.fonts.bold,
+      fontSize: 25,
+      color: theme.colors.tertiary,
+    }
+  });
+
+  return styles;
+};
 
 export default MainStackNavigator

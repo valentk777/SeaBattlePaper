@@ -8,11 +8,12 @@ const sizes: Sizes = {
 };
 
 const fonts: Fonts = {
-  bold: 'Inter-Bold',
-  semiBold: 'Inter-SemiBold',
-  medium: 'Inter-Medium',
-  regular: 'Inter-Regular',
-  light: 'Inter-Light',
+  extraBold: 'tillana-extrabold',
+  bold: 'tillana-bold',
+  semiBold: 'tillana-semibold',
+  medium: 'tillana-medium',
+  regular: 'tillana-regular',
+  light: 'Allura-Regular',
 };
 
 const shadows = {

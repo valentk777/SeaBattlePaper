@@ -42,13 +42,17 @@ const createNewGame = async (userId: string, setActiveGameOnChange: Function) =>
       status: ProgressStatus.Created,
     } as Game;
 
-    const response = await activeGamesDbTable.addActiveGame(newGame);
 
-    if (response.isSuccessfull) {
-      await activeGamesDbTable.getActiveGame(response.result.id, setActiveGameOnChange);
-    } else {
-      console.log("error creating game");
-    }
+      const response = await activeGamesDbTable.addActiveGame(newGame);
+      console.log("cia");
+  
+      console.log(response);
+  
+      if (response.isSuccessfull) {
+        await activeGamesDbTable.getActiveGame(response.result.id, setActiveGameOnChange);
+      } else {
+        console.log("error creating game");
+      }
 }
 
 const getGameIfPossible = async (userId: string, gameId: string) => {
@@ -62,14 +66,20 @@ const getGameIfPossible = async (userId: string, gameId: string) => {
         return {};
       }
 
-      if (candidateGame.status == ProgressStatus.Started) {
-        console.log("player can join to empty game");
+      if (candidateGame.playerA == userId) {
+        console.log("Host can re-join to active the game");
 
         return candidateGame;
       }
 
-      if (candidateGame.playerA == userId || candidateGame.playerB == userId) {
-        console.log("game is for current player");
+      if (candidateGame.playerB == userId) {
+        console.log("Player can re-join to active the game");
+
+        return candidateGame;
+      }
+
+      if (candidateGame.playerB == undefined) {
+        console.log("Player joined as a second player");
 
         return candidateGame;
       }
@@ -82,10 +92,41 @@ const getGameIfPossible = async (userId: string, gameId: string) => {
     }
 }
 
+const tryJoinToGame = async (userId: string, game: Game) => {
+  if (game.playerA == userId) {
+    console.log("Host can re-join to active the game");
+    // TODO: think about player object and update actual player status here. it would be useful if player disconects from game.
+    return true;
+  }
+
+  if (game.playerB == userId) {
+    console.log("Player can re-join to active the game");
+    // TODO: think about player object and update actual player status here. it would be useful if player disconects from game.
+    return true;
+  }
+
+  if (game.playerB == undefined) {
+    console.log("Player joined as a second player");
+
+    game.playerB = userId;
+
+    const response = await activeGamesDbTable.updateActiveGames(game) as AppResponse;
+
+    if (!response.isSuccessfull){
+      console.log("Cannot join to the game" + response.error);
+    }
+
+    return response.isSuccessfull;
+  }
+
+  return false;
+}
+
 const gameService = {
     // getGameKey,
     createNewGame,
     getGameIfPossible,
+    tryJoinToGame,
   };
   
   export default gameService;

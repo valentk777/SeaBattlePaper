@@ -2,6 +2,7 @@ import React from 'react'
 import { Image, ImageSourcePropType, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { useTheme } from '../../hooks/useTheme';
 import { AppTheme } from '../../styles/themeModels';
+import { PaperAreaButton } from './PaperAreaButton';
 
 interface SignInButtonProps {
   icon: ImageSourcePropType;
@@ -16,15 +17,19 @@ export const SignInButton = (props: SignInButtonProps) => {
   const { text, icon, onSignPress } = props;
 
   return (
-    <TouchableOpacity onPress={onSignPress} style={[styles.button, theme.shadows.medium]}>
+    <PaperAreaButton
+      areaStyle={styles.area}
+      buttonStyle={styles.button}
+      textStyle={styles.text}
+      onPress={onSignPress}
+      buttonColor={theme.colors.canvas}
+      text={text}
+    >
       <Image
         source={icon}
         style={styles.image}
       />
-      <Text style={styles.text}>
-        {text}
-      </Text>
-    </TouchableOpacity>
+    </PaperAreaButton>
   )
 }
 
@@ -35,20 +40,19 @@ const createStyles = (theme: AppTheme) => {
       height: 25,
       marginRight: 15,
     },
-    text: {
-      fontFamily: theme.fonts.semiBold,
-      color: theme.colors.primary,
-      fontWeight: "600",
-    },
-    button: {
-      backgroundColor: theme.colors.canvas,
+    area: {
+      marginVertical: 8,
       width: '100%',
       height: 45,
-      marginTop: 8,
-      borderRadius: 10,
+    },
+    button: {
+      flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
-      flexDirection: "row",
+    },
+    text: {
+      fontFamily: theme.fonts.semiBold,
+      color: theme.colors.tertiary,
     },
   });
 

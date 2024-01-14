@@ -11,6 +11,7 @@ import gameService from '../../services/gameService';
 import { Game } from '../../entities/game';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../navigators/MainStackNavigator';
+import { Background } from '../../components/Background/BackgroundImage';
 
 type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateGame'>;
 
@@ -18,7 +19,7 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
 
-  const [activeGame, onChangeActiveGame] = useState({id: ""} as Game);
+  const [activeGame, onChangeActiveGame] = useState({ id: "" } as Game);
 
   const user = useCurrentUser() as UserAccount;
   const { signOut } = useAuth();
@@ -31,6 +32,8 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
 
   return (
     <View style={styles.container}>
+      <Background />
+
       <View>
         <Text>Share this number with another player to start a game</Text>
 
@@ -46,7 +49,6 @@ const createStyles = (theme: AppTheme) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: 'green'
     }
   });
 

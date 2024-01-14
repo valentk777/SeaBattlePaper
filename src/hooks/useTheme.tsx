@@ -1,6 +1,6 @@
 import React, { ProviderProps, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { AppTheme } from '../styles/themeModels';
-import { darkBlueTheme } from '../styles/darkBlueTheme';
+import { lightBluePaperTheme } from '../styles/lightBluePaperTheme';
 import userService from '../services/userService';
 import { useCurrentUser } from './useCurrentUser';
 
@@ -24,7 +24,7 @@ export const ThemeContext = createContext<IThemeContext>({
 });
 
 const themesMap = [
-  { name: 'darkBlue', color: "#1F4063", iconName: "night-mode.png", theme: darkBlueTheme },
+  { name: 'lightBlue', color: "#A1C0FF", iconName: "night-mode.png", theme: lightBluePaperTheme },
 ] as ThemeMap[];
 
 interface ThemeContextProviderProps
@@ -33,20 +33,20 @@ interface ThemeContextProviderProps
 
 export const ThemeProvider = ({ children }: ThemeContextProviderProps) => {
   const user = useCurrentUser();
-  const [currentTheme, setCurrentTheme] = useState(darkBlueTheme)
+  const [currentTheme, setCurrentTheme] = useState(lightBluePaperTheme)
 
   useEffect(() => {
     const getCurrentThemeOrDefault = () => {
 
       if (user?.theme == null || user?.theme == undefined || !user.isOnline) {
-        setCurrentTheme(darkBlueTheme);
+        setCurrentTheme(lightBluePaperTheme);
         return;
       }
 
       const selected = themesMap.filter(x => x.name == user?.theme);
 
       if (selected.length == 0) {
-        setCurrentTheme(darkBlueTheme);
+        setCurrentTheme(lightBluePaperTheme);
         return;
       }
 

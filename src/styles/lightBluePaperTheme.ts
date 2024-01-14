@@ -4,9 +4,9 @@ import {AppTheme, Palette, Shadow, Shadows} from './themeModels';
 const palette: Palette = {
   canvas: '#FFFFFF',
   canvasInverted: '#74858C',
-  primary: '#0d132B',
-  secondary: '#1F4063',
-  tertiary: '#079AA4',
+  primary: '#D4E2FF',
+  secondary: '#A1C0FF',
+  tertiary: '#1B1464',
   exceptional: '#E32F45',
 };
 
@@ -29,7 +29,7 @@ const shadows: Shadows = {
   } as Shadow,
 };
 
-export const darkBlueTheme: AppTheme = {
+export const lightBluePaperTheme: AppTheme = {
   ...baseTheme,
   colors: palette,
   shadows: shadows,
