@@ -76,3 +76,9 @@ To release an application run this command under 'android' folder
 Bundle appears in ...\SeaBattlePaper\android\app\build\outputs\bundle\release
 <!-- https://play.google.com/console/u/0/developers/6969098457648081136/app-list -->
 
+<!-- 
+## Notes:
+to link new fonts: `npx react-native-asset`
+icon colections: https://www.svgrepo.com/collections/
+
+  -->

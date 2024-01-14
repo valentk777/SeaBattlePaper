@@ -53,11 +53,12 @@
 	<false/>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Inter-Bold.ttf</string>
-		<string>Inter-Light.ttf</string>
-		<string>Inter-Medium.ttf</string>
-		<string>Inter-Regular.ttf</string>
-		<string>Inter-SemiBold.ttf</string>
+		<string>Allura-Regular.ttf</string>
+		<string>tillana-bold.ttf</string>
+		<string>tillana-extrabold.ttf</string>
+		<string>tillana-medium.ttf</string>
+		<string>tillana-regular.ttf</string>
+		<string>tillana-semibold.ttf</string>
 	</array>
 </dict>
 </plist>

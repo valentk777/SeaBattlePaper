@@ -34,6 +34,7 @@
     "react-native-big-calendar": "^4.5.0",
     "react-native-calendars": "^1.1302.0",
     "react-native-circular-progress-indicator": "^4.4.2",
+    "react-native-confirmation-code-field": "^7.3.2",
     "react-native-health-connect": "^1.2.0",
     "react-native-image-picker": "^7.0.0",
     "react-native-linear-gradient": "^2.8.1",
