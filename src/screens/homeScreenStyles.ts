@@ -29,18 +29,15 @@ const createStyles = () => {
       justifyContent: 'center',
       alignItems: 'center'
     },
-    button: {
-      backgroundColor: theme.colors.canvas,
+    areaStyle: {
       width: '80%',
       height: 45,
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: theme.colors.secondary,
-      justifyContent: "center",
-      alignItems: "center",
+    },
+    buttonStyle: {
+      backgroundColor: theme.colors.canvas,
     },
     buttonText: {
-      fontFamily: theme.fonts.medium,
+      fontFamily: theme.fonts.bold,
       color: theme.colors.tertiary,
     },
     orArea: {
@@ -63,24 +60,26 @@ const createStyles = () => {
       width: '80%',
       justifyContent: "center",
     },
-    cell: {
+    inputArea: {
+      marginHorizontal: '3%',
       width: 45,
       height: 45,
+    },
+    inputComponent: {
       backgroundColor: theme.colors.canvas,
-      marginHorizontal: 5,
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: theme.colors.secondary,
-      justifyContent: "center",
-      alignItems: "center",
-      lineHeight: 45,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    inputText: {
+      width: '100%',
+      height: '100%',
+      lineHeight: 40, //TODO: think about this part
       textAlign: 'center',
-      fontFamily: theme.fonts.light,
+      fontFamily: theme.fonts.medium,
       color:theme.colors.tertiary,
-      fontSize: 20,
+      fontSize: 22,
     },
     focusCell: {
-      borderColor: theme.colors.tertiary,
     },
     empty: {
       flex: 3,

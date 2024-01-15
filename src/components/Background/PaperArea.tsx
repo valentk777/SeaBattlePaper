@@ -33,7 +33,6 @@ const createStyles = (theme: AppTheme) => {
       width: '100%',
     },
     firstArea: {
-
       // flex: 1,
       // width: '100%',
       borderColor: theme.colors.tertiary,

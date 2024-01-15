@@ -1,14 +1,13 @@
 import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from '../../hooks/useTheme';
-import { AppTheme } from "../../styles/themeModels";
 import { PaperArea } from "../Background/PaperArea";
 
 interface PaperAreaButtonProps {
   areaStyle?: any;
   buttonStyle?: any;
   textStyle?: any;
-  text: string;
+  text?: string;
   onPress(): void;
   children?: React.ReactNode | undefined;
 }
@@ -19,16 +18,16 @@ export const PaperAreaButton = (props: PaperAreaButtonProps) => {
 
   return (
     <PaperArea areaStyle={areaStyle}>
-    <TouchableOpacity
-      style={{...styles.buttonStyle, ...buttonStyle}}
-      onPress={onPress}
-    >
+      <TouchableOpacity
+        style={{ ...styles.buttonStyle, ...buttonStyle }}
+        onPress={onPress}
+      >
         {children}
         <Text
-          style={{...styles.textStyle, ...textStyle}}>
+          style={{ ...styles.textStyle, ...textStyle }}>
           {text}
         </Text>
-    </TouchableOpacity>
+      </TouchableOpacity>
     </PaperArea>
   );
 };

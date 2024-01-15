@@ -10,6 +10,8 @@ import { ProgressStatus } from '../entities/progressStatus';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import createStyles from './homeScreenStyles';
 import { Background } from '../components/Background/BackgroundImage';
+import { PaperAreaButton } from '../components/ButtonWrapper/PaperAreaButton';
+import { PaperArea } from '../components/Background/PaperArea';
 
 type HomeScreenProps = NativeStackScreenProps<MainStackParamList, 'Home'>;
 
@@ -71,9 +73,13 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
       </View>
       <View style={styles.options}>
         <View style={styles.hostOptions}>
-          <TouchableOpacity style={styles.button} onPress={onCreateGamePress}>
-            <Text style={styles.buttonText}>START NEW GAME</Text>
-          </TouchableOpacity>
+          <PaperAreaButton 
+          areaStyle={styles.areaStyle} 
+          buttonStyle={styles.buttonStyle} 
+          textStyle={styles.buttonText} 
+          onPress={onCreateGamePress}
+          text={'START NEW GAME'}
+          />
         </View>
         <View style={styles.orArea}>
           <Text style={styles.orText}>--- OR ---</Text>
@@ -89,17 +95,30 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
             keyboardType="number-pad"
             textContentType="oneTimeCode"
             renderCell={({ index, symbol, isFocused }) => (
-              <Text
-                key={index}
-                style={[styles.cell, isFocused && styles.focusCell]}
-                onLayout={getCellOnLayoutHandler(index)}>
-                {symbol || (isFocused ? <Cursor /> : null)}
-              </Text>
+              <PaperArea
+                areaStyle={styles.inputArea}
+                componentStyle={styles.inputComponent}
+              >
+                <Text
+                  key={index}
+                  style={[styles.inputText, isFocused && styles.focusCell]}
+                  onLayout={getCellOnLayoutHandler(index)}
+                >
+                  {symbol || (isFocused ? <Cursor /> : null)}
+
+                </Text>
+
+              </PaperArea>
+
             )}
           />
-          <TouchableOpacity style={styles.button} onPress={async () => await onJoinGamePress()}>
-            <Text style={styles.buttonText}>JOIN</Text>
-          </TouchableOpacity>
+          <PaperAreaButton 
+          areaStyle={styles.areaStyle} 
+          buttonStyle={styles.buttonStyle} 
+          textStyle={styles.buttonText} 
+          onPress={async () => await onJoinGamePress()}
+          text={'JOIN'}
+          />
         </View>
       </View>
       <View style={styles.empty} />
