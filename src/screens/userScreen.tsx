@@ -164,7 +164,6 @@ const createStyles = (theme: AppTheme) => {
       fontFamily: theme.fonts.bold,
       fontSize: 25,
       color: theme.colors.canvas,
-      fontWeight: "600",
     },
     userInfoContainer: {
       flex: 3,

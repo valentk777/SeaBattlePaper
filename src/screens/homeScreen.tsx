@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useCurrentUser } from '../hooks/useCurrentUser';
 import { UserAccount } from '../entities/user';
-import { useTheme } from '../hooks/useTheme';
 import { MainStackParamList } from '../navigators/MainStackNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import gameService from '../services/gameService';
@@ -15,8 +14,7 @@ import { Background } from '../components/Background/BackgroundImage';
 type HomeScreenProps = NativeStackScreenProps<MainStackParamList, 'Home'>;
 
 export const HomeScreen = ({ navigation }: HomeScreenProps) => {
-  const { theme } = useTheme();
-  const styles = createStyles(theme);
+  const styles = createStyles();
   const CELL_COUNT = 4;
 
   const [gameId, onChangeGameId] = useState('');

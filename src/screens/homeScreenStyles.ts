@@ -1,8 +1,10 @@
 import {StyleSheet} from 'react-native';
-import { AppTheme } from '../styles/themeModels';
 import constants from '../constants/constants';
+import { useTheme } from '../hooks/useTheme';
 
-const createStyles = (theme: AppTheme) => {
+const createStyles = () => {
+  const { theme } = useTheme();
+
   const styles = StyleSheet.create({
     container: {
       height: constants.screenHeight,

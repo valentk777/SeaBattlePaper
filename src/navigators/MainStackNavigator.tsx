@@ -4,12 +4,9 @@ import CreateGameScreen from "../screens/game/createGameScreen";
 import GameSetupScreen from "../screens/game/gameSetupScreen";
 import PlayGameScreen from "../screens/game/playGameScreen";
 import HomeScreen from "../screens/homeScreen";
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Animated } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { AppTheme } from '../styles/themeModels';
 import { useTheme } from "../hooks/useTheme";
-import { Button } from "react-native";
-import { CircleButton } from "../components/ButtonWrapper/CircleButton";
 import { LogOutButton } from "../components/LogOutButton";
 
 export type MainStackParamList = {
@@ -31,8 +28,8 @@ const MainStackNavigator = () => {
       initialRouteName="Home"
       screenOptions={{
         headerBackTitleVisible: false,
-        headerStyle: styles.headerStyle,
-        headerTitleStyle: styles.headerTitleStyle,
+        headerStyle: styles.header,
+        headerTitleStyle: styles.headerTitle,
         // headerShown: false,
       }}
     >
@@ -74,10 +71,10 @@ const MainStackNavigator = () => {
 
 const createStyles = (theme: AppTheme) => {
   const styles = StyleSheet.create({
-    headerStyle: {
+    header: {
       backgroundColor: theme.colors.secondary,
     },
-    headerTitleStyle: {
+    headerTitle: {
       fontFamily: theme.fonts.bold,
       fontSize: 25,
       color: theme.colors.tertiary,

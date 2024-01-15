@@ -4,7 +4,6 @@ import { useAuth } from '../../hooks/useAuth';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { UserAccount } from '../../entities/user';
 import { useTheme } from '../../hooks/useTheme';
-import { AppTheme } from '../../styles/themeModels';
 import { useTranslation } from 'react-i18next';
 import { useTranslations } from '../../hooks/useTranslations';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -14,8 +13,7 @@ import { Background } from '../../components/Background/BackgroundImage';
 type PlayGameScreenProps = NativeStackScreenProps<MainStackParamList, 'PlayGame'>;
 
 export const PlayGameScreen = ({ navigation }: PlayGameScreenProps) => {
-  const { theme } = useTheme();
-  const styles = createStyles(theme);
+  const styles = createStyles();
 
   const user = useCurrentUser() as UserAccount;
   const { signOut } = useAuth();
@@ -32,7 +30,9 @@ export const PlayGameScreen = ({ navigation }: PlayGameScreenProps) => {
   );
 };
 
-const createStyles = (theme: AppTheme) => {
+const createStyles = () => {
+  const { theme } = useTheme();
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,

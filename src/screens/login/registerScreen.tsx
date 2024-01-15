@@ -9,12 +9,16 @@ import { icons } from '../../assets';
 import { SignInButton } from '../../components/ButtonWrapper/SignInButton';
 import { Background } from '../../components/Background/BackgroundImage';
 import createStyles from './signInAndRegisterStyles';
+import { PaperArea } from '../../components/Background/PaperArea';
+import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
 
 type RegisterScreenProps = NativeStackScreenProps<AuthStackParamList, 'RegisterScreen'>;
 
 export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const { theme } = useTheme();
-  const styles = createStyles(theme);
+  const styles = createStyles();
+
+  const window = useWindowDimensions();
 
   const { createUser, signInAnonymously, loginOrSignUpWithGoogle } = useAuth()
 
@@ -25,7 +29,7 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
     navigation.navigate("SingInScreen", {});
   }
 
-  const handleRegisterButton = () => {
+  const handleLoginButton = () => {
     if (password === null || password === "") {
       Alert.alert("Password cannot be empty");
       return;
@@ -61,39 +65,41 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
 
   const renderInputContainer = () => (
     <View style={styles.textInputContainer}>
-      <View style={styles.inputArea}>
-        <Text style={styles.inputText}>
-          Email
-        </Text>
-        <TextInput
-          placeholder="Enter your email..."
-          placeholderTextColor={theme.colors.canvasInverted}
-          style={styles.textInputStyle}
-          onChangeText={setEmail}
-        />
-      </View>
-      <View style={styles.inputArea}>
-        <Text style={styles.inputText}>
-          Password
-        </Text>
-        <TextInput
-          placeholder="Enter your password..."
-          placeholderTextColor={theme.colors.canvasInverted}
-          style={styles.textInputStyle}
-          secureTextEntry
-          onChangeText={setPassword}
-        />
-      </View>
-      <View style={styles.registerButtonContainer}>
-        <TouchableOpacity
-          style={styles.registerButtonStyle}
-          onPress={handleRegisterButton}
-        >
-          <Text style={styles.registerButtonTextStyle}>
-            Sign Up
+      <PaperArea
+        areaStyle={styles.paperArea}
+        componentStyle={{ backgroundColor: theme.colors.canvas }}
+      >
+        <View style={styles.inputArea}>
+          <Text style={styles.inputText}>
+            Email
           </Text>
-        </TouchableOpacity>
-      </View>
+          <TextInput
+            placeholder="Enter your email..."
+            placeholderTextColor={theme.colors.canvasInverted}
+            style={styles.textInputStyle}
+            onChangeText={setEmail}
+          />
+        </View>
+        <View style={styles.inputArea}>
+          <Text style={styles.inputText}>
+            Password
+          </Text>
+          <TextInput
+            placeholder="Enter your password..."
+            placeholderTextColor={theme.colors.canvasInverted}
+            style={styles.textInputStyle}
+            secureTextEntry
+            onChangeText={setPassword}
+          />
+        </View>
+        <View style={styles.LoginButtonContainer}>
+          <PaperAreaButton
+            areaStyle={styles.LoginButtonAreaStyle}
+            buttonStyle={styles.LoginButtonStyle}
+            textStyle={styles.LoginButtonTextStyle}
+            onPress={handleLoginButton} text={'Sign Up'} />
+        </View>
+      </PaperArea>
     </View>
   );
 
@@ -111,16 +117,16 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
     </View>
   );
 
-  const renderSignInTextContainer = () => (
-    <View style={styles.signInButtonContainer}>
-      <Text style={styles.signInQuestionTextStyle}>
+  const renderQuestionContainer = () => (
+    <View style={styles.questionContainer}>
+      <Text style={styles.questionText}>
         Have An Account?
       </Text>
       <TouchableOpacity
-        style={styles.signInButtonStyle}
+        style={styles.questionButtonStyle}
         onPress={handleSignIn}
       >
-        <Text style={styles.signInButtonTextStyle}>
+        <Text style={styles.questionButtonText}>
           Sign In
         </Text>
       </TouchableOpacity>
@@ -128,15 +134,15 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={{ ...styles.container, height: window.height }}>
       <Background />
       <View style={styles.mainContainer}>
         {renderHeaderContainer()}
         {renderInputContainer()}
         {renderExternalOptionsContainer()}
-        {renderSignInTextContainer()}
+        {renderQuestionContainer()}
       </View>
-    </View  >
+    </View>
   );
 };
 

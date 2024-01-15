@@ -10,19 +10,17 @@ interface PaperAreaButtonProps {
   textStyle?: any;
   text: string;
   onPress(): void;
-  buttonColor?: string;
   children?: React.ReactNode | undefined;
 }
 
 export const PaperAreaButton = (props: PaperAreaButtonProps) => {
-  const { theme } = useTheme();
-  const styles = createStyles(theme);
-  const { text, onPress, areaStyle, textStyle, buttonColor, buttonStyle, children } = props;
+  const styles = createStyles();
+  const { text, onPress, areaStyle, textStyle, buttonStyle, children } = props;
 
   return (
-    <PaperArea style={areaStyle}>
+    <PaperArea areaStyle={areaStyle}>
     <TouchableOpacity
-      style={{...styles.buttonStyle, ...buttonStyle, backgroundColor: buttonColor}}
+      style={{...styles.buttonStyle, ...buttonStyle}}
       onPress={onPress}
     >
         {children}
@@ -35,7 +33,9 @@ export const PaperAreaButton = (props: PaperAreaButtonProps) => {
   );
 };
 
-const createStyles = (theme: AppTheme) => {
+const createStyles = () => {
+  const { theme } = useTheme();
+
   const styles = StyleSheet.create({
     buttonStyle: {
       height: '100%',

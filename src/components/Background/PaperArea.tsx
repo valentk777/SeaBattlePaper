@@ -4,20 +4,20 @@ import { useTheme } from '../../hooks/useTheme';
 import { AppTheme } from "../../styles/themeModels";
 
 interface PaperAreaProps {
-  children?: React.ReactNode | undefined;
-  backgroundColor?: string;
-  style?: any;
+  children: React.ReactNode | undefined;
+  areaStyle?: any;
+  componentStyle?: any;
 }
 
-export const PaperArea = ({ children, backgroundColor, style }: PaperAreaProps) => {
+export const PaperArea = ({ children, componentStyle, areaStyle }: PaperAreaProps) => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
 
   return (
-    <View style={{ ...styles.container, ...style }}>
+    <View style={{ ...styles.container, ...areaStyle }}>
       <View style={styles.firstArea}>
         <View style={styles.secondArea}>
-          <View style={{...styles.thirdArea, backgroundColor: backgroundColor}}>
+          <View style={{...styles.thirdArea, ...componentStyle}}>
             {children}
           </View>
         </View>

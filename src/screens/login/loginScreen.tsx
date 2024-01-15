@@ -1,20 +1,17 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, Image, Animated } from 'react-native';
-import { AppTheme } from '../../styles/themeModels';
+import { Text, View, Image, Animated } from 'react-native';
 import { AuthStackParamList } from '../../navigators/AuthStackNavigator';
 import { logo } from '../../assets';
-import { useTheme } from '../../hooks/useTheme';
 import { Background } from '../../components/Background/BackgroundImage';
 import { PaperAreaWithGradient } from '../../components/Background/PaperAreaWithGradient';
 import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
+import createStyles from './loginScreenStyles';
 
 type LoginScreenProps = NativeStackScreenProps<AuthStackParamList, 'LoginScreen'>;
 
 export const LoginScreen = ({ navigation }: LoginScreenProps) => {
-  const { theme } = useTheme();
-  const styles = createStyles(theme);
-
+  const styles = createStyles();
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -38,7 +35,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
   return (
     <View style={styles.global}>
       <Background />
-      <PaperAreaWithGradient style={{
+      <PaperAreaWithGradient areaStyle={{
         width: '80%',
         height: '80%',
       }}>
@@ -46,79 +43,24 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
         <View style={styles.buttonContainer}>
           <PaperAreaButton
             areaStyle={styles.register}
+            buttonStyle={styles.button}
+            textStyle={styles.buttonText}
             onPress={() => navigation.navigate('RegisterScreen', {})}
             text={'Register'}
-            textStyle={styles.bottomText}
-            buttonColor={theme.colors.canvas}
           >
           </PaperAreaButton>
           <PaperAreaButton
             areaStyle={styles.signIn}
+            buttonStyle={styles.button}
+            textStyle={styles.buttonText}
             onPress={() => navigation.navigate('SingInScreen', {})}
             text={'Sign In'}
-            textStyle={styles.bottomText}
-            buttonColor={theme.colors.canvas}
           >
           </PaperAreaButton>
         </View>
       </PaperAreaWithGradient>
     </View >
   );
-};
-
-const createStyles = (theme: AppTheme) => {
-  const styles = StyleSheet.create({
-    global: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    headerContainer: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '70%',
-    },
-    buttonContainer: {
-      flex: 1,
-      paddingLeft: '10%',
-      paddingRight: '10%',
-      flexDirection: 'row',
-      justifyContent: 'space-around'
-    },
-    image: {
-      width: '40%',
-      height: undefined,
-      aspectRatio: 1,
-      borderRadius: 20,
-    },
-    text: {
-      fontSize: 20,
-      lineHeight: 30,
-      fontFamily: theme.fonts.bold,
-      color: theme.colors.tertiary,
-      marginTop: 30,
-    },
-    register: {
-      height: 50,
-      width: '45%',
-    },
-    signIn: {
-      height: 50,
-      width: '45%',
-    },
-    center: {
-      flex: 1,
-      justifyContent: 'center',
-    },
-    bottomText: {
-      fontSize: 18,
-      color: theme.colors.tertiary,
-      fontFamily: theme.fonts.medium,
-      fontWeight: '600'
-    }
-  });
-
-  return styles;
 };
 
 export default LoginScreen;

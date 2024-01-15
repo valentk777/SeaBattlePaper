@@ -22,7 +22,6 @@ export const SignInButton = (props: SignInButtonProps) => {
       buttonStyle={styles.button}
       textStyle={styles.text}
       onPress={onSignPress}
-      buttonColor={theme.colors.canvas}
       text={text}
     >
       <Image
@@ -49,6 +48,7 @@ const createStyles = (theme: AppTheme) => {
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
+      backgroundColor: theme.colors.canvas
     },
     text: {
       fontFamily: theme.fonts.semiBold,

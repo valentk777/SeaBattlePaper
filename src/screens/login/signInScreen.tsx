@@ -1,11 +1,11 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Animated, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { Alert, Animated, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { AuthStackParamList } from '../../navigators/AuthStackNavigator';
 import { useAuth } from '../../hooks/useAuth';
 import { LoginUser } from '../../entities/user';
-import { icons, logo } from '../../assets';
+import { icons } from '../../assets';
 import { SignInButton } from '../../components/ButtonWrapper/SignInButton';
 import { Background } from '../../components/Background/BackgroundImage';
 import { PaperArea } from '../../components/Background/PaperArea';
@@ -16,7 +16,9 @@ type SingInScreenProps = NativeStackScreenProps<AuthStackParamList, 'SingInScree
 
 export const SingInScreen = ({ navigation }: SingInScreenProps) => {
   const { theme } = useTheme();
-  const styles = createStyles(theme);
+  const styles = createStyles();
+
+  const window = useWindowDimensions();
 
   const { emailSignIn, signInAnonymously, loginOrSignUpWithGoogle } = useAuth()
 
@@ -27,7 +29,7 @@ export const SingInScreen = ({ navigation }: SingInScreenProps) => {
     navigation.navigate("RegisterScreen", {});
   }
 
-  const handleSignInButton = () => {
+  const handleLoginButton = () => {
     if (password === null || password === "") {
       Alert.alert("Password cannot be empty");
       return;
@@ -63,8 +65,8 @@ export const SingInScreen = ({ navigation }: SingInScreenProps) => {
   const renderInputContainer = () => (
     <View style={styles.textInputContainer}>
       <PaperArea
-        style={styles.paperArea}
-        backgroundColor={theme.colors.canvas}
+        areaStyle={styles.paperArea}
+        componentStyle={{ backgroundColor: theme.colors.canvas }}
       >
         <View style={styles.inputArea}>
           <Text style={styles.inputText}>
@@ -89,12 +91,12 @@ export const SingInScreen = ({ navigation }: SingInScreenProps) => {
             onChangeText={setPassword}
           />
         </View>
-        <View style={styles.signInButtonContainer}>
+        <View style={styles.LoginButtonContainer}>
           <PaperAreaButton
-            areaStyle={styles.signInButtonStyle}
-            // buttonStyle={}
-            textStyle={styles.signInButtonTextStyle}
-            onPress={handleSignInButton} text={'Sign In'}          />
+            areaStyle={styles.LoginButtonAreaStyle}
+            buttonStyle={styles.LoginButtonStyle}
+            textStyle={styles.LoginButtonTextStyle}
+            onPress={handleLoginButton} text={'Sign In'} />
         </View>
       </PaperArea>
     </View>
@@ -114,16 +116,16 @@ export const SingInScreen = ({ navigation }: SingInScreenProps) => {
     </View>
   );
 
-  const renderSignUpButtonContainer = () => (
-    <View style={styles.signUpButtonContainer}>
-      <Text style={styles.signUpTextStyle}>
+  const renderQuestionContainer = () => (
+    <View style={styles.questionContainer}>
+      <Text style={styles.questionText}>
         Don't Have An Account ?
       </Text>
       <TouchableOpacity
-        style={styles.signUpButtonStyle}
+        style={styles.questionButtonStyle}
         onPress={handleRegistration}
       >
-        <Text style={styles.signUpButtonTextStyle}>
+        <Text style={styles.questionButtonText}>
           Sign Up
         </Text>
       </TouchableOpacity>
@@ -131,13 +133,13 @@ export const SingInScreen = ({ navigation }: SingInScreenProps) => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={{ ...styles.container, height: window.height }}>
       <Background />
       <View style={styles.mainContainer}>
         {renderHeaderContainer()}
         {renderInputContainer()}
         {renderExternalOptionsContainer()}
-        {renderSignUpButtonContainer()}
+        {renderQuestionContainer()}
       </View>
     </View >
   );
