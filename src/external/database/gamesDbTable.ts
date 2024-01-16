@@ -1,70 +1,146 @@
-// import firestore from '@react-native-firebase/firestore';
-// import {AppResponse} from '../../entities/appResponse';
-// import {Game} from '../../entities/game';
-// import timeService from '../../services/timeService';
+import {firebase} from '@react-native-firebase/database'
+import {AppResponse} from '../../entities/appResponse';
+import timeService from '../../services/timeService';
+import { Game } from '../../entities/game';
 
-// export const gameRef = firestore().collection('games');
+// https://rnfirebase.io/database/usage
+const database = firebase.app().database('https://seabattlepaper-default-rtdb.europe-west1.firebasedatabase.app/');
 
-// export const getGames = async (userId: string) => {
-//   try {
-//     let response = await gameRef.doc(userId).get();
+export const getGame = async (gameId: string) => {
+  try {
+    const snapshot = await database.ref(`activeGames/${gameId}`).once('value');
+    const activeGame = snapshot.val() as Game;
 
-//     if (response.exists) {
-//       const games = response.data()?.games;
+    console.log('getGame: ', activeGame);
 
-//       if (games === undefined) {
-//         return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
-//       }
+    if (activeGame === undefined) {
+      return {isSuccessfull: true, result: {} as Game} as AppResponse;
+    }
 
-//       return {
-//         isSuccessfull: true,
-//         result: games as Game[],
-//       } as AppResponse;
-//     } else {
-//       await addNewDbGames(userId);
+    return {
+      isSuccessfull: true,
+      result: activeGame as Game,
+    } as AppResponse;
+  } catch (error) {
+    console.error(error);
 
-//       return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
-//     }
-//   } catch (error) {
-//     console.error(error);
+    return {isSuccessfull: false, error: error} as AppResponse;
+  }
+};
 
-//     return {isSuccessfull: false, error: error} as AppResponse;
-//   }
-// };
+export const getAllActiveGames = async () => {
+  try {
+    const snapshot = await database.ref('activeGames').once('value');
 
-// export const addNewDbGames = async (userId: string) => {
-//   try {
-//     const dataWithOnlineStatus = {
-//       games: [] as Game[],
-//       lastTimeUpdated: timeService.getCurrentDateString(),
-//     };
+    if (snapshot.exists()) {
+      const activeGames = snapshot.val();
 
-//     await gameRef.doc(userId).set(dataWithOnlineStatus, {merge: true});
-//     return {isSuccessfull: true} as AppResponse;
-//   } catch (error) {
-//     console.log(error);
+      console.log('getAllActiveGames: ', activeGames);
 
-//     return {isSuccessfull: false, error: error} as AppResponse;
-//   }
-// };
+      if (activeGames === undefined) {
+        return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
+      }
 
-// export const updateDbStoredGames = async (
-//   userId: string,
-//   games: Game[],
+      return {
+        isSuccessfull: true,
+        result: activeGames as Game[],
+      } as AppResponse;
+    } else {
+      console.log('not exist');
+      return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
+    }
+  } catch (error) {
+    console.error(error);
+
+    return {isSuccessfull: false, error: error} as AppResponse;
+  }
+};
+
+export const setActiveGameOnChangeFuncion = async (gameId: string, setActiveGameOnChange: Function) => {
+  try {
+    database.ref(`activeGames/${gameId}`).on('value', (snapshot: any) => {
+      const activeGame = snapshot.val();
+
+      if (activeGame === undefined) {
+        setActiveGameOnChange({} as Game);
+        return;
+      }
+
+      setActiveGameOnChange(activeGame as Game);
+    });
+  } catch (error) {
+    console.error(error);
+
+    return {isSuccessfull: false, error: error} as AppResponse;
+  }
+};
+
+export const addActiveGame = async (activeGame: Game) => {
+  try {
+    const gameKeyRef = database.ref(`lastActiveGameKey`);
+
+    const lastActiveGameIdResult = await gameKeyRef.transaction(
+      lastActiveGameId => lastActiveGameId + 1,
+    );
+
+    if (lastActiveGameIdResult.snapshot.val() === undefined) {
+      return {isSuccessfull: false, error: 'cannot create id'} as AppResponse;
+    }
+
+    const newId = lastActiveGameIdResult.snapshot.val();
+
+    activeGame.id = newId;
+    activeGame.lastTimeUpdated = timeService.getCurrentDateString();
+
+    const activeGamesRef = database.ref(`activeGames/${activeGame.id}`);
+
+    await activeGamesRef.set(activeGame);
+
+    return {isSuccessfull: true, result: activeGame} as AppResponse;
+  } catch (error) {
+    console.error(error);
+
+    return {isSuccessfull: false, error: error} as AppResponse;
+  }
+};
+
+export const updateActiveGames = async (activeGame: Game) => {
+  if (activeGame === undefined) {
+    return {isSuccessfull: false, error: "cannot update empty game"} as AppResponse;
+  }
+
+  try {
+    const databaseRef = database.ref(`activeGames/${activeGame.id}`);
+
+    activeGame.lastTimeUpdated = timeService.getCurrentDateString();
+    
+    await databaseRef.update(activeGame);
+
+    return {
+      isSuccessfull: true,
+      result: activeGame,
+    } as AppResponse;
+
+  } catch (error) {
+    console.error(error);
+
+    return {isSuccessfull: false, error: error} as AppResponse;
+  }
+};
+
+// export const removeActiveGame = async (
+//   gameId: string
 // ) => {
-//   if (userId == undefined || userId === '' || userId == null) {
-//     console.log('Cannot save to remote database');
+//   if (gameId == undefined || gameId === '' || gameId == null) {
+//     console.log('Cannot find a game in remote database');
 
 //     return;
 //   }
 
-//   const dataWithOnlineStatus = {
-//     games: games,
-//     lastTimeUpdated: timeService.getCurrentDateString(),
-//   };
-
 //   try {
-//     await gameRef.doc(userId).update(dataWithOnlineStatus);
+//     await gameRef.doc(gameId).delete();
+
+//     console.log('Game successfully deleted');
 
 //     return {isSuccessfull: true} as AppResponse;
 //   } catch (error) {
@@ -74,10 +150,12 @@
 //   }
 // };
 
-// const gamesDbTable = {
-//   getGames,
-//   addNewDbGames,
-//   updateDbStoredGames,
-// };
+const gamesDbTable = {
+  getGame,
+  getAllActiveGames,
+  setActiveGameOnChangeFuncion,
+  addActiveGame,
+  updateActiveGames,
+};
 
-// export default gamesDbTable;
+export default gamesDbTable;

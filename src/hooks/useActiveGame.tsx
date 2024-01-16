@@ -1,14 +1,12 @@
-// import React, { createContext } from 'react'
-// import { Challenge } from '../entities/challenge';
+import React, { createContext } from 'react'
+import { Game } from '../entities/game';
 
-// interface ActiveGameContextProvider {
-//   challenge: Challenge;
-//   newValue: number;
-//   updateValue: (value: number) => void;
-// }
+interface ActiveGameContextProvider {
+  game: Game;
+  updateGame: (newGame: Game) => void;
+}
 
-// export const ActiveGameContext = createContext<ActiveGameContextProvider>({
-//   challenge: {} as Challenge,
-//   newValue: 0,
-//   updateValue: (value: number) => { },
-// });
+export const ActiveGameContext = createContext<ActiveGameContextProvider>({
+    game: {} as Game,
+    updateGame: (newGame: Game) => { },
+});

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import { useCurrentUser } from '../hooks/useCurrentUser';
 import { UserAccount } from '../entities/user';
 import { MainStackParamList } from '../navigators/MainStackNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import gameService from '../services/gameService';
 import { Game } from '../entities/game';
-import { ProgressStatus } from '../entities/progressStatus';
+import { GameProgress } from '../entities/gameProgress';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import createStyles from './homeScreenStyles';
 import { Background } from '../components/Background/BackgroundImage';
@@ -40,7 +40,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
       return;
     }
 
-    const existingGame = await gameService.getGameIfPossible(user.id, gameId) as Game;
+    const existingGame: Game = await gameService.getGameIfPossible(user.id, gameId) as Game;
 
     if (existingGame.id != gameId) {
       return;
@@ -53,12 +53,12 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
       return;
     }
 
-    if (existingGame.status == ProgressStatus.Created || existingGame.status == ProgressStatus.PlayerMatched) {
+    if (existingGame.status == GameProgress.Created || existingGame.status == GameProgress.PlayerMatched) {
       navigation.navigate('GameSetup');
       return;
     }
 
-    if (existingGame.status == ProgressStatus.Started) {
+    if (existingGame.status == GameProgress.Started) {
       navigation.navigate('PlayGame');
       return;
     }
@@ -73,12 +73,12 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
       </View>
       <View style={styles.options}>
         <View style={styles.hostOptions}>
-          <PaperAreaButton 
-          areaStyle={styles.areaStyle} 
-          buttonStyle={styles.buttonStyle} 
-          textStyle={styles.buttonText} 
-          onPress={onCreateGamePress}
-          text={'START NEW GAME'}
+          <PaperAreaButton
+            areaStyle={styles.areaStyle}
+            buttonStyle={styles.buttonStyle}
+            textStyle={styles.buttonText}
+            onPress={onCreateGamePress}
+            text={'START NEW GAME'}
           />
         </View>
         <View style={styles.orArea}>
@@ -96,6 +96,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
             textContentType="oneTimeCode"
             renderCell={({ index, symbol, isFocused }) => (
               <PaperArea
+                key={index}  
                 areaStyle={styles.inputArea}
                 componentStyle={styles.inputComponent}
               >
@@ -105,19 +106,16 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
                   onLayout={getCellOnLayoutHandler(index)}
                 >
                   {symbol || (isFocused ? <Cursor /> : null)}
-
                 </Text>
-
               </PaperArea>
-
             )}
           />
-          <PaperAreaButton 
-          areaStyle={styles.areaStyle} 
-          buttonStyle={styles.buttonStyle} 
-          textStyle={styles.buttonText} 
-          onPress={async () => await onJoinGamePress()}
-          text={'JOIN'}
+          <PaperAreaButton
+            areaStyle={styles.areaStyle}
+            buttonStyle={styles.buttonStyle}
+            textStyle={styles.buttonText}
+            onPress={async () => await onJoinGamePress()}
+            text={'JOIN'}
           />
         </View>
       </View>

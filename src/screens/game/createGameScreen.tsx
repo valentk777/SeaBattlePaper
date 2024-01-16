@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { Game } from '../../entities/game';
@@ -7,23 +7,39 @@ import { MainStackParamList } from '../../navigators/MainStackNavigator';
 import { Background } from '../../components/Background/BackgroundImage';
 import { ShipsBoard } from '../../components/Game/ShipsBoard';
 import { PaperArea } from '../../components/Background/PaperArea';
+import gameService from '../../services/gameService';
+import { UserAccount } from '../../entities/user';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
+import { ActiveGameContext } from '../../hooks/useActiveGame';
 
 type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateGame'>;
 
 export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
   const styles = createStyles();
 
-  const [activeGame, onChangeActiveGame] = useState({ id: "1113" } as Game);
-  // const user = useCurrentUser() as UserAccount;
+  const [activeGame, onChangeActiveGame] = useState({ id: "" } as Game);
+  const user = useCurrentUser() as UserAccount;
 
-  // useEffect(() => {
-  //   gameService.createNewGame(user.id, onChangeActiveGame);
-  // }, []);
+  useEffect(() => {
+    const createNewGameAsync = async () => {
+      try {
+        await gameService.createNewGame(user.id, onChangeActiveGame);
+      } catch (error) {
+        // Handle errors here, e.g., log them or show an error message.
+        console.error('Error creating a new game:', error);
+      }
+    };
 
+    createNewGameAsync();
+  }, []);
+
+  const values = useMemo(() => ({ game: activeGame, updateGame: onChangeActiveGame }), [activeGame]);
+  
   return (
     <View style={styles.container}>
       <Background />
       <View style={styles.empty} />
+      <ActiveGameContext.Provider value={values}>
       <View style={styles.newGameContainer}>
         <PaperArea
           areaStyle={styles.areaStyle}
@@ -34,8 +50,9 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
         </PaperArea>
       </View>
       <View style={styles.shipBoardContainer}>
-        <ShipsBoard gameId={activeGame.id} />
+        <ShipsBoard/>
       </View>
+      </ActiveGameContext.Provider>
     </View>
   );
 };

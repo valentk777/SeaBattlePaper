@@ -1,9 +1,9 @@
 import {StyleSheet} from 'react-native';
 import constants from '../constants/constants';
-import { useTheme } from '../hooks/useTheme';
+import {useTheme} from '../hooks/useTheme';
 
 const createStyles = () => {
-  const { theme } = useTheme();
+  const {theme} = useTheme();
 
   const styles = StyleSheet.create({
     container: {
@@ -12,7 +12,7 @@ const createStyles = () => {
     titleContainer: {
       flex: 2,
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     title: {
       fontFamily: theme.fonts.bold,
@@ -27,7 +27,7 @@ const createStyles = () => {
       flex: 2,
       width: '100%',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     areaStyle: {
       width: '80%',
@@ -42,12 +42,12 @@ const createStyles = () => {
     },
     orArea: {
       flex: 2,
-      justifyContent: "center",
+      justifyContent: 'center',
     },
     orText: {
       fontFamily: theme.fonts.medium,
       color: theme.colors.tertiary,
-      justifyContent: "center",
+      justifyContent: 'center',
     },
     joinOptions: {
       flex: 3,
@@ -58,7 +58,7 @@ const createStyles = () => {
     codeFieldRoot: {
       height: 45,
       width: '80%',
-      justifyContent: "center",
+      justifyContent: 'center',
     },
     inputArea: {
       marginHorizontal: '3%',
@@ -76,11 +76,10 @@ const createStyles = () => {
       lineHeight: 40, //TODO: think about this part
       textAlign: 'center',
       fontFamily: theme.fonts.medium,
-      color:theme.colors.tertiary,
+      color: theme.colors.tertiary,
       fontSize: 22,
     },
-    focusCell: {
-    },
+    focusCell: {},
     empty: {
       flex: 3,
     },

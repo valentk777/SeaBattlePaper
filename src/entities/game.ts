@@ -1,18 +1,12 @@
-import {ProgressStatus} from './progressStatus';
+import {PlayerBoard} from './playerBoard';
+import {GameProgress} from './gameProgress';
 
 export interface Game {
   id: string;
-  title: string;
-  playerA: string;
-  playerB: string;
-  // image: string;
+  // title: string;
+  playerA: PlayerBoard;
+  playerB: PlayerBoard;
+  status: GameProgress;
   timeCreated: string;
   lastTimeUpdated: string;
-  // currentValue: number;
-  // initialValue: number;
-  // targetValue: number;
-  // favorite: boolean;
-  status: ProgressStatus;
-
-  // board: Board;
 }
