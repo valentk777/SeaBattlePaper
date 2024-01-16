@@ -2,6 +2,11 @@ import {Alert} from 'react-native';
 import {BoardItem} from '../entities/boardItem';
 import {getData, storeData} from './dataStorageService';
 import { Game } from '../entities/game';
+import gamesDbTable from '../external/database/gamesDbTable';
+
+const getGameStorageKey = (userId: string, gameId: string) => {
+  return `${userId}/games/${gameId}`;
+};
 
 const generateNewShipBoard = () => {
   const customArray = [
@@ -57,17 +62,59 @@ const getCurrentPlayerBoard = (game: Game, userId: string) => {
   return generateNewShipBoard();
 }
 
+const getCompetitorPlayerBoard = (game: Game, userId: string) => {
+  if (game?.playerA?.id === userId) {
+    if (game?.playerB?.board === undefined) {
+      return generateNewShipBoard();
+    }
+
+    return game.playerB.board;
+  }
+
+  if (game?.playerB?.id === userId) {
+    if (game?.playerA?.board === undefined) {
+      return generateNewShipBoard();
+    }
+
+    return game.playerA.board;
+  }
+
+  return generateNewShipBoard();
+}
+
 const updateShipBoardItem = (shipBoard: BoardItem[], item: BoardItem) => {
   return shipBoard.map(currentItem =>
     currentItem.location === item.location ? item : currentItem,
   );
 };
 
+const publishPlayerBoardsetWithStoring = async (game: Game, userId: string) => {
+  try {
+    await gamesDbTable.updateActiveGamePlayer(game, userId);
+
+    if (game?.playerA?.id === userId) {
+      await storeData(
+        `${getGameStorageKey(userId, game.id)}/playerA`,
+        game.playerA,
+      );
+    } else if (game?.playerB?.id === userId) {
+      await storeData(
+        `${getGameStorageKey(userId, game.id)}/playerB`,
+        game.playerA,
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    alert(error);
+  }
+};
 
 const shipBoardService = {
   generateNewShipBoard,
   getCurrentPlayerBoard,
+  getCompetitorPlayerBoard,
   updateShipBoardItem,
+  publishPlayerBoardsetWithStoring,
 };
 
 export default shipBoardService;

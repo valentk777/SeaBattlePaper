@@ -10,21 +10,66 @@ import shipBoardService from './shipBoardService';
 import {Alert} from 'react-native';
 import {BoardItem} from '../entities/boardItem';
 import userService from './userService';
+import {User, UserAccount} from '../entities/user';
 
 const getGameStorageKey = (userId: string, gameId: string) => {
   return `${userId}/games/${gameId}`;
 };
 
-const initGame = async (userId: string, gameId: string) => {
-  const response = (await gamesDbTable.getGame(gameId)) as AppResponse;
+const createNewGameTemplate = (user: UserAccount) => {
+  return {
+    playerA: {
+      id: user.id,
+      email: user.email,
+      status: PlayerStatus.Joined,
+      board: shipBoardService.generateNewShipBoard(),
+    } as PlayerBoard,
+    timeCreated: timeService.getCurrentDateString(),
+    status: GameProgress.Created,
+  } as Game;
+};
 
-  if (response.isSuccessfull) {
-    await storeData(getGameStorageKey(userId, gameId), response.result);
-    return response.result;
+const publishGameWithStoring = async (game: Game) => {
+  const response = (await gamesDbTable.addActiveGame(game)) as AppResponse;
+
+  const user = await userService.getCurrentUser();
+
+  if (user === null || user.id === '' || user.id === null) {
+    return {} as Game;
   }
 
-  alert('Cannot find local game. Create a new one');
+  if (response.isSuccessfull) {
+    const updatedGame = response.result as Game;
+
+    await storeData(getGameStorageKey(user.id, updatedGame.id), updatedGame);
+
+    return updatedGame;
+  } else {
+    console.log('error creating game');
+    return game;
+  }
 };
+
+const updateGameInLocalStorage = async (game: Game) => {
+  const user = await userService.getCurrentUser();
+
+  if (user === null || user.id === '' || user.id === null) {
+    return {} as Game;
+  }
+
+  await storeData(getGameStorageKey(user.id, game.id), game);
+};
+
+// const initGame = async (userId: string, gameId: string) => {
+//   const response = (await gamesDbTable.getGame(gameId)) as AppResponse;
+
+//   if (response.isSuccessfull) {
+//     await storeData(getGameStorageKey(userId, gameId), response.result);
+//     return response.result;
+//   }
+
+//   alert('Cannot find local game. Create a new one');
+// };
 
 // const getGameKey = (length: number = 4) => {
 //     // we will generate
@@ -42,37 +87,11 @@ const initGame = async (userId: string, gameId: string) => {
 //     return result;
 // }
 
-const createNewGame = async (
-  userId: string,
+const setGameWithTracking = async (
+  gameId: string,
   setActiveGameOnChange: Function,
 ) => {
-  const newGame = {
-    playerA: {
-      id: userId,
-      status: PlayerStatus.Joined,
-      board: shipBoardService.generateNewShipBoard(),
-    } as PlayerBoard,
-    timeCreated: timeService.getCurrentDateString(),
-    status: GameProgress.Created,
-  } as Game;
-
-  const response = (await gamesDbTable.addActiveGame(newGame)) as AppResponse;
-
-  if (response.isSuccessfull) {
-    // const response = (await gamesDbTable.getGame(gameId)) as AppResponse;
-
-    // const updatedGame = {id : response.result.id, ...newGame.playerA} as Game
-
-    // newGame.id = ;
-
-    await gamesDbTable.setActiveGameOnChangeFuncion(
-      response.result.id,
-      setActiveGameOnChange,
-    );
-    // await storeData(getGameStorageKey(userId, newGame.id), newGame);
-  } else {
-    console.log('error creating game');
-  }
+  await gamesDbTable.setGameWithTracking(gameId, setActiveGameOnChange);
 };
 
 const getGameIfPossible = async (userId: string, gameId: string) => {
@@ -135,22 +154,20 @@ const getGameFromStorage = async (gameId: string) => {
 };
 
 const tryJoinToGame = async (userId: string, game: Game) => {
-  if (game.playerA == userId) {
+  if (game.playerA?.id == userId) {
     console.log('Host can re-join to active the game');
-    // TODO: think about player object and update actual player status here. it would be useful if player disconects from game.
     return true;
   }
 
-  if (game.playerB == userId) {
+  if (game.playerB?.id == userId) {
     console.log('Player can re-join to active the game');
-    // TODO: think about player object and update actual player status here. it would be useful if player disconects from game.
     return true;
   }
 
   if (game.playerB == undefined) {
     console.log('Player joined as a second player');
 
-    game.playerB = userId;
+    game.playerB.id = userId;
 
     const response = (await gamesDbTable.updateActiveGames(
       game,
@@ -166,45 +183,63 @@ const tryJoinToGame = async (userId: string, game: Game) => {
   return false;
 };
 
+const getUpdateGameOnPress = (game: Game, item: BoardItem, userId: string) => {
+  try {
+    const updatedGame = JSON.parse(JSON.stringify(game));
+
+    if (updatedGame?.playerA?.id === userId) {
+      updatedGame.playerA.board = updatedGame.playerA.board.map(currentItem =>
+        currentItem.location === item.location ? item : currentItem,
+      );
+    }
+
+    if (updatedGame?.playerB?.id === userId) {
+      updatedGame.playerB.board = updatedGame.playerB.board.map(currentItem =>
+        currentItem.location === item.location ? item : currentItem,
+      );
+    }
+
+    return updatedGame;
+  } catch (error) {
+    Alert.alert(`Issues updating ship board: Error: ${error}`);
+    console.log(error);
+    return game;
+  }
+};
+
 const updateGameOnBoardPress = async (
   game: Game,
   item: BoardItem,
   userId: string,
 ) => {
   try {
-    if (game?.playerA?.id === userId) {
-      game.playerA.board.map(currentItem =>
-        currentItem.location === item.location ? item : currentItem,
-      );
-    }
-
-    if (game?.playerB?.id === userId) {
-      game.playerB.board.map(currentItem =>
-        currentItem.location === item.location ? item : currentItem,
-      );
-    }
+    const updatedGame = getUpdateGameOnPress(game, item, userId);
 
     const response = (await gamesDbTable.updateActiveGames(
-      game,
+      updatedGame,
     )) as AppResponse;
 
     if (!response.isSuccessfull) {
       alert('Cannot update game' + response.error);
     }
 
-    return game;
+    return updatedGame;
   } catch (error) {
     Alert.alert(`Issues updating ship board: Error: ${error}`);
+    console.log(error);
     return game;
   }
 };
 
 const gameService = {
-  createNewGame,
+  createNewGameTemplate,
+  publishGameWithStoring,
   getGameIfPossible,
-  // tryJoinToGame,
-  // updateGameOnChange,
+  tryJoinToGame,
+  getUpdateGameOnPress,
+  setGameWithTracking,
   updateGameOnBoardPress,
+  updateGameInLocalStorage,
 };
 
 export default gameService;

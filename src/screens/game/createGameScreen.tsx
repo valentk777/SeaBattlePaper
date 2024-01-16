@@ -12,19 +12,30 @@ import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { ActiveGameContext } from '../../hooks/useActiveGame';
 import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
 import createStyles from './gameSetupStyles';
+import shipBoardService from '../../services/shipBoardService';
+import { GameProgress } from '../../entities/gameProgress';
+import { PlayerStatus } from '../../entities/playerStatus';
 
 type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateGame'>;
 
 export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
   const styles = createStyles();
 
-  const [activeGame, onChangeActiveGame] = useState({ id: "" } as Game);
+  const [activeGame, setActiveGame] = useState({ id: "" } as Game);
   const user = useCurrentUser() as UserAccount;
+
+  const updateGame = async (game: Game) => {
+    await gameService.updateGameInLocalStorage(game);
+    setActiveGame(game);
+  };
 
   useEffect(() => {
     const createNewGameAsync = async () => {
       try {
-        await gameService.createNewGame(user, onChangeActiveGame);
+        const gameTemplate = gameService.createNewGameTemplate(user);
+        const newGame = await gameService.publishGameWithStoring(gameTemplate);
+
+        setActiveGame(newGame);
       } catch (error) {
         console.error('Error creating a new game:', error);
       }
@@ -34,13 +45,22 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
   }, []);
 
   const onStartGame = () => {
-    // activeGame.playerA.status = PlayerStatus.Started;
+    const updatedGame = JSON.parse(JSON.stringify(activeGame));
+    
+    if (updatedGame?.playerA?.id === user.id) {
+      updatedGame.playerA.status = PlayerStatus.Started;
+    }
+
+    if (updatedGame?.playerB?.id === user.id) {
+      updatedGame.playerB.status = PlayerStatus.Started;
+    }
+
+    shipBoardService.publishPlayerBoardsetWithStoring(updatedGame, user.id);
 
     navigation.navigate('PlayGame', {gameId: activeGame.id });
-    return;
   }
 
-  const values = useMemo(() => ({ game: activeGame, updateGame: onChangeActiveGame }), [activeGame]);
+  const values = useMemo(() => ({ game: activeGame, updateGame: updateGame }), [activeGame]);
 
   return (
     <View style={styles.container}>
@@ -69,7 +89,7 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
           </View>
         </View>
         <View style={styles.shipBoardContainer}>
-          <ShipsBoard />
+          <ShipsBoard isMyShipBoard={true}/>
         </View>
         <View style={styles.empty} />
         <PaperAreaButton

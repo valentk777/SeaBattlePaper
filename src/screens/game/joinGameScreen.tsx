@@ -13,6 +13,7 @@ import { PaperArea } from '../../components/Background/PaperArea';
 import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
 import { ShipsBoard } from '../../components/Game/ShipsBoard';
 import { ActiveGameContext } from '../../hooks/useActiveGame';
+import shipBoardService from '../../services/shipBoardService';
 
 type JoinGameScreenProps = NativeStackScreenProps<MainStackParamList, 'JoinGame'>;
 
@@ -21,12 +22,44 @@ export const JoinGameScreen = ({ navigation, route }: JoinGameScreenProps) => {
 
   const { game } = route.params;
 
-  const [activeGame, onChangeActiveGame] = useState(game);
+  const [activeGame, setActiveGame] = useState(game);
+  const user = useCurrentUser() as UserAccount;
 
-  const updateGame = (value: Game) => {
-    console.log("UPDATE GAME");
-    onChangeActiveGame(value);
-  }
+  const updateGame = async (game: Game) => {
+    await gameService.updateGameInLocalStorage(game);
+    setActiveGame(game);
+  };
+
+  useEffect(() => {
+    const updatedGame = JSON.parse(JSON.stringify(activeGame));
+
+    if (updatedGame?.playerA?.id !== undefined && updatedGame?.playerB?.id) {
+
+    }
+
+
+    const joinNewGameAsync = async () => {
+      try {
+        if (game?.playerA?.id === user.id) {
+          console.log("host joined");
+        }
+        else if (game?.playerB?.id === user.id) {
+          console.log('rejoin');
+        }
+
+
+
+        // const gameTemplate = gameService.createNewGameTemplate(user);
+        // const newGame = await gameService.publishGameWithStoring(gameTemplate);
+
+        // setActiveGame(newGame);
+      } catch (error) {
+        console.error('Error creating a new game:', error);
+      }
+    };
+
+    joinNewGameAsync();
+  }, []);
 
   // const user = useCurrentUser() as UserAccount;
 
@@ -46,9 +79,19 @@ export const JoinGameScreen = ({ navigation, route }: JoinGameScreenProps) => {
   // }, [activeGame]);
 
   const onStartGame = () => {
-    activeGame.playerA.status = PlayerStatus.Started;
+    const updatedGame = JSON.parse(JSON.stringify(activeGame));
+    
+    if (updatedGame?.playerA?.id === user.id) {
+      updatedGame.playerA.status = PlayerStatus.Started;
+    }
 
-    // store game to remote storage.
+    if (updatedGame?.playerB?.id === user.id) {
+      updatedGame.playerB.status = PlayerStatus.Started;
+    }
+
+    shipBoardService.publishPlayerBoardsetWithStoring(updatedGame, user.id);
+
+    navigation.navigate('PlayGame', {gameId: activeGame.id });
   }
 
   const values = useMemo(() => ({ game: activeGame, updateGame: updateGame }), [activeGame]);
@@ -80,7 +123,7 @@ export const JoinGameScreen = ({ navigation, route }: JoinGameScreenProps) => {
           </View>
         </View>
         <View style={styles.shipBoardContainer}>
-          <ShipsBoard />
+          <ShipsBoard  isMyShipBoard={true}/>
         </View>
         <View style={styles.empty} />
         <PaperAreaButton

@@ -1,81 +1,42 @@
-// TODO: refactor later. Now just let's make it work
-import firebase from '@react-native-firebase/database';
-
-import React, { useContext, useEffect, useState } from 'react'
-import { Alert, FlatList, Image, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useContext } from 'react'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useTheme } from '../../hooks/useTheme';
-import { AppTheme } from '../../styles/themeModels';
 import constants from '../../constants/constants';
 import { PaperArea } from '../Background/PaperArea';
 import { BoardItem } from '../../entities/boardItem';
 import shipBoardService from '../../services/shipBoardService';
 import { UserAccount } from '../../entities/user';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
-import { PlayerBoard } from '../../entities/playerBoard';
 import { ActiveGameContext } from '../../hooks/useActiveGame';
 import gameService from '../../services/gameService';
+import { Game } from '../../entities/game';
 
-const BORD_BORDER_LENGHT = constants.screenWidth * 0.8;
+const BORD_BORDER_LENGHT = constants.screenWidth * 0.63;
 
 interface ShipsBoardProps {
-  // playerBoard: PlayerBoard;
+  style?: any;
+  isMyShipBoard: boolean;
 }
 
-export const ShipsBoard = (props: ShipsBoardProps) => {
+export const ShipsBoard = ({style, isMyShipBoard}: ShipsBoardProps) => {
   const styles = createStyles();
 
   const user = useCurrentUser() as UserAccount;
   const { game, updateGame } = useContext(ActiveGameContext);
 
-  // useEffect(() => {
-  //   readData();
-
-  //   // const gameRef = firebase
-  //   // .app()
-  //   // .database('https://seabattlepaper-default-rtdb.europe-west1.firebasedatabase.app/')
-  //   // .ref(`/activeGames/${gameId}`)
-  //   // .on('value', snapshot => {
-  //   //     console.log('Active game data: ', snapshot.val());
-  //   //   });
-
-  //   // Stop listening for updates when no longer required
-  //   // return () => database().ref(`/users/${userId}`).off('value', onValueChange);
-  // }, []);
-
-  // useEffect(() => {
-  //   // readData();
-
-  //   // const gameRef = firebase
-  //   // .app()
-  //   // .database('https://seabattlepaper-default-rtdb.europe-west1.firebasedatabase.app/')
-  //   // .ref(`/activeGames/${gameId}`)
-  //   // .on('value', snapshot => {
-  //   //     console.log('Active game data: ', snapshot.val());
-  //   //   });
-
-  //   // Stop listening for updates when no longer required
-  //   // return () => database().ref(`/users/${userId}`).off('value', onValueChange);
-  // }, [shipBoard]);
-
-  // const readData = async () => {
-  //   try {
-  //     const shipBoard = await shipBoardService.getShipBoard(gameId);
-
-  //     if (shipBoard.length == 0) {
-  //       return;
-  //     }
-
-  //     updateShipBoard(shipBoard);
-
-  //   } catch (error) {
-  //     Alert.alert(`${error}`)
-  //   }
-  // }
-
   const onPressBox = async (item: BoardItem) => {
-    item.selected = !item.selected;
+    console.log(item);
 
-    await gameService.updateGameOnBoardPress(game, item, user.id);
+    const newItem = {
+      location: item.location,
+      selected: !item.selected,
+      fixed: item.fixed,
+      value: item.value,
+    } as BoardItem;
+
+    const updatedGame = gameService.getUpdateGameOnPress(game, newItem, user.id) as Game;
+
+    updateGame(updatedGame);
   }
 
   const renderItem = ({ item }) => {
@@ -95,24 +56,23 @@ export const ShipsBoard = (props: ShipsBoardProps) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{...styles.container, ...style}}>
       <PaperArea
         areaStyle={styles.areaStyle}
         componentStyle={styles.componentStyle}
       >
         <FlatList
-          // contentContainerStyle={ }
-          data={shipBoardService.getCurrentPlayerBoard(game, user.id)}
+          data={isMyShipBoard ? shipBoardService.getCurrentPlayerBoard(game, user.id) : shipBoardService.getCompetitorPlayerBoard(game, user.id)}
           renderItem={renderItem}
           keyExtractor={(item) => item.location}
           numColumns={11}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-          // ItemSeparatorComponent={}
           refreshing={false}
           initialNumToRender={121}
           scrollEnabled={false}
           style={styles.flatList}
+        // extraData={selectedLocations} 
         />
       </PaperArea>
     </View>
@@ -124,19 +84,6 @@ const createStyles = () => {
 
   const styles = StyleSheet.create({
     container: {
-      // height: BORD_BORDER_LENGHT + 50,
-      // width: BORD_BORDER_LENGHT + 50,
-
-      // flex: 11, 
-      // marginHorizontal: "auto",
-      // width: 400,
-      // backgroundColor: "red"
-
-
-      // alignItems: 'flex-end',
-      // justifyContent: 'flex-end',
-
-      // backgroundColor: 'green',
     },
     areaStyle: {
       height: BORD_BORDER_LENGHT + 6,
@@ -162,8 +109,6 @@ const createStyles = () => {
       height: '100%',
       width: '100%',
       backgroundColor: theme.colors.primary,
-      // borderWidth: 1,
-      // borderColor: theme.colors.canvasInverted,
     },
     symbolTileText: {
       fontSize: 18,

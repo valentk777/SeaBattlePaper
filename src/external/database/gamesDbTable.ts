@@ -56,7 +56,7 @@ export const getAllActiveGames = async () => {
   }
 };
 
-export const setActiveGameOnChangeFuncion = async (gameId: string, setActiveGameOnChange: Function) => {
+export const setGameWithTracking = async (gameId: string, setActiveGameOnChange: Function) => {
   try {
     database.ref(`activeGames/${gameId}`).on('value', (snapshot: any) => {
       const activeGame = snapshot.val();
@@ -128,6 +128,31 @@ export const updateActiveGames = async (activeGame: Game) => {
   }
 };
 
+export const updateActiveGamePlayer = async (activeGame: Game, userId: string) => {
+  if (activeGame === undefined) {
+    return {isSuccessfull: false, error: "cannot update empty game"} as AppResponse;
+  }
+
+  try {
+    if (activeGame?.playerA?.id === userId) {
+      const databaseRef = database.ref(`activeGames/${activeGame.id}/playerA/`);
+      await databaseRef.update(activeGame.playerA);
+    } else if (activeGame?.playerB?.id === userId) {
+      const databaseRef = database.ref(`activeGames/${activeGame.id}/playerB/`);
+      await databaseRef.update(activeGame.playerB);
+    }
+
+    return {
+      isSuccessfull: true,
+      result: activeGame,
+    } as AppResponse;
+  } catch (error) {
+    console.error(error);
+
+    return {isSuccessfull: false, error: error} as AppResponse;
+  }
+};
+
 // export const removeActiveGame = async (
 //   gameId: string
 // ) => {
@@ -153,9 +178,10 @@ export const updateActiveGames = async (activeGame: Game) => {
 const gamesDbTable = {
   getGame,
   getAllActiveGames,
-  setActiveGameOnChangeFuncion,
+  setGameWithTracking,
   addActiveGame,
   updateActiveGames,
+  updateActiveGamePlayer,
 };
 
 export default gamesDbTable;
