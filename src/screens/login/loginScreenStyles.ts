@@ -10,6 +10,13 @@ const createStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
     },
+    areaStyle: {
+      width: '80%',
+      height: '80%',
+    },
+    componentStyle: {
+      backgroundColor: theme.colors.canvas,
+    },
     headerContainer: {
       alignItems: 'center',
       justifyContent: 'center',
@@ -17,8 +24,7 @@ const createStyles = () => {
     },
     buttonContainer: {
       flex: 1,
-      paddingLeft: '10%',
-      paddingRight: '10%',
+      paddingHorizontal: '5%',
       flexDirection: 'row',
       justifyContent: 'space-around',
     },
@@ -38,17 +44,19 @@ const createStyles = () => {
     register: {
       height: 50,
       width: '45%',
+      paddingRight: 5,
     },
     signIn: {
       height: 50,
       width: '45%',
+      paddingLeft: 5,
     },
     center: {
       flex: 1,
       justifyContent: 'center',
     },
     button: {
-      backgroundColor: theme.colors.canvas,
+      backgroundColor: theme.colors.primary,
     },
     buttonText: {
       fontSize: 18,

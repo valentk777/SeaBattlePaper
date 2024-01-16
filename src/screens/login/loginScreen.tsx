@@ -4,9 +4,9 @@ import { Text, View, Image, Animated } from 'react-native';
 import { AuthStackParamList } from '../../navigators/AuthStackNavigator';
 import { logo } from '../../assets';
 import { Background } from '../../components/Background/BackgroundImage';
-import { PaperAreaWithGradient } from '../../components/Background/PaperAreaWithGradient';
 import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
 import createStyles from './loginScreenStyles';
+import { PaperArea } from '../../components/Background/PaperArea';
 
 type LoginScreenProps = NativeStackScreenProps<AuthStackParamList, 'LoginScreen'>;
 
@@ -35,10 +35,9 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
   return (
     <View style={styles.global}>
       <Background />
-      <PaperAreaWithGradient areaStyle={{
-        width: '80%',
-        height: '80%',
-      }}>
+      <PaperArea areaStyle={styles.areaStyle}
+        componentStyle={styles.componentStyle}
+      >
         {renderHeaderContainer()}
         <View style={styles.buttonContainer}>
           <PaperAreaButton
@@ -58,7 +57,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
           >
           </PaperAreaButton>
         </View>
-      </PaperAreaWithGradient>
+      </PaperArea>
     </View >
   );
 };

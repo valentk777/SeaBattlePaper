@@ -1,50 +1,53 @@
-// import {Alert} from 'react-native';
-// import {Challenge} from '../entities/challenge';
-// import {getData, storeData} from './dataStorageService';
-// import userService from './userService';
-// import challengesDbTable from '../external/database/challengesDbTable';
-// import uuid from 'react-native-uuid';
-// import { ProgressStatus } from '../entities/progressStatus';
-// import { ChallengeTypes } from '../entities/challengeTypes';
-// import timeService from './timeService';
+import { Alert } from "react-native";
+import { BoardItem } from "../entities/boardItem";
+import { getData, storeData } from "./dataStorageService";
 
-// const initChallengesList = async (userId: string) => {
-//   const response = await challengesDbTable.getChallenges(userId);
-//   let challenges = [] as Challenge[];
+const generateNewShipBoard = () => Array.from({ length: 100 }, (_, index) => (
+  {
+    location: String(index).padStart(2, '0'),
+    selected: false,
+    fixed: false,
+  } as BoardItem
+));
 
-//   if (response.isSuccessfull) {
-//     challenges = response.result as Challenge[];
-//   }
+const initShipBoard = async (gameId: string) => {
+  // const response = await challengesDbTable.getChallenges(userId);
+  // let challenges = [] as Challenge[];
 
-//   await storeData('challenges', challenges);
+  // if (response.isSuccessfull) {
+  //   challenges = response.result as Challenge[];
+  // }
+  const shipBoard = generateNewShipBoard();
 
-//   return challenges;
-// };
+  await storeData(getShipBoardKey(gameId), shipBoard);
 
-// const getChallengesKey = (userId: string) => {
-//   return `challenges/${userId}`;
-// };
+  return shipBoard;
+};
 
-// const getAllChallenges = async () => {
-//   try {
-//     const user = await userService.getCurrentUser();
+const getShipBoardKey = (gameId: string) => {
+  return `board/${gameId}`;
+};
 
-//     if (user === null || user.id === '' || user.id === null) {
-//       return [] as Challenge[];
-//     }
+const getShipBoard = async (gameId: string) => {
+  try {
+    // const user = await userService.getCurrentUser();
 
-//     const challenges = await getData(getChallengesKey(user.id));
+    // if (gameId === null || gameId === '') {
+    //   return [] as Challenge[];
+    // }
 
-//     if (challenges === null) {
-//       return await initChallengesList(user.id);
-//     }
+    const shipBoard = await getData(getShipBoardKey(gameId));
 
-//     return challenges as Challenge[];
-//   } catch (error) {
-//     Alert.alert(`Issues getting all challenges: Error: ${error}`);
-//     return [] as Challenge[];
-//   }
-// };
+    if (shipBoard === null) {
+      return await initShipBoard(gameId);
+    }
+
+    return shipBoard as BoardItem[];
+  } catch (error) {
+    Alert.alert(`Issues getting all board item: Error: ${error}`);
+    return [] as BoardItem[];
+  }
+};
 
 // const getChallengeById = (challenges: Challenge[], challengeId: string) => {
 //   if (challenges.length == 0) {
@@ -66,36 +69,36 @@
 //   return selectedChallenges[0];
 // };
 
-// const storeChallenge = async (challenge: Challenge) => {
-//   try {
-//     const user = await userService.getCurrentUser();
+const updateShipBoardItem = (shipBoard: BoardItem[], item: BoardItem) => {
+  return shipBoard.map(currentItem =>
+    currentItem.location === item.location ? item : currentItem,
+  );
+};
 
-//     if (user === null || user.id === '' || user.id === null) {
-//       console.error('Cannot store challenge because user does not exist');
-//       return false;
-//     }
+const updateShipBoard = async (gameId: string, shipBoard: BoardItem[], item: BoardItem) => {
+  try {
+    // const user = await userService.getCurrentUser();
 
-//     let challenges = await getAllChallenges();
-//     const selectedChallenge = getChallengeById(challenges, challenge.id);
+    // if (user === null || user.id === '' || user.id === null) {
+    //   console.error('Cannot store challenge because user does not exist');
+    //   return false;
+    // }
 
-//     if (selectedChallenge != null) {
-//       // remove challenge to prevent from duplicates
-//       challenges = challenges.filter(
-//         localChallenge => challenge.id !== localChallenge.id,
-//       );
-//     }
+    let shipBoard = await getShipBoard(gameId);
 
-//     challenges.push(challenge);
+    if (shipBoard != null) {
+      shipBoard = updateShipBoardItem(shipBoard, item);
+    }
 
-//     storeData(getChallengesKey(user.id), challenges);
-//     challengesDbTable.updateDbStoredChallenges(user.id, challenges);
+    storeData(getShipBoardKey(gameId), shipBoard);
+    // challengesDbTable.updateDbStoredChallenges(user.id, challenges);
 
-//     return true;
-//   } catch (error) {
-//     Alert.alert(`Issues adding new challenge: Error: ${error}`);
-//     return false;
-//   }
-// };
+    return shipBoard;
+  } catch (error) {
+    Alert.alert(`Issues updating ship board: Error: ${error}`);
+    return shipBoard;
+  }
+};
 
 // const removeChallenge = async (challengeId: string) => {
 //   try {
@@ -112,7 +115,7 @@
 //       challenge => challenge.id !== challengeId,
 //     );
 
-//     storeData(getChallengesKey(user.id), updatedChallenges);
+//     storeData(getShipBoardKey(user.id), updatedChallenges);
 //     challengesDbTable.updateDbStoredChallenges(user.id, updatedChallenges);
 
 //     return true;
@@ -204,12 +207,10 @@
 //   return challengeCandidate;
 // };
 
-// const challengesService = {
-//   getAllChallenges,
-//   storeChallenge,
-//   removeChallenge,
-//   getPercentage,
-//   createNewChallenge,
-// };
+const shipBoardService = {
+  getShipBoard,
+  updateShipBoardItem,
+  updateShipBoard,
+};
 
-// export default challengesService;
+export default shipBoardService;

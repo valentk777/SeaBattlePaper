@@ -15,7 +15,7 @@ export const Background = ({ style }: BackgroundProps) => {
   const BackgroundImage = SvgFileNamesToComponentsMap['SquerePaper.js'];
 
   return (
-    <View style={{...styles.container, ...style}}>
+    <View style={{ ...styles.container, ...style }}>
       <View style={styles.background}>
         <BackgroundImage
           width="100%"
@@ -39,7 +39,7 @@ const createStyles = (theme: AppTheme) => {
       alignItems: 'center',
       width: constants.screenWidth,
       height: constants.screenHeight,
-      zIndex: -1, 
+      zIndex: -1,
     },
     background: {
       backgroundColor: theme.colors.primary,

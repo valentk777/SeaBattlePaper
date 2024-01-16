@@ -8,6 +8,7 @@ import { StyleSheet } from 'react-native';
 import { AppTheme } from '../styles/themeModels';
 import { useTheme } from "../hooks/useTheme";
 import { LogOutButton } from "../components/LogOutButton";
+import { BackButton } from "../components/BackButton";
 
 export type MainStackParamList = {
   Home: {};
@@ -47,7 +48,10 @@ const MainStackNavigator = () => {
         name="CreateGame"
         component={CreateGameScreen}
         options={{
-          title: 'Create new game',
+          title: '',
+          headerTransparent: true,
+          headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
+          headerLeft: () => (<BackButton />),
         }}
       />
       <MainStack.Screen
@@ -75,8 +79,8 @@ const createStyles = (theme: AppTheme) => {
       backgroundColor: theme.colors.secondary,
     },
     headerTitle: {
-      fontFamily: theme.fonts.bold,
-      fontSize: 25,
+      fontFamily: theme.fonts.semiBold,
+      fontSize: 20,
       color: theme.colors.tertiary,
     }
   });
