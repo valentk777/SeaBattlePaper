@@ -54,12 +54,12 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
     }
 
     if (existingGame.status == GameProgress.Created || existingGame.status == GameProgress.PlayerMatched) {
-      navigation.navigate('GameSetup');
+      navigation.navigate('JoinGame', {game: existingGame});
       return;
     }
 
     if (existingGame.status == GameProgress.Started) {
-      navigation.navigate('PlayGame');
+      navigation.navigate('PlayGame', {gameId: gameId});
       return;
     }
   };

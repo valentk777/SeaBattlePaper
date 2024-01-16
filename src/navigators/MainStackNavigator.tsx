@@ -1,7 +1,7 @@
 import React, { createNativeStackNavigator } from "@react-navigation/native-stack"
 import UserScreen from "../screens/userScreen";
 import CreateGameScreen from "../screens/game/createGameScreen";
-import GameSetupScreen from "../screens/game/gameSetupScreen";
+import JoinGameScreen from "../screens/game/joinGameScreen";
 import PlayGameScreen from "../screens/game/playGameScreen";
 import HomeScreen from "../screens/homeScreen";
 import { StyleSheet } from 'react-native';
@@ -9,12 +9,14 @@ import { AppTheme } from '../styles/themeModels';
 import { useTheme } from "../hooks/useTheme";
 import { LogOutButton } from "../components/LogOutButton";
 import { BackButton } from "../components/BackButton";
+import { useNavigation } from "@react-navigation/native";
+import { Game } from "../entities/game";
 
 export type MainStackParamList = {
   Home: {};
   CreateGame: {};
-  GameSetup: {};
-  PlayGame: {};
+  JoinGame: {game: Game};
+  PlayGame: {gameId: string};
   User: {};
 };
 
@@ -23,6 +25,8 @@ const MainStack = createNativeStackNavigator<MainStackParamList>()
 const MainStackNavigator = () => {
   const { theme } = useTheme();
   const styles = createStyles(theme);
+
+  const navigation = useNavigation();
 
   return (
     <MainStack.Navigator
@@ -51,23 +55,39 @@ const MainStackNavigator = () => {
           title: '',
           headerTransparent: true,
           headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
-          headerLeft: () => (<BackButton />),
+          headerLeft: () => (<BackButton onPress={() => navigation.goBack()} />),
         }}
       />
       <MainStack.Screen
-        name="GameSetup"
-        component={GameSetupScreen}
-        options={{ title: '' }}
+        name="JoinGame"
+        component={JoinGameScreen}
+        options={{
+          title: '',
+          headerTransparent: true,
+          headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
+          headerLeft: () => (<BackButton onPress={() => navigation.goBack()} />),
+        }}
       />
       <MainStack.Screen
         name="PlayGame"
         component={PlayGameScreen}
-        options={{ title: '' }}
+        options={{
+          title: '',
+          headerTransparent: true,
+          headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
+          headerLeft: () => (<BackButton onPress={() => navigation.navigate("Home")} />),
+        }}
       />
       <MainStack.Screen
         name="User"
         component={UserScreen}
-        options={{ title: '' }}
+        options={{
+          title: '',
+          headerTransparent: true,
+          headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
+          headerLeft: () => (<BackButton onPress={() => navigation.goBack()} />),
+          headerRight: () => (<LogOutButton />),
+        }}
       />
     </MainStack.Navigator>
   )

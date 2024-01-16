@@ -1,46 +1,57 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text } from 'react-native';
-import { Game } from '../../entities/game';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
+import { UserAccount } from '../../entities/user';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../navigators/MainStackNavigator';
 import { Background } from '../../components/Background/BackgroundImage';
-import { ShipsBoard } from '../../components/Game/ShipsBoard';
-import { PaperArea } from '../../components/Background/PaperArea';
+import { Game } from '../../entities/game';
+import { PlayerStatus } from '../../entities/playerStatus';
 import gameService from '../../services/gameService';
-import { UserAccount } from '../../entities/user';
-import { useCurrentUser } from '../../hooks/useCurrentUser';
-import { ActiveGameContext } from '../../hooks/useActiveGame';
-import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
 import createStyles from './gameSetupStyles';
+import { PaperArea } from '../../components/Background/PaperArea';
+import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
+import { ShipsBoard } from '../../components/Game/ShipsBoard';
+import { ActiveGameContext } from '../../hooks/useActiveGame';
 
-type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateGame'>;
+type JoinGameScreenProps = NativeStackScreenProps<MainStackParamList, 'JoinGame'>;
 
-export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
+export const JoinGameScreen = ({ navigation, route }: JoinGameScreenProps) => {
   const styles = createStyles();
 
-  const [activeGame, onChangeActiveGame] = useState({ id: "" } as Game);
-  const user = useCurrentUser() as UserAccount;
+  const { game } = route.params;
 
-  useEffect(() => {
-    const createNewGameAsync = async () => {
-      try {
-        await gameService.createNewGame(user, onChangeActiveGame);
-      } catch (error) {
-        console.error('Error creating a new game:', error);
-      }
-    };
+  const [activeGame, onChangeActiveGame] = useState(game);
 
-    createNewGameAsync();
-  }, []);
-
-  const onStartGame = () => {
-    // activeGame.playerA.status = PlayerStatus.Started;
-
-    navigation.navigate('PlayGame', {gameId: activeGame.id });
-    return;
+  const updateGame = (value: Game) => {
+    console.log("UPDATE GAME");
+    onChangeActiveGame(value);
   }
 
-  const values = useMemo(() => ({ game: activeGame, updateGame: onChangeActiveGame }), [activeGame]);
+  // const user = useCurrentUser() as UserAccount;
+
+  // useEffect(() => {
+  //   // store provided game to local storage
+
+
+  //   // const joinGameAsync = async () => {
+  //   //   try {
+  //   //     await gameService.createNewGame(user, onChangeActiveGame);
+  //   //   } catch (error) {
+  //   //     console.error('Error creating a new game:', error);
+  //   //   }
+  //   // };
+
+  //   // joinGameAsync();
+  // }, [activeGame]);
+
+  const onStartGame = () => {
+    activeGame.playerA.status = PlayerStatus.Started;
+
+    // store game to remote storage.
+  }
+
+  const values = useMemo(() => ({ game: activeGame, updateGame: updateGame }), [activeGame]);
 
   return (
     <View style={styles.container}>
@@ -85,5 +96,5 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
   );
 };
 
-export default CreateGameScreen;
+export default JoinGameScreen;
 
