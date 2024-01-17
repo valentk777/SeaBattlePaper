@@ -15,8 +15,8 @@ import { Game } from "../entities/game";
 export type MainStackParamList = {
   Home: {};
   CreateGame: {};
-  JoinGame: {game: Game};
-  PlayGame: {gameId: string};
+  JoinGame: {game: Game, isHost: boolean};
+  PlayGame: {gameId: string, isHost: boolean};
   User: {};
 };
 

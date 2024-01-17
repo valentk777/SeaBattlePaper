@@ -15,6 +15,8 @@ import createStyles from './gameSetupStyles';
 import shipBoardService from '../../services/shipBoardService';
 import { GameProgress } from '../../entities/gameProgress';
 import { PlayerStatus } from '../../entities/playerStatus';
+import { ShipBoardContext } from '../../hooks/useShipBoard';
+import { BoardItem } from '../../entities/boardItem';
 
 type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateGame'>;
 
@@ -22,12 +24,8 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
   const styles = createStyles();
 
   const [activeGame, setActiveGame] = useState({ id: "" } as Game);
+  const [currentBoard, setCurrentBoard] = useState(shipBoardService.generateNewShipBoard());
   const user = useCurrentUser() as UserAccount;
-
-  const updateGame = async (game: Game) => {
-    await gameService.updateGameInLocalStorage(game);
-    setActiveGame(game);
-  };
 
   useEffect(() => {
     const createNewGameAsync = async () => {
@@ -36,6 +34,7 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
         const newGame = await gameService.publishGameWithStoring(gameTemplate);
 
         setActiveGame(newGame);
+        // setCurrentBoard(shipBoardService.generateNewShipBoard())
       } catch (error) {
         console.error('Error creating a new game:', error);
       }
@@ -43,6 +42,39 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
 
     createNewGameAsync();
   }, []);
+
+  const updateGame = async (item: BoardItem) => {
+    const updatedGame = JSON.parse(JSON.stringify(activeGame)) as Game;
+
+    if (item.isShip) {
+      // remove from ship
+      if (activeGame.playerA.ships.includes(item.location)) {
+        updatedGame.playerA.ships = activeGame.playerA.ships.filter((selectedLocation) => selectedLocation !== item.location);
+      }
+    }
+    else {
+      // add to ship
+      if (!activeGame.playerA.ships.includes(item.location)) {
+        updatedGame.playerA.ships = [...activeGame.playerA.ships, item.location];
+      }
+    }
+
+    await gameService.updateGameInLocalStorage(updatedGame);
+    setActiveGame(updatedGame);
+  };
+
+  const updateBoard = (item: BoardItem) => {
+    const newItem = { ...item, isShip: !item.isShip } as BoardItem;
+    const index = currentBoard.findIndex(currentItem => currentItem.location === item.location)
+    currentBoard[index] = newItem;
+
+    setCurrentBoard(currentBoard);
+  };
+
+  const onPressBox = async (item: BoardItem) => {
+    updateBoard(item);
+    await updateGame(item);
+  }
 
   const onStartGame = () => {
     const updatedGame = JSON.parse(JSON.stringify(activeGame));
@@ -57,16 +89,18 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
 
     shipBoardService.publishPlayerBoardsetWithStoring(updatedGame, user.id);
 
-    navigation.navigate('PlayGame', {gameId: activeGame.id });
+    navigation.navigate('PlayGame', {gameId: activeGame.id, isHost: true });
   }
 
-  const values = useMemo(() => ({ game: activeGame, updateGame: updateGame }), [activeGame]);
+  // const values = useMemo(() => ({ game: activeGame, updateGame: updateGame }), [activeGame]);
+  // const values = useMemo(() => ({ board: activeGame?.playerA?.board === undefined ? shipBoardService.generateNewShipBoard() : activeGame.playerA.board, updateBoard: updateBoard }), [activeGame]);
 
   return (
     <View style={styles.container}>
       <Background />
       <View style={styles.empty} />
-      <ActiveGameContext.Provider value={values}>
+      {/* <ActiveGameContext.Provider value={values}> */}
+      {/* <ShipBoardContext.Provider value={values}> */}
         <View style={styles.newGameContainer}>
           <PaperArea
             areaStyle={styles.areaStyle}
@@ -87,20 +121,25 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
               PlayerB: {activeGame.playerB?.id !== undefined ? "Joined" : "NotFound"}
             </Text>
           </View>
-        </View>
-        <View style={styles.shipBoardContainer}>
-          <ShipsBoard isMyShipBoard={true}/>
-        </View>
-        <View style={styles.empty} />
-        <PaperAreaButton
-          areaStyle={styles.startButtonArea}
-          buttonStyle={styles.startButton}
-          textStyle={styles.startButtonText}
-          text="Start game"
-          onPress={onStartGame}
+      </View>
+      <View style={styles.shipBoardContainer}>
+        <ShipsBoard
+          disabled={false}
+          onPress={onPressBox}
+          board={currentBoard}
         />
-        <View style={styles.empty} />
-      </ActiveGameContext.Provider>
+      </View>
+      <View style={styles.empty} />
+      <PaperAreaButton
+        areaStyle={styles.startButtonArea}
+        buttonStyle={styles.startButton}
+        textStyle={styles.startButtonText}
+        text="Start game"
+        onPress={onStartGame}
+      />
+      <View style={styles.empty} />
+      {/* </ShipBoardContext.Provider> */}
+      {/* </ActiveGameContext.Provider> */}
     </View>
   );
 };

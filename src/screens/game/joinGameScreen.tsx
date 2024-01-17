@@ -14,6 +14,8 @@ import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton'
 import { ShipsBoard } from '../../components/Game/ShipsBoard';
 import { ActiveGameContext } from '../../hooks/useActiveGame';
 import shipBoardService from '../../services/shipBoardService';
+import { BoardItem } from '../../entities/boardItem';
+import { ShipBoardContext } from '../../hooks/useShipBoard';
 
 type JoinGameScreenProps = NativeStackScreenProps<MainStackParamList, 'JoinGame'>;
 
@@ -25,9 +27,16 @@ export const JoinGameScreen = ({ navigation, route }: JoinGameScreenProps) => {
   const [activeGame, setActiveGame] = useState(game);
   const user = useCurrentUser() as UserAccount;
 
-  const updateGame = async (game: Game) => {
-    await gameService.updateGameInLocalStorage(game);
-    setActiveGame(game);
+  // const updateGame = async (game: Game) => {
+  //   await gameService.updateGameInLocalStorage(game);
+  //   setActiveGame(game);
+  // };
+
+  const updateBoard = async (board: BoardItem[]) => {
+    const updatedGame = gameService.getUpdateGameOnPress(activeGame, board, user.id) as Game;
+
+    await gameService.updateGameInLocalStorage(updatedGame);
+    setActiveGame(updatedGame);
   };
 
   useEffect(() => {
@@ -94,13 +103,15 @@ export const JoinGameScreen = ({ navigation, route }: JoinGameScreenProps) => {
     navigation.navigate('PlayGame', {gameId: activeGame.id });
   }
 
-  const values = useMemo(() => ({ game: activeGame, updateGame: updateGame }), [activeGame]);
+  // const values = useMemo(() => ({ game: activeGame, updateGame: updateGame }), [activeGame]);
+  const values = useMemo(() => ({ board: activeGame?.playerA?.board === undefined ? shipBoardService.generateNewShipBoard() : activeGame.playerA.board, updateBoard: updateBoard }), [activeGame]);
 
   return (
     <View style={styles.container}>
       <Background />
       <View style={styles.empty} />
-      <ActiveGameContext.Provider value={values}>
+      {/* <ActiveGameContext.Provider value={values}> */}
+      <ShipBoardContext.Provider value={values}>
         <View style={styles.newGameContainer}>
           <PaperArea
             areaStyle={styles.areaStyle}
@@ -123,7 +134,7 @@ export const JoinGameScreen = ({ navigation, route }: JoinGameScreenProps) => {
           </View>
         </View>
         <View style={styles.shipBoardContainer}>
-          <ShipsBoard  isMyShipBoard={true}/>
+          <ShipsBoard  disabled={false}/>
         </View>
         <View style={styles.empty} />
         <PaperAreaButton
@@ -134,7 +145,8 @@ export const JoinGameScreen = ({ navigation, route }: JoinGameScreenProps) => {
           onPress={onStartGame}
         />
         <View style={styles.empty} />
-      </ActiveGameContext.Provider>
+        </ShipBoardContext.Provider>
+      {/* </ActiveGameContext.Provider> */}
     </View>
   );
 };

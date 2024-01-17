@@ -12,6 +12,7 @@ import createStyles from './homeScreenStyles';
 import { Background } from '../components/Background/BackgroundImage';
 import { PaperAreaButton } from '../components/ButtonWrapper/PaperAreaButton';
 import { PaperArea } from '../components/Background/PaperArea';
+import { PlayerStatus } from '../entities/playerStatus';
 
 type HomeScreenProps = NativeStackScreenProps<MainStackParamList, 'Home'>;
 
@@ -28,6 +29,28 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
   const user = useCurrentUser() as UserAccount;
 
+  const handlePlayGame = (game: Game) => {
+    // TODO: store game to local storage + update game status
+    navigation.navigate('PlayGame', {gameId: game.id, isHost: gameService.isHost(game, user.id)});
+  }
+
+  const handleJoinToGame = async (game: Game) => {
+    const isHost = gameService.isHost(game, user.id);
+
+    if (!isHost) {
+      if (game?.playerB?.status != PlayerStatus.Joined) {
+        const playerB = gameService.createNewPlayerTemplate(user);
+
+        const updatedGame = { ...game, playerB: playerB, status: GameProgress.PlayerMatched } as Game;
+
+        await gameService.updateGameInLocalStorage(updatedGame);
+        await gameService.updateGameInRemote(updatedGame);
+      }
+    }
+
+    navigation.navigate('JoinGame', {game: game, isHost:  isHost});
+  }
+
   const onCreateGamePress = () => {
     navigation.navigate('CreateGame');
   };
@@ -40,26 +63,29 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
       return;
     }
 
-    const existingGame: Game = await gameService.getGameIfPossible(user.id, gameId) as Game;
+    const candidateGame: Game = await gameService.getRemoteGameById(gameId) as Game;
 
-    if (existingGame.id != gameId) {
+    if (candidateGame === undefined || candidateGame.id != gameId) {
+      console.log("Game does not exist or game id is not match");
+      alert("Game does not exist");
       return;
     }
 
-    const isJoinToGameSuccessful = await gameService.tryJoinToGame(user.id, existingGame);
+    const isGameValid = gameService.validateGame(candidateGame, user.id);
 
-    if (!isJoinToGameSuccessful) {
-      alert("Cannot join to the game");
+    if (!isGameValid) {
+      console.log("cannot join to game. game is not valid");
+      alert("Game does not exist");
       return;
     }
 
-    if (existingGame.status == GameProgress.Created || existingGame.status == GameProgress.PlayerMatched) {
-      navigation.navigate('JoinGame', {game: existingGame});
+    if (candidateGame.status == GameProgress.Started) {
+      handlePlayGame(candidateGame);
       return;
     }
 
-    if (existingGame.status == GameProgress.Started) {
-      navigation.navigate('PlayGame', {gameId: gameId});
+    if (candidateGame.status == GameProgress.Created || candidateGame.status == GameProgress.PlayerMatched) {
+      await handleJoinToGame(candidateGame);
       return;
     }
   };

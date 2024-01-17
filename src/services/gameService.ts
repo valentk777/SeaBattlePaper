@@ -16,14 +16,24 @@ const getGameStorageKey = (userId: string, gameId: string) => {
   return `${userId}/games/${gameId}`;
 };
 
+const isHost = (game: Game, userId: string) => {
+  return game?.playerA?.id === userId;
+}
+
+const createNewPlayerTemplate = (user: UserAccount) => {
+  return {
+    id: user.id,
+    email: user.email,
+    status: PlayerStatus.Joined,
+    ships: [] as string[],
+    attackedShips: [] as string[],
+    markedShips: [] as string[],
+  } as PlayerBoard;
+};
+
 const createNewGameTemplate = (user: UserAccount) => {
   return {
-    playerA: {
-      id: user.id,
-      email: user.email,
-      status: PlayerStatus.Joined,
-      board: shipBoardService.generateNewShipBoard(),
-    } as PlayerBoard,
+    playerA: createNewPlayerTemplate(user),
     timeCreated: timeService.getCurrentDateString(),
     status: GameProgress.Created,
   } as Game;
@@ -94,42 +104,46 @@ const setGameWithTracking = async (
   await gamesDbTable.setGameWithTracking(gameId, setActiveGameOnChange);
 };
 
-const getGameIfPossible = async (userId: string, gameId: string) => {
+const validateGame = async (candidateGame: Game, userId: string) => {
+
+  if (candidateGame.status == GameProgress.Completed) {
+    console.log('Game already completed');
+    return false;
+  }
+
+  if (candidateGame.playerA.id == userId) {
+    console.log('Host can re-join to active the game');
+
+    return true;
+  }
+
+  if (candidateGame.playerB.id == userId) {
+    console.log('Player can re-join to active the game');
+
+    return true;
+  }
+
+  if (candidateGame.playerB == undefined) {
+    console.log('Player can join as a second player');
+
+    return true;
+  }
+
+  console.log('game is not for current player');
+  return false;
+};
+
+
+const getRemoteGameById = async (gameId: string) => {
   // const response = await getData(getGameStorageKey(userId, gameId)) as AppResponse;
   const response = (await gamesDbTable.getGame(gameId)) as AppResponse;
 
   if (response.isSuccessfull) {
-    const candidateGame = response.result as Game;
-
-    if (candidateGame.status == GameProgress.Completed) {
-      console.log('Game already completed');
-      return {};
-    }
-
-    if (candidateGame.playerA.id == userId) {
-      console.log('Host can re-join to active the game');
-
-      return candidateGame;
-    }
-
-    if (candidateGame.playerB.id == userId) {
-      console.log('Player can re-join to active the game');
-
-      return candidateGame;
-    }
-
-    if (candidateGame.playerB == undefined) {
-      console.log('Player joined as a second player');
-
-      return candidateGame;
-    }
-
-    console.log('game is not for current player');
-    return {};
-  } else {
-    console.log('error creating game');
-    return {};
+    return response.result as Game;
   }
+
+  console.log('error creating game');
+  return {} as Game;
 };
 
 const getGameFromStorage = async (gameId: string) => {
@@ -153,50 +167,16 @@ const getGameFromStorage = async (gameId: string) => {
   }
 };
 
-const tryJoinToGame = async (userId: string, game: Game) => {
-  if (game.playerA?.id == userId) {
-    console.log('Host can re-join to active the game');
-    return true;
-  }
-
-  if (game.playerB?.id == userId) {
-    console.log('Player can re-join to active the game');
-    return true;
-  }
-
-  if (game.playerB == undefined) {
-    console.log('Player joined as a second player');
-
-    game.playerB.id = userId;
-
-    const response = (await gamesDbTable.updateActiveGames(
-      game,
-    )) as AppResponse;
-
-    if (!response.isSuccessfull) {
-      console.log('Cannot join to the game' + response.error);
-    }
-
-    return response.isSuccessfull;
-  }
-
-  return false;
-};
-
-const getUpdateGameOnPress = (game: Game, item: BoardItem, userId: string) => {
+const getUpdateGameOnPress = (game: Game, board: BoardItem[], userId: string) => {
   try {
     const updatedGame = JSON.parse(JSON.stringify(game));
 
     if (updatedGame?.playerA?.id === userId) {
-      updatedGame.playerA.board = updatedGame.playerA.board.map(currentItem =>
-        currentItem.location === item.location ? item : currentItem,
-      );
+      updatedGame.playerA.board = board;
     }
 
     if (updatedGame?.playerB?.id === userId) {
-      updatedGame.playerB.board = updatedGame.playerB.board.map(currentItem =>
-        currentItem.location === item.location ? item : currentItem,
-      );
+        updatedGame.playerB.board = board;
     }
 
     return updatedGame;
@@ -231,15 +211,35 @@ const updateGameOnBoardPress = async (
   }
 };
 
+const updateGameInRemote = async (
+  game: Game,
+) => {
+  try {
+    const response = (await gamesDbTable.updateActiveGames(
+      game,
+    )) as AppResponse;
+
+    if (!response.isSuccessfull) {
+      alert('Cannot update game' + response.error);
+    }
+  } catch (error) {
+    Alert.alert(`Issues updating ship board: Error: ${error}`);
+    console.log(error);
+  }
+};
+
 const gameService = {
+  isHost,
+  createNewPlayerTemplate,
   createNewGameTemplate,
   publishGameWithStoring,
-  getGameIfPossible,
-  tryJoinToGame,
+  getRemoteGameById,
+  validateGame,
   getUpdateGameOnPress,
   setGameWithTracking,
   updateGameOnBoardPress,
   updateGameInLocalStorage,
+  updateGameInRemote,
 };
 
 export default gameService;

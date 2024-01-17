@@ -12,8 +12,10 @@ const generateNewShipBoard = () => {
   const customArray = [
     {
       location: '0',
-      selected: false,
-      fixed: true,
+      isShip: false,
+      isAttacked: false,
+      isFixed: true,
+      isMarked: false,
       value: '',
     } as BoardItem,
   ];
@@ -22,26 +24,32 @@ const generateNewShipBoard = () => {
   for (let letterCode = 65; letterCode <= 74; letterCode++) {
     customArray.push({
       location: String.fromCharCode(letterCode),
-      selected: false,
-      fixed: true,
+      isShip: false,
+      isAttacked: false,
+      isFixed: true,
+      isMarked: false,
       value: String.fromCharCode(letterCode),
     } as BoardItem);
   }
 
   // Add numbers in the specified pattern
-  for (let tens = 1; tens <= 9; tens++) {
+  for (let tens = 1; tens <= 10; tens++) {
     customArray.push({
       location: tens.toString(),
-      selected: false,
-      fixed: true,
+      isShip: false,
+      isAttacked: false,
+      isFixed: true,
+      isMarked: false,
       value: tens.toString(),
     } as BoardItem);
 
     for (let ones = 0; ones <= 9; ones++) {
       customArray.push({
         location: `${tens}${ones.toString()}`,
-        selected: false,
-        fixed: false,
+        isShip: false,
+        isAttacked: false,
+        isFixed: false,
+        isMarked: false,
         value: '',
       } as BoardItem);
     }

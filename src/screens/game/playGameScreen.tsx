@@ -72,10 +72,10 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
           </View>
         </View> */}
       <View style={styles.competitorShipBoardContainer}>
-        <ShipsBoard isMyShipBoard={true} />
+        <ShipsBoard disabled={true} />
       </View>
       <View style={styles.myShipBoardContainer}>
-        <ShipsBoard isMyShipBoard={false} />
+        <ShipsBoard disabled={false} />
       </View>
       {/* <View style={styles.empty} /> */}
       {/* <PaperAreaButton
