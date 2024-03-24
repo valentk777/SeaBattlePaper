@@ -8,6 +8,26 @@ const getGameStorageKey = (userId: string, gameId: string) => {
   return `${userId}/games/${gameId}`;
 };
 
+const generateNewShipBoardLocations = () => {
+  const customArray = ['0'];
+
+  // Add letters A to J
+  for (let letterCode = 65; letterCode <= 74; letterCode++) {
+    customArray.push(String.fromCharCode(letterCode));
+  }
+
+  // Add numbers in the specified pattern
+  for (let tens = 1; tens <= 10; tens++) {
+    customArray.push(tens.toString());
+
+    for (let ones = 0; ones <= 9; ones++) {
+      customArray.push(`${tens}${ones.toString()}`);
+    }
+  }
+
+  return customArray;
+};
+
 const generateNewShipBoard = () => {
   const customArray = [
     {
@@ -123,6 +143,7 @@ const shipBoardService = {
   getCompetitorPlayerBoard,
   updateShipBoardItem,
   publishPlayerBoardsetWithStoring,
+  generateNewShipBoardLocations,
 };
 
 export default shipBoardService;

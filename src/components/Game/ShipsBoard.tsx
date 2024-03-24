@@ -1,23 +1,29 @@
-import React from 'react'
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useCallback, useEffect } from 'react'
+import { FlatList, ListRenderItem, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useTheme } from '../../hooks/useTheme';
 import constants from '../../constants/constants';
 import { PaperArea } from '../Background/PaperArea';
-import { BoardItem } from '../../entities/boardItem';
 import { UserAccount } from '../../entities/user';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
+import { ShipBoardItem } from './ShipBoardItem';
+import { BoardItem } from '../../entities/boardItem';
 
 const BORD_BORDER_LENGHT = constants.screenWidth * 0.63;
 
 interface ShipsBoardProps {
+  boardLocations: string[];
   board: BoardItem[];
   style?: any;
   disabled: boolean;
-  onPress: any;
+  onPress: (newValue: string) => Promise<void>;
 }
 
-export const ShipsBoard = ({ board, style, disabled, onPress }: ShipsBoardProps) => {
+export const ShipsBoard = ({ boardLocations, board, style, disabled, onPress }: ShipsBoardProps) => {
   const styles = createStyles();
+
+  useEffect(() => {
+    console.log("Data has changed");
+  }, [boardLocations]);
 
   const user = useCurrentUser() as UserAccount;
 
@@ -46,22 +52,13 @@ export const ShipsBoard = ({ board, style, disabled, onPress }: ShipsBoardProps)
   //   await updateBoard(board);
   // }
 
-  const renderItem = ({ item }) => {
+  const renderItem: ListRenderItem<string> = ({ item: location }) => {
+    const currentItem = board.find(x => x.location == location) as BoardItem;
 
-    return (
-      <TouchableOpacity
-        disabled={item.isFixed}
-        onPress={async () => await onPress(item)}
-        style={[styles.gridItemButtom, item.isShip ? styles.ship : null]}
-      >
-        <View style={[item.isFixed ? styles.symbolTileContainer : null]}>
-          <Text style={[item.isFixed ? styles.symbolTileText : null]}>{item.value}</Text>
-        </View>
-      </TouchableOpacity>
-    )
+    console.log("Rendered item: ", currentItem);
+
+    return <ShipBoardItem item={currentItem} setValue={async () => await onPress(location)} />
   };
-
-  console.log(board);
 
   return (
     <View style={[disabled ? styles.disabled : null, styles.container, style]}>
@@ -70,9 +67,8 @@ export const ShipsBoard = ({ board, style, disabled, onPress }: ShipsBoardProps)
         componentStyle={styles.componentStyle}
       >
         <FlatList
-          data={board}
+          data={boardLocations}
           renderItem={renderItem}
-          keyExtractor={(item) => item.location}
           numColumns={11}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
@@ -101,30 +97,6 @@ const createStyles = () => {
       backgroundColor: theme.colors.canvasInverted,
     },
     flatList: {
-
-    },
-    gridItemButtom: {
-      height: BORD_BORDER_LENGHT * (1 / 11),
-      width: BORD_BORDER_LENGHT * (1 / 11),
-      borderColor: theme.colors.canvasInverted,
-      borderWidth: 0.5,
-      backgroundColor: theme.colors.canvas,
-    },
-    symbolTileContainer: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      alignSelf: 'center',
-      height: '100%',
-      width: '100%',
-      backgroundColor: theme.colors.primary,
-    },
-    symbolTileText: {
-      fontSize: 18,
-      color: theme.colors.tertiary,
-      fontFamily: theme.fonts.medium,
-    },
-    ship: {
-      backgroundColor: theme.colors.tertiary,
     },
     gridItem: {
     },

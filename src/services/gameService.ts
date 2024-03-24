@@ -167,6 +167,28 @@ const getGameFromStorage = async (gameId: string) => {
   }
 };
 
+// TODO: get board for game?
+// const getGameFromStorage = async (gameId: string) => {
+//   try {
+//     const user = await userService.getCurrentUser();
+
+//     if (user === null || user.id === '' || user.id === null) {
+//       return {} as Game;
+//     }
+
+//     const shipBoard = await getData(getGameStorageKey(user.id, gameId));
+
+//     if (shipBoard === null) {
+//       return await initGame(user.id, gameId);
+//     }
+
+//     return shipBoard as BoardItem[];
+//   } catch (error) {
+//     Alert.alert(`Issues getting all board item: Error: ${error}`);
+//     return [] as BoardItem[];
+//   }
+// };
+
 const getUpdateGameOnPress = (game: Game, board: BoardItem[], userId: string) => {
   try {
     const updatedGame = JSON.parse(JSON.stringify(game));
@@ -235,6 +257,7 @@ const gameService = {
   publishGameWithStoring,
   getRemoteGameById,
   validateGame,
+  getGameFromStorage,
   getUpdateGameOnPress,
   setGameWithTracking,
   updateGameOnBoardPress,

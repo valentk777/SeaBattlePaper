@@ -9,13 +9,10 @@ import { PaperArea } from '../../components/Background/PaperArea';
 import gameService from '../../services/gameService';
 import { UserAccount } from '../../entities/user';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
-import { ActiveGameContext } from '../../hooks/useActiveGame';
 import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
 import createStyles from './gameSetupStyles';
 import shipBoardService from '../../services/shipBoardService';
-import { GameProgress } from '../../entities/gameProgress';
 import { PlayerStatus } from '../../entities/playerStatus';
-import { ShipBoardContext } from '../../hooks/useShipBoard';
 import { BoardItem } from '../../entities/boardItem';
 
 type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateGame'>;
@@ -24,6 +21,7 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
   const styles = createStyles();
 
   const [activeGame, setActiveGame] = useState({ id: "" } as Game);
+  const [boardLocations, setBoardLocations] = useState(shipBoardService.generateNewShipBoardLocations());
   const [currentBoard, setCurrentBoard] = useState(shipBoardService.generateNewShipBoard());
   const user = useCurrentUser() as UserAccount;
 
@@ -63,17 +61,17 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
     setActiveGame(updatedGame);
   };
 
-  const updateBoard = (item: BoardItem) => {
-    const newItem = { ...item, isShip: !item.isShip } as BoardItem;
-    const index = currentBoard.findIndex(currentItem => currentItem.location === item.location)
-    currentBoard[index] = newItem;
+  const updateBoard = (itemIndex: number) => {
+    currentBoard[itemIndex] = { ...currentBoard[itemIndex], isShip: !currentBoard[itemIndex].isShip } as BoardItem;
 
     setCurrentBoard(currentBoard);
   };
 
-  const onPressBox = async (item: BoardItem) => {
-    updateBoard(item);
-    await updateGame(item);
+  const onPressBox = async (boardItemLocation: string) => {
+    const itemToUpdateIndex = currentBoard.findIndex(currentItem => currentItem.location === boardItemLocation);
+
+    updateBoard(itemToUpdateIndex);
+    await updateGame(currentBoard[itemToUpdateIndex]);
   }
 
   const onStartGame = () => {
@@ -124,6 +122,7 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
       </View>
       <View style={styles.shipBoardContainer}>
         <ShipsBoard
+          boardLocations={boardLocations}
           disabled={false}
           onPress={onPressBox}
           board={currentBoard}

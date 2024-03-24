@@ -65,15 +65,15 @@ jobs:
           echo $ANDROID_SIGNING_KEY_BASE64 | base64 --decode > /home/runner/work/SeaBattlePaper/SeaBattlePaper/android/app/my-upload-key.keystore
           echo $GOOGLE_SERVICES_JSON | base64 --decode > /home/runner/work/SeaBattlePaper/SeaBattlePaper/android/app/google-services.json
 
-      # - name: Test signing
-      #   env:
-      #     ANDROID_SIGNING_ALIAS: ${{ secrets.ANDROID_SIGNING_ALIAS }}
-      #     ANDROID_SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
-      #     ANDROID_SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }}
-      #   run: |
-      #     cd android
-      #     chmod +x ./gradlew
-      #     ./gradlew signingReport
+      - name: Test signing
+        env:
+          ANDROID_SIGNING_ALIAS: ${{ secrets.ANDROID_SIGNING_ALIAS }}
+          ANDROID_SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
+          ANDROID_SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }}
+        run: |
+          cd android
+          chmod +x ./gradlew
+          ./gradlew signingReport
 
       - name: Build signed Android release
         env:
@@ -86,17 +86,17 @@ jobs:
           ./gradlew bundleRelease --no-daemon
           cp /home/runner/work/SeaBattlePaper/SeaBattlePaper/android/app/build/outputs/bundle/release/app-release.aab /home/runner/work/SeaBattlePaper/SeaBattlePaper/app-release.aab
 
-      # - name: Upload Artifact
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: Signed SeaBattlePaper v-${{ steps.package-version.outputs.current-version }}
-      #     path: /home/runner/work/SeaBattlePaper/SeaBattlePaper/app-release.aab
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Signed SeaBattlePaper v-${{ steps.package-version.outputs.current-version }}
+          path: /home/runner/work/SeaBattlePaper/SeaBattlePaper/app-release.aab
 
-      # - name: Upload App to Google Play
-      #   uses: r0adkll/upload-google-play@v1
-      #   with:
-      #     serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-      #     packageName: com.baitupasaulis.seabattlepaper
-      #     releaseFiles: /home/runner/work/SeaBattlePaper/SeaBattlePaper/app-release.aab
-      #     track: production
-      #     status: completed
+      - name: Upload App to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: com.baitupasaulis.seabattlepaper
+          releaseFiles: /home/runner/work/SeaBattlePaper/SeaBattlePaper/app-release.aab
+          track: production
+          status: completed
