@@ -1,11 +1,13 @@
 # Sea Battle Paper
-<!-- [![Build](https://github.com/valentk777/MyChallenges/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/valentk777/MyChallenges/actions/workflows/main.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=valentk777_seabattlepaper&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=valentk777_seabattlepaper)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=valentk777_seabattlepaper&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=valentk777_seabattlepaper)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=valentk777_seabattlepaper&metric=bugs)](https://sonarcloud.io/summary/new_code?id=valentk777_seabattlepaper)
 
-<a href='https://play.google.com/store/apps/details?id=com.baitupasaulis.MyChallenges&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-  <img alt='Get it on Google Play' src='https://github.com/valentk777/MyChallenges/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/feature%20graphic.jpg'/>
+[![Build](https://github.com/valentk777/SeaBattlePaper/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/valentk777/SeaBattlePaper/actions/workflows/main.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=valentk777_SeaBattlePaper&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=valentk777_SeaBattlePaper)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=valentk777_SeaBattlePaper&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=valentk777_SeaBattlePaper)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=valentk777_SeaBattlePaper&metric=bugs)](https://sonarcloud.io/summary/new_code?id=valentk777_SeaBattlePaper)
+
+<!-- 
+<a href='https://play.google.com/store/apps/details?id=com.baitupasaulis.SeaBattlePaper&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+  <img alt='Get it on Google Play' src='https://github.com/valentk777/SeaBattlePaper/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/feature%20graphic.jpg'/>
 </a>
 -->
 
@@ -26,11 +28,11 @@ Target features:
 <!-- ## Screenshots -->
 
 <!-- <div align="center">
-  <img alt='screen' src='https://github.com/valentk777/MyChallenges/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347994.png' height="400" />
-  <img alt='screen' src='https://github.com/valentk777/MyChallenges/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347478.png' height="400" />
-  <img alt='screen' src='https://github.com/valentk777/MyChallenges/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347449.png' height="400" />
-  <img alt='screen' src='https://github.com/valentk777/MyChallenges/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347622.png' height="400" />
-  <img alt='screen' src='https://github.com/valentk777/MyChallenges/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347280.png' height="400" />
+  <img alt='screen' src='https://github.com/valentk777/SeaBattlePaper/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347994.png' height="400" />
+  <img alt='screen' src='https://github.com/valentk777/SeaBattlePaper/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347478.png' height="400" />
+  <img alt='screen' src='https://github.com/valentk777/SeaBattlePaper/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347449.png' height="400" />
+  <img alt='screen' src='https://github.com/valentk777/SeaBattlePaper/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347622.png' height="400" />
+  <img alt='screen' src='https://github.com/valentk777/SeaBattlePaper/blob/a13b767cb0c3e90c112971bf98efb2ea90462474/Design/Screenshots%20-%20v2/Screenshot_1696347280.png' height="400" />
 </div> -->
 
 ## Tech stack:
