@@ -307,8 +307,6 @@ const signInAnonymously = () => {
           } as AppResponse);
         });
     } catch (error) {
-      Alert.alert('cia');
-
       Alert.alert(ErrorCode.anonymousSigninFailed);
 
       resolve({
