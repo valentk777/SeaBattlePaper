@@ -58,15 +58,15 @@ jobs:
           echo $ANDROID_SIGNING_KEY_BASE64 | base64 --decode > /home/runner/work/SeaBattlePaper/SeaBattlePaper/android/app/my-upload-key.keystore
           echo $GOOGLE_SERVICES_JSON | base64 --decode > /home/runner/work/SeaBattlePaper/SeaBattlePaper/android/app/google-services.json
 
-      - name: Test signing
-        env:
-          ANDROID_SIGNING_ALIAS: ${{ secrets.ANDROID_SIGNING_ALIAS }}
-          ANDROID_SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
-          ANDROID_SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }}
-        run: |
-          cd android
-          chmod +x ./gradlew
-          ./gradlew signingReport
+      # - name: Test signing
+      #   env:
+      #     ANDROID_SIGNING_ALIAS: ${{ secrets.ANDROID_SIGNING_ALIAS }}
+      #     ANDROID_SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
+      #     ANDROID_SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }}
+      #   run: |
+      #     cd android
+      #     chmod +x ./gradlew
+      #     ./gradlew signingReport
 
       - name: List versions
         run: |
