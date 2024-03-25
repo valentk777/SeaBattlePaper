@@ -410,6 +410,6 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 keystore.properties
-google-services.json
-google-service.json.base64.txt
-my-upload-key.keystore.base64.txt
+google-services.*
+my-upload-key.keystore.*
+service-account*
