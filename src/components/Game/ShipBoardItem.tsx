@@ -23,7 +23,7 @@ export const ShipBoardItem: React.FC<ShipBoardItemProps> = ({
   // }, [item]);
 
 
-  // const game = await gameService.getGameFromStorage(updatedGame);
+  // const game = await gameService.getGameFromStorage(gameId);
 
   console.log(item);
 

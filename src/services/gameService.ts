@@ -70,16 +70,16 @@ const updateGameInLocalStorage = async (game: Game) => {
   await storeData(getGameStorageKey(user.id, game.id), game);
 };
 
-// const initGame = async (userId: string, gameId: string) => {
-//   const response = (await gamesDbTable.getGame(gameId)) as AppResponse;
+const initGame = async (userId: string, gameId: string) => {
+  const response = (await gamesDbTable.getGame(gameId)) as AppResponse;
 
-//   if (response.isSuccessfull) {
-//     await storeData(getGameStorageKey(userId, gameId), response.result);
-//     return response.result;
-//   }
+  if (response.isSuccessfull) {
+    await storeData(getGameStorageKey(userId, gameId), response.result);
+    return response.result;
+  }
 
-//   alert('Cannot find local game. Create a new one');
-// };
+  alert('Cannot find local game. Create a new one');
+};
 
 // const getGameKey = (length: number = 4) => {
 //     // we will generate
@@ -166,28 +166,6 @@ const getGameFromStorage = async (gameId: string) => {
     return [] as BoardItem[];
   }
 };
-
-// TODO: get board for game?
-// const getGameFromStorage = async (gameId: string) => {
-//   try {
-//     const user = await userService.getCurrentUser();
-
-//     if (user === null || user.id === '' || user.id === null) {
-//       return {} as Game;
-//     }
-
-//     const shipBoard = await getData(getGameStorageKey(user.id, gameId));
-
-//     if (shipBoard === null) {
-//       return await initGame(user.id, gameId);
-//     }
-
-//     return shipBoard as BoardItem[];
-//   } catch (error) {
-//     Alert.alert(`Issues getting all board item: Error: ${error}`);
-//     return [] as BoardItem[];
-//   }
-// };
 
 const getUpdateGameOnPress = (game: Game, board: BoardItem[], userId: string) => {
   try {
