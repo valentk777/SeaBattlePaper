@@ -122,21 +122,19 @@ jobs:
         with:
           name: ${{ needs.version.outputs.project-name }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path: build/
+          path: build
 
-      - name: Display structure of downloaded files
-        run: |
-          ls
-          cd build
-          ls
-          cd ${{ needs.version.outputs.project-name }}
-          ls
+      # - name: Display structure of downloaded files
+      #   run: |
+      #     ls
+      #     cd build
+      #     ls
 
       - name: Upload App to Google Play
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: com.baitupasaulis.seabattlepaper
-          releaseFiles: build/${{ needs.version.outputs.project-name }}/app-release.aab
+          releaseFiles: build/app-release.aab
           track: production
           status: completed
