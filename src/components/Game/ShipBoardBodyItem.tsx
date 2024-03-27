@@ -1,46 +1,32 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from '../../hooks/useTheme';
 import constants from '../../constants/constants';
-import { BoardItem } from '../../entities/boardItem';
-import gameService from "../../services/gameService";
 
 const BORD_BORDER_LENGHT = constants.screenWidth * 0.63;
 
-type ShipBoardItemProps = {
-  item: BoardItem
-  setValue: (newValue: string) => Promise<void>;
+type ShipBoardBodyItemProps = {
+  text: string
 };
 
-const ShipBoardItem: React.FC<ShipBoardItemProps> = ({
-  item,
-  setValue,
+const ShipBoardBodyItem: React.FC<ShipBoardBodyItemProps> = ({
+  text,
 }) => {
   const styles = createStyles();
 
-  // useEffect(() => {
-  //   console.log("Data has changed");
-  // }, [item]);
-
-
-  // const game = await gameService.getGameFromStorage(gameId);
-
-  console.log(`Rerending this item: ${item.location}`);
-
   return (
     <TouchableOpacity
-      disabled={item.isFixed}
-      style={[styles.gridItemButtom, item.isShip ? styles.ship : null]}
-      onPress={async () => await setValue(item.location)}
+      disabled={true}
+      style={styles.gridItemButtom}
     >
-      <View style={[item.isFixed ? styles.symbolTileContainer : null]}>
-        <Text style={[item.isFixed ? styles.symbolTileText : null]}>{item.value}</Text>
+      <View style={styles.symbolTileContainer}>
+        <Text style={styles.symbolTileText}>{text}</Text>
       </View>
     </TouchableOpacity>
   )
 };
 
-export default React.memo(ShipBoardItem);
+export default React.memo(ShipBoardBodyItem);
 
 const createStyles = () => {
   const { theme } = useTheme();
@@ -52,9 +38,6 @@ const createStyles = () => {
       borderColor: theme.colors.canvasInverted,
       borderWidth: 0.5,
       backgroundColor: theme.colors.canvas,
-    },
-    ship: {
-      backgroundColor: theme.colors.tertiary,
     },
     symbolTileContainer: {
       alignItems: 'center',

@@ -84,3 +84,26 @@ to link new fonts: `npx react-native-asset`
 icon colections: https://www.svgrepo.com/collections/
 
   -->
+
+<!--
+Useful videos
+Release to Google Play Store
+https://www.youtube.com/watch?v=A3--3Ozxz6o
+https://www.youtube.com/watch?v=oBWBDaqNuws&t=416s
+
+
+# CMD
+keytool -genkey -v -keystore my-upload-key.keystore -alias seabattlepaper -keyalg RSA -keysize 2048 -validity 10000
+ANDROID_SIGNING_ALIAS - alias when creating keystore
+ANDROID_SIGNING_KEY_PASSWORD - your password
+
+# open GIT CMD and run command
+openssl base64 < my-upload-key.keystore  | tr -d '\n' | tee my-upload-key.keystore.base64.txt
+remove new lines at the end of txt files and you will have this value
+ANDROID_SIGNING_KEY_BASE64 - generated file to base64
+
+ANDROID_SIGNING_STORE_PASSWORD - 
+GOOGLE_SERVICES_JSON - Base64 excoded google-service.json with project_info and client sections.
+SERVICE_ACCOUNT_JSON - service accound from google console where private_key and client_email is listed. Set as PLAIN TEXT
+SONAR_CLOUD_TOKEN - Generated token in sonar cloud. it is NOT project key
+-->

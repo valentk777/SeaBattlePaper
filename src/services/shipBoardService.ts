@@ -8,18 +8,30 @@ const getGameStorageKey = (userId: string, gameId: string) => {
   return `${userId}/games/${gameId}`;
 };
 
-const generateNewShipBoardLocations = () => {
-  const customArray = ['0'];
+const generateLetters = () => {
+  const customArray = [] as string [];
 
-  // Add letters A to J
   for (let letterCode = 65; letterCode <= 74; letterCode++) {
     customArray.push(String.fromCharCode(letterCode));
   }
 
-  // Add numbers in the specified pattern
+  return customArray;
+}
+
+const generateNumbers = () => {
+  const customArray = [] as string [];
+
   for (let tens = 1; tens <= 10; tens++) {
     customArray.push(tens.toString());
+  }
 
+  return customArray;
+}
+
+const generateNewShipBoardLocations = () => {
+  const customArray = [] as string [];
+
+  for (let tens = 1; tens <= 10; tens++) {
     for (let ones = 0; ones <= 9; ones++) {
       customArray.push(`${tens}${ones.toString()}`);
     }
@@ -29,6 +41,16 @@ const generateNewShipBoardLocations = () => {
 };
 
 const generateNewShipBoard = () => {
+  // raides ir skaicius sonuose generuoti paciame map'e o ne cia.
+    // const shipMap = new Map();
+
+  // for (let tens = 1; tens <= 10; tens++) {
+
+
+// pakeisti boolean i enum'us. attacked, ship, marked. display_type
+  // }
+
+
   const customArray = [
     {
       location: '0',
@@ -138,6 +160,11 @@ const publishPlayerBoardsetWithStoring = async (game: Game, userId: string) => {
 };
 
 const shipBoardService = {
+  generateLetters,
+  generateNumbers,
+
+
+
   generateNewShipBoard,
   getCurrentPlayerBoard,
   getCompetitorPlayerBoard,
