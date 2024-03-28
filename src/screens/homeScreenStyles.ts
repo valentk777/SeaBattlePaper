@@ -7,7 +7,7 @@ const createStyles = () => {
 
   const styles = StyleSheet.create({
     container: {
-      height: constants.screenHeight,
+      height: constants.SCREEN_HEIGHT,
     },
     titleContainer: {
       flex: 2,

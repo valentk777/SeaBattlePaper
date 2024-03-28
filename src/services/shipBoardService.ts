@@ -3,6 +3,7 @@ import {BoardItem} from '../entities/boardItem';
 import {getData, storeData} from './dataStorageService';
 import { Game } from '../entities/game';
 import gamesDbTable from '../external/database/gamesDbTable';
+import { BoardItemStatus } from '../entities/boardItemStatus';
 
 const getGameStorageKey = (userId: string, gameId: string) => {
   return `${userId}/games/${gameId}`;
@@ -51,48 +52,36 @@ const generateNewShipBoard = () => {
   // }
 
 
-  const customArray = [
-    {
-      location: '0',
-      isShip: false,
-      isAttacked: false,
-      isFixed: true,
-      isMarked: false,
-      value: '',
-    } as BoardItem,
-  ];
+  const customArray = [ ] as BoardItem[];
 
-  // Add letters A to J
-  for (let letterCode = 65; letterCode <= 74; letterCode++) {
-    customArray.push({
-      location: String.fromCharCode(letterCode),
-      isShip: false,
-      isAttacked: false,
-      isFixed: true,
-      isMarked: false,
-      value: String.fromCharCode(letterCode),
-    } as BoardItem);
-  }
+  // // Add letters A to J
+  // for (let letterCode = 65; letterCode <= 74; letterCode++) {
+  //   customArray.push({
+  //     location: String.fromCharCode(letterCode),
+  //     isShip: false,
+  //     isAttacked: false,
+  //     isFixed: true,
+  //     isMarked: false,
+  //     value: String.fromCharCode(letterCode),
+  //   } as BoardItem);
+  // }
 
   // Add numbers in the specified pattern
   for (let tens = 1; tens <= 10; tens++) {
-    customArray.push({
-      location: tens.toString(),
-      isShip: false,
-      isAttacked: false,
-      isFixed: true,
-      isMarked: false,
-      value: tens.toString(),
-    } as BoardItem);
+    // customArray.push({
+    //   location: tens.toString(),
+    //   isShip: false,
+    //   isAttacked: false,
+    //   isFixed: true,
+    //   isMarked: false,
+    //   value: tens.toString(),
+    // } as BoardItem);
 
     for (let ones = 0; ones <= 9; ones++) {
       customArray.push({
         location: `${tens}${ones.toString()}`,
         isShip: false,
-        isAttacked: false,
-        isFixed: false,
-        isMarked: false,
-        value: '',
+        status: BoardItemStatus.NotSelected
       } as BoardItem);
     }
   }

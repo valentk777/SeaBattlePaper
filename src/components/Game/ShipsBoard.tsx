@@ -12,7 +12,6 @@ import { Game } from '../../entities/game';
 import ShipBoardBodyItem from './ShipBoardBodyItem';
 import { ShipBoardContext } from '../../hooks/useShipBoard';
 
-const BORD_BORDER_LENGHT = constants.screenWidth * 0.63;
 
 interface ShipsBoardProps {
   // board: BoardItem[];
@@ -21,17 +20,17 @@ interface ShipsBoardProps {
   // onPress: (newValue: string) => Promise<void>;
 }
 
-export const ShipsBoard = memo(({ style, disabled }: ShipsBoardProps) => {
+const ShipsBoard = ({ style, disabled }: ShipsBoardProps) => {
   const styles = createStyles();
   const { board, updateBoard } = useContext(ShipBoardContext);
-  
-  const generateNewShipBoardLocations = useMemo(shipBoardService.generateNewShipBoardLocations, []);
-  const generateLetters = useMemo(shipBoardService.generateLetters, []);
-  const generateNumbers = useMemo(shipBoardService.generateNumbers, []);
-  
-  useEffect(() => {
-    console.log("RE-RENDERING --- ShipsBoard");
-  }, [board]);
+
+  const [locations] = useState(shipBoardService.generateNewShipBoardLocations);
+  const [letters] = useState(shipBoardService.generateLetters);
+  const [numbers] = useState(shipBoardService.generateNumbers);
+
+  // useEffect(() => {
+  //   console.log("RE-RENDERING --- ShipsBoard");
+  // }, [board]);
 
 
 
@@ -41,9 +40,11 @@ export const ShipsBoard = memo(({ style, disabled }: ShipsBoardProps) => {
   const updateCurrentBoard = (boardItemLocation: string) => {
     // let newBoardItem = {}
 
+
+
     const newBoard = board.map((boardItem, i) => {
       if (boardItem.location === boardItemLocation) {
-        const newBoardItem =  { ...boardItem, isShip: !boardItem.isShip } as BoardItem;
+        const newBoardItem = { ...boardItem, isShip: !boardItem.isShip } as BoardItem;
         return newBoardItem
       } else {
         return boardItem;
@@ -52,6 +53,7 @@ export const ShipsBoard = memo(({ style, disabled }: ShipsBoardProps) => {
 
     updateBoard(newBoard);
 
+    console.log(newBoard)
     // return newBoardItem;
   };
 
@@ -83,18 +85,24 @@ export const ShipsBoard = memo(({ style, disabled }: ShipsBoardProps) => {
   //   await updateBoard(board);
   // }
 
-  const renderBodyItem: ListRenderItem<string> =  useCallback(({ item }) => {
+  const renderBodyItem: ListRenderItem<string> = useCallback(({ item }) => {
     console.log("RE-RENDER SHAPE: ", item);
-  
+
     return <ShipBoardBodyItem text={item} />
   }, []);
   
-  const RenderBoardLetters = React.memo(() => {
+  const renderboardItem: ListRenderItem<string> = ({ item: location }) => {
+    const currentItem = board.find(x => x.location == location) as BoardItem;
+
+    return <ShipBoardItem item={currentItem} setValue={(location) => updateCurrentBoard(location)} />
+  };
+
+  const RenderBoardLetters = memo(() => {
     return (
       <View style={styles.bodyRow}>
         <View style={styles.cornerBox} />
         <FlatList
-          data={generateLetters}
+          data={letters}
           renderItem={renderBodyItem}
           numColumns={10}
           showsVerticalScrollIndicator={false}
@@ -106,44 +114,40 @@ export const ShipsBoard = memo(({ style, disabled }: ShipsBoardProps) => {
       </View>
     )
   });
-  
-  const RenderBoardNumbers = React.memo(() => {
+
+  const RenderBoardNumbers = memo(() => {
     return (
-      <View style={{ height: BORD_BORDER_LENGHT, width: BORD_BORDER_LENGHT / 11, }}>
-      <FlatList
-        data={generateNumbers}
-        renderItem={renderBodyItem}
-        numColumns={1}
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        refreshing={false}
-        initialNumToRender={10}
-        scrollEnabled={false}
-      />
-    </View>
+      <View style={{ height: constants.BOARD_FULL_LENGHT, width: constants.BOARD_CELL_LENGHT, }}>
+        <FlatList
+          data={numbers}
+          renderItem={renderBodyItem}
+          numColumns={1}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          refreshing={false}
+          initialNumToRender={10}
+          scrollEnabled={false}
+        />
+      </View>
     )
   });
 
-
-
-
-
-
-
-
-
-
-
-
-
-  const renderboardItem: ListRenderItem<string> = ({ item: location }) => {
-    const currentItem = board.find(x => x.location == location) as BoardItem;
-
-    return <ShipBoardItem item={currentItem} setValue={async () => await onPress(location)} />
+  const RenderActiveBoard = () => {
+    return (
+      <View style={{ height: constants.BOARD_ACTIVE_LENGHT, width: constants.BOARD_ACTIVE_LENGHT, }}>
+        <FlatList
+          data={locations}
+          renderItem={renderboardItem}
+          numColumns={10}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          refreshing={false}
+          initialNumToRender={100}
+          scrollEnabled={false}
+        />
+      </View>
+    )
   };
-
-
-
 
   return (
     <View style={[disabled ? styles.disabled : null, styles.container, style]}>
@@ -155,24 +159,13 @@ export const ShipsBoard = memo(({ style, disabled }: ShipsBoardProps) => {
           <RenderBoardLetters />
           <View style={styles.bodyRow}>
             <RenderBoardNumbers />
-            <View style={{ height: BORD_BORDER_LENGHT * 10 / 11, width: BORD_BORDER_LENGHT * 10 / 11, }}>
-              <FlatList
-                data={generateNewShipBoardLocations}
-                renderItem={renderboardItem}
-                numColumns={10}
-                showsVerticalScrollIndicator={false}
-                showsHorizontalScrollIndicator={false}
-                refreshing={false}
-                initialNumToRender={100}
-                scrollEnabled={false}
-              />
-            </View>
+            <RenderActiveBoard />
           </View>
         </View>
       </PaperArea>
     </View>
   )
-});
+};
 
 const createStyles = () => {
   const { theme } = useTheme();
@@ -181,24 +174,24 @@ const createStyles = () => {
     container: {
     },
     areaStyle: {
-      height: BORD_BORDER_LENGHT + 6,
-      width: BORD_BORDER_LENGHT + 18,
+      height: constants.BOARD_FULL_LENGHT + 6,
+      width: constants.BOARD_FULL_LENGHT + 18,
     },
     componentStyle: {
       backgroundColor: theme.colors.canvasInverted,
       height: '100%'
     },
     grid: {
-      height: BORD_BORDER_LENGHT,
-      width: BORD_BORDER_LENGHT,
+      height: constants.BOARD_FULL_LENGHT,
+      width: constants.BOARD_FULL_LENGHT,
     },
     bodyRow: {
       flexDirection: 'row',
     },
     cornerBox: {
       backgroundColor: theme.colors.primary,
-      height: BORD_BORDER_LENGHT / 11,
-      width: BORD_BORDER_LENGHT / 11,
+      height: constants.BOARD_CELL_LENGHT,
+      width: constants.BOARD_CELL_LENGHT,
     },
     disabled: {
       pointerEvents: 'none',
@@ -207,3 +200,5 @@ const createStyles = () => {
 
   return styles;
 };
+
+export default memo(ShipsBoard);

@@ -1,21 +1,19 @@
-import React, { useEffect } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from '../../hooks/useTheme';
 import constants from '../../constants/constants';
 import { BoardItem } from '../../entities/boardItem';
 import gameService from "../../services/gameService";
 
-const BORD_BORDER_LENGHT = constants.screenWidth * 0.63;
-
 type ShipBoardItemProps = {
   item: BoardItem
-  setValue: (newValue: string) => Promise<void>;
+  setValue: (newValue: string) => void;
 };
 
-const ShipBoardItem: React.FC<ShipBoardItemProps> = ({
+const ShipBoardItem = ({
   item,
   setValue,
-}) => {
+}: ShipBoardItemProps) => {
   const styles = createStyles();
 
   // useEffect(() => {
@@ -25,30 +23,33 @@ const ShipBoardItem: React.FC<ShipBoardItemProps> = ({
 
   // const game = await gameService.getGameFromStorage(gameId);
 
+  const onPress = useCallback(() => setValue(item.location), []);
+
+
   console.log(`Rerending this item: ${item.location}`);
 
   return (
     <TouchableOpacity
-      disabled={item.isFixed}
+      // disabled={item.isFixed}
       style={[styles.gridItemButtom, item.isShip ? styles.ship : null]}
-      onPress={async () => await setValue(item.location)}
+      onPress={onPress}
     >
-      <View style={[item.isFixed ? styles.symbolTileContainer : null]}>
+      {/* <View style={[item.isFixed ? styles.symbolTileContainer : null]}>
         <Text style={[item.isFixed ? styles.symbolTileText : null]}>{item.value}</Text>
-      </View>
+      </View> */}
     </TouchableOpacity>
   )
 };
 
-export default React.memo(ShipBoardItem);
+export default memo(ShipBoardItem);
 
 const createStyles = () => {
   const { theme } = useTheme();
 
   const styles = StyleSheet.create({
     gridItemButtom: {
-      height: BORD_BORDER_LENGHT * (1 / 11),
-      width: BORD_BORDER_LENGHT * (1 / 11),
+      height: constants.BOARD_CELL_LENGHT,
+      width: constants.BOARD_CELL_LENGHT,
       borderColor: theme.colors.canvasInverted,
       borderWidth: 0.5,
       backgroundColor: theme.colors.canvas,

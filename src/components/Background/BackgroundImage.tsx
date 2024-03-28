@@ -37,8 +37,8 @@ const createStyles = (theme: AppTheme) => {
       position: "absolute",
       justifyContent: 'center',
       alignItems: 'center',
-      width: constants.screenWidth,
-      height: constants.screenHeight,
+      width: constants.SCREEN_WIDTH,
+      height: constants.SCREEN_HEIGHT,
       zIndex: -1,
     },
     background: {

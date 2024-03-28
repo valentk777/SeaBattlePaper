@@ -1,13 +1,20 @@
 import {Dimensions} from 'react-native';
 
-const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
-const screenAspectRatio =
-  screenWidth < screenHeight
-    ? screenHeight / screenWidth
-    : screenWidth / screenHeight;
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
+const SCREEN_ASPECT_RATION =
+  SCREEN_WIDTH < SCREEN_HEIGHT
+    ? SCREEN_HEIGHT / SCREEN_WIDTH
+    : SCREEN_WIDTH / SCREEN_HEIGHT;
+
+const BOARD_FULL_LENGHT = SCREEN_WIDTH * 0.63;
+const BOARD_CELL_LENGHT = BOARD_FULL_LENGHT / 11;
+const BOARD_ACTIVE_LENGHT = BOARD_CELL_LENGHT * 10;
 
 export default {
-  screenWidth,
-  screenHeight,
-  screenAspectRatio,
+  SCREEN_WIDTH,
+  SCREEN_HEIGHT,
+  SCREEN_ASPECT_RATION,
+  BOARD_FULL_LENGHT,
+  BOARD_CELL_LENGHT,
+  BOARD_ACTIVE_LENGHT
 };

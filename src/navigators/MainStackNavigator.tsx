@@ -1,8 +1,8 @@
 import React, { createNativeStackNavigator } from "@react-navigation/native-stack"
 import UserScreen from "../screens/userScreen";
 import CreateGameScreen from "../screens/game/createGameScreen";
-import JoinGameScreen from "../screens/game/joinGameScreen";
-import PlayGameScreen from "../screens/game/playGameScreen";
+// import JoinGameScreen from "../screens/game/joinGameScreen";
+// import PlayGameScreen from "../screens/game/playGameScreen";
 import HomeScreen from "../screens/homeScreen";
 import { StyleSheet } from 'react-native';
 import { AppTheme } from '../styles/themeModels';
@@ -58,7 +58,7 @@ const MainStackNavigator = () => {
           headerLeft: () => (<BackButton onPress={() => navigation.goBack()} />),
         }}
       />
-      <MainStack.Screen
+      {/* <MainStack.Screen
         name="JoinGame"
         component={JoinGameScreen}
         options={{
@@ -77,7 +77,7 @@ const MainStackNavigator = () => {
           headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
           headerLeft: () => (<BackButton onPress={() => navigation.navigate("Home")} />),
         }}
-      />
+      /> */}
       <MainStack.Screen
         name="User"
         component={UserScreen}

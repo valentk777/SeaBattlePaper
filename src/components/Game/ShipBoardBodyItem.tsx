@@ -1,17 +1,15 @@
-import React from "react";
+import React, { memo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from '../../hooks/useTheme';
 import constants from '../../constants/constants';
-
-const BORD_BORDER_LENGHT = constants.screenWidth * 0.63;
 
 type ShipBoardBodyItemProps = {
   text: string
 };
 
-const ShipBoardBodyItem: React.FC<ShipBoardBodyItemProps> = ({
+const ShipBoardBodyItem = ({
   text,
-}) => {
+} : ShipBoardBodyItemProps) => {
   const styles = createStyles();
 
   return (
@@ -26,15 +24,15 @@ const ShipBoardBodyItem: React.FC<ShipBoardBodyItemProps> = ({
   )
 };
 
-export default React.memo(ShipBoardBodyItem);
+export default memo(ShipBoardBodyItem);
 
 const createStyles = () => {
   const { theme } = useTheme();
 
   const styles = StyleSheet.create({
     gridItemButtom: {
-      height: BORD_BORDER_LENGHT * (1 / 11),
-      width: BORD_BORDER_LENGHT * (1 / 11),
+      height: constants.BOARD_CELL_LENGHT,
+      width: constants.BOARD_CELL_LENGHT,
       borderColor: theme.colors.canvasInverted,
       borderWidth: 0.5,
       backgroundColor: theme.colors.canvas,

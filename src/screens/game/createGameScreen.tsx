@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text } from 'react-native';
 import { Game } from '../../entities/game';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../navigators/MainStackNavigator';
 import { Background } from '../../components/Background/BackgroundImage';
-import { ShipsBoard } from '../../components/Game/ShipsBoard';
+import ShipsBoard from '../../components/Game/ShipsBoard';
 import { PaperArea } from '../../components/Background/PaperArea';
 import gameService from '../../services/gameService';
 import { UserAccount } from '../../entities/user';
@@ -43,6 +43,10 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
 
     createNewGameAsync();
   }, []);
+
+  const updateBoard = (board) => {
+    setCurrentBoard(board);
+  };
 
   // const updateGame = async (item: BoardItem) => {
   //   const updatedGame = JSON.parse(JSON.stringify(activeGame)) as Game;
@@ -91,7 +95,7 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
   }
 
   // const values = useMemo(() => ({ game: activeGame, updateGame: updateGame }), [activeGame]);
-  const values = useMemo(() => ({ board: currentBoard, updateBoard: setCurrentBoard }), [activeGame]);
+  const values = useMemo(() => ({ board: currentBoard, updateBoard: updateBoard }), [currentBoard]);
 
   return (
     <View style={styles.container}>
