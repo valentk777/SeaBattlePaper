@@ -23,10 +23,10 @@ const ShipBoardItem = ({
 
   // const game = await gameService.getGameFromStorage(gameId);
 
-  const onPress = useCallback(() => setValue(item.location), []);
+  const onPress = useCallback(() => setValue(item.key), []);
 
 
-  console.log(`Rerending this item: ${item.location}`);
+  console.log(`Rerending this item: ${item.key}`);
 
   return (
     <TouchableOpacity

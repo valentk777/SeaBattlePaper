@@ -14,19 +14,19 @@ import { ShipBoardContext } from '../../hooks/useShipBoard';
 
 
 interface ShipsBoardProps {
-  // board: BoardItem[];
-  style?: any;
+  board: BoardItem[];
+  onPress: (newBoard: BoardItem[]) => void;
   disabled: boolean;
-  // onPress: (newValue: string) => Promise<void>;
+  style?: any;
 }
 
-const ShipsBoard = ({ style, disabled }: ShipsBoardProps) => {
+const ShipsBoard = ({ board, onPress,  disabled, style }: ShipsBoardProps) => {
   const styles = createStyles();
-  const { board, updateBoard } = useContext(ShipBoardContext);
+  // const { board, updateBoard } = useContext(ShipBoardContext);
 
-  const [locations] = useState(shipBoardService.generateNewShipBoardLocations);
-  const [letters] = useState(shipBoardService.generateLetters);
-  const [numbers] = useState(shipBoardService.generateNumbers);
+  // const [locations] = useState(shipBoardService.generateNewShipBoardLocations);
+  // const [letters] = useState(shipBoardService.generateLetters);
+  // const [numbers] = useState(shipBoardService.generateNumbers);
 
   // useEffect(() => {
   //   console.log("RE-RENDERING --- ShipsBoard");
@@ -37,13 +37,10 @@ const ShipsBoard = ({ style, disabled }: ShipsBoardProps) => {
 
 
 
-  const updateCurrentBoard = (boardItemLocation: string) => {
+  const updateCurrentBoard = useCallback((boardItemLocation: string) => {
     // let newBoardItem = {}
-
-
-
     const newBoard = board.map((boardItem, i) => {
-      if (boardItem.location === boardItemLocation) {
+      if (boardItem.key === boardItemLocation) {
         const newBoardItem = { ...boardItem, isShip: !boardItem.isShip } as BoardItem;
         return newBoardItem
       } else {
@@ -51,11 +48,11 @@ const ShipsBoard = ({ style, disabled }: ShipsBoardProps) => {
       }
     });
 
-    updateBoard(newBoard);
+    onPress(newBoard);
 
     console.log(newBoard)
     // return newBoardItem;
-  };
+  }, []);
 
 
   // const user = useCurrentUser() as UserAccount;
@@ -71,7 +68,7 @@ const ShipsBoard = ({ style, disabled }: ShipsBoardProps) => {
   //   } as BoardItem;
 
   //   // const newItem = {
-  //   //   location: item.location,
+  //   //   key: item.key,
   //   //   selected: !item.selected,
   //   //   fixed: item.fixed,
   //   //   value: item.value,
@@ -79,7 +76,7 @@ const ShipsBoard = ({ style, disabled }: ShipsBoardProps) => {
 
   //   // const updatedGame = gameService.getUpdateGameOnPress(game, newItem, user.id) as Game;
 
-  //   const index = board.findIndex(currentItem => currentItem.location === item.location)
+  //   const index = board.findIndex(currentItem => currentItem.key === item.key)
   //   board[index] = newItem;
 
   //   await updateBoard(board);
@@ -91,10 +88,10 @@ const ShipsBoard = ({ style, disabled }: ShipsBoardProps) => {
     return <ShipBoardBodyItem text={item} />
   }, []);
   
-  const renderboardItem: ListRenderItem<string> = ({ item: location }) => {
-    const currentItem = board.find(x => x.location == location) as BoardItem;
+  const renderboardItem: ListRenderItem<string> = ({ item: key }) => {
+    const currentItem = board.find(x => x.key == key) as BoardItem;
 
-    return <ShipBoardItem item={currentItem} setValue={(location) => updateCurrentBoard(location)} />
+    return <ShipBoardItem item={currentItem} setValue={(key) => updateCurrentBoard(key)} />
   };
 
   const RenderBoardLetters = memo(() => {

@@ -57,7 +57,7 @@ const generateNewShipBoard = () => {
   // // Add letters A to J
   // for (let letterCode = 65; letterCode <= 74; letterCode++) {
   //   customArray.push({
-  //     location: String.fromCharCode(letterCode),
+  //     key: String.fromCharCode(letterCode),
   //     isShip: false,
   //     isAttacked: false,
   //     isFixed: true,
@@ -69,7 +69,7 @@ const generateNewShipBoard = () => {
   // Add numbers in the specified pattern
   for (let tens = 1; tens <= 10; tens++) {
     // customArray.push({
-    //   location: tens.toString(),
+    //   key: tens.toString(),
     //   isShip: false,
     //   isAttacked: false,
     //   isFixed: true,
@@ -79,7 +79,7 @@ const generateNewShipBoard = () => {
 
     for (let ones = 0; ones <= 9; ones++) {
       customArray.push({
-        location: `${tens}${ones.toString()}`,
+        key: `${tens}${ones.toString()}`,
         isShip: false,
         status: BoardItemStatus.NotSelected
       } as BoardItem);
@@ -123,7 +123,7 @@ const getCompetitorPlayerBoard = (game: Game, userId: string) => {
 
 const updateShipBoardItem = (shipBoard: BoardItem[], item: BoardItem) => {
   return shipBoard.map(currentItem =>
-    currentItem.location === item.location ? item : currentItem,
+    currentItem.key === item.key ? item : currentItem,
   );
 };
 
