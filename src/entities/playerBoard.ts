@@ -1,7 +1,7 @@
 import {PlayerStatus} from './playerStatus';
 
 export interface PlayerBoard {
-  id: string; // gameid_userid
+  id: string; // board key. it will be gameid_userid
   status: PlayerStatus;
   ships: string[];
   attackedShips: string[];

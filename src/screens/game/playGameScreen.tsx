@@ -14,7 +14,7 @@
 // import gameService from '../../services/gameService';
 // import { PaperArea } from '../../components/Background/PaperArea';
 // import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
-// import ShipsBoard from '../../components/Game/ShipsBoard';
+// import Board from '../../components/Game/Board';
 // import { ActiveGameContext } from '../../hooks/useActiveGame';
 // import { GameProgress } from '../../entities/gameProgress';
 // import AuthStackNavigator from '../../navigators/AuthStackNavigator';
@@ -72,10 +72,10 @@
 //           </View>
 //         </View> */}
 //       <View style={styles.competitorShipBoardContainer}>
-//         <ShipsBoard disabled={true} />
+//         <Board disabled={true} />
 //       </View>
 //       <View style={styles.myShipBoardContainer}>
-//         <ShipsBoard disabled={false} />
+//         <Board disabled={false} />
 //       </View>
 //       {/* <View style={styles.empty} /> */}
 //       {/* <PaperAreaButton

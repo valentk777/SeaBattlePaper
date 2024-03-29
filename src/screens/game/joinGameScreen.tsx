@@ -11,7 +11,7 @@
 // import createStyles from './gameSetupStyles';
 // import { PaperArea } from '../../components/Background/PaperArea';
 // import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
-// import ShipsBoard from '../../components/Game/ShipsBoard';
+// import Board from '../../components/Game/Board';
 // import { ActiveGameContext } from '../../hooks/useActiveGame';
 // import shipBoardService from '../../services/shipBoardService';
 // import { BoardItem } from '../../entities/boardItem';
@@ -134,7 +134,7 @@
 //           </View>
 //         </View>
 //         <View style={styles.shipBoardContainer}>
-//           <ShipsBoard  disabled={false}/>
+//           <Board  disabled={false}/>
 //         </View>
 //         <View style={styles.empty} />
 //         <PaperAreaButton

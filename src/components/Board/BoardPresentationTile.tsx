@@ -1,30 +1,25 @@
 import React, { memo } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useTheme } from '../../hooks/useTheme';
 import constants from '../../constants/constants';
 
-type ShipBoardBodyItemProps = {
+type BoardPresentationTileProps = {
   text: string
 };
 
-const ShipBoardBodyItem = ({
-  text,
-} : ShipBoardBodyItemProps) => {
+const BoardPresentationTile = ({ text }: BoardPresentationTileProps) => {
   const styles = createStyles();
 
+  console.log(`Render shape with location: ${text}`);
+
   return (
-    <TouchableOpacity
-      disabled={true}
-      style={styles.gridItemButtom}
-    >
+    <View style={styles.gridItemButtom}>
       <View style={styles.symbolTileContainer}>
         <Text style={styles.symbolTileText}>{text}</Text>
       </View>
-    </TouchableOpacity>
+    </View>
   )
 };
-
-export default memo(ShipBoardBodyItem);
 
 const createStyles = () => {
   const { theme } = useTheme();
@@ -54,3 +49,8 @@ const createStyles = () => {
 
   return styles;
 };
+
+export default memo(BoardPresentationTile, (prevProps, nextProps) => {
+  // This function returns true if passing nextProps would return the same result as passing prevProps to render
+  return prevProps.text === nextProps.text;
+});

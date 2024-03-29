@@ -79,7 +79,7 @@ const generateNewShipBoard = () => {
 
     for (let ones = 0; ones <= 9; ones++) {
       customArray.push({
-        key: `${tens}${ones.toString()}`,
+        location: `${tens}${ones.toString()}`,
         isShip: false,
         status: BoardItemStatus.NotSelected
       } as BoardItem);
@@ -121,9 +121,9 @@ const getCompetitorPlayerBoard = (game: Game, userId: string) => {
   return generateNewShipBoard();
 }
 
-const updateShipBoardItem = (shipBoard: BoardItem[], item: BoardItem) => {
+const updateBoardActiveTile = (shipBoard: BoardItem[], item: BoardItem) => {
   return shipBoard.map(currentItem =>
-    currentItem.key === item.key ? item : currentItem,
+    currentItem.location === item.location ? item : currentItem,
   );
 };
 
@@ -157,7 +157,7 @@ const shipBoardService = {
   generateNewShipBoard,
   getCurrentPlayerBoard,
   getCompetitorPlayerBoard,
-  updateShipBoardItem,
+  updateBoardActiveTile,
   publishPlayerBoardsetWithStoring,
   generateNewShipBoardLocations,
 };

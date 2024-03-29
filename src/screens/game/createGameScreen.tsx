@@ -1,8 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { MainStackParamList } from '../../navigators/MainStackNavigator';
-import Board from '../../components/Board/Board';
 import { BoardItem } from '../../entities/boardItem';
 import shipBoardService from '../../services/shipBoardService';
 import createStyles from './gameSetupStyles';
@@ -12,9 +11,11 @@ import { UserAccount } from '../../entities/user';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { Background } from '../../components/Background/BackgroundImage';
 import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
+import Board from '../../components/Board/Board';
+import { PaperArea } from '../../components/Background/PaperArea';
+import { PlayerStatus } from '../../entities/playerStatus';
 
 type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateGame'>;
-
 
 export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
   const styles = createStyles();
@@ -23,16 +24,13 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
   const [activeGame, setActiveGame] = useState({ id: "" } as Game);
   const [currentBoard, setCurrentBoard] = useState(shipBoardService.generateNewShipBoard());
 
-    useEffect(() => {
-    console.log("RE-RENDERING --- CreateGameScreen");
-
+  useEffect(() => {
     const createNewGameAsync = async () => {
       try {
         const gameTemplate = gameService.createNewGameTemplate(user);
         const newGame = await gameService.publishGameWithStoring(gameTemplate);
 
         setActiveGame(newGame);
-        setCurrentBoard(shipBoardService.generateNewShipBoard())
       } catch (error) {
         console.error('Error creating a new game:', error);
       }
@@ -41,23 +39,40 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
     createNewGameAsync();
   }, []);
 
+  const onBoardTilePress = useCallback((selectedBox: BoardItem) => {
+    setCurrentBoard((currentBoard) => {
+      return currentBoard.map((item) => {
+        if (item.location === selectedBox.location) {
+          return { ...item, isShip: !item.isShip };
+        } else {
+          return item;
+        }
+      });
+    });
+  }, [currentBoard]);
 
-  const handlePress = (selectedBox: BoardItem) => {
-    console.log(`board updated: key ${selectedBox.key}`);
+  const onStartGamePress = () => {
+    const updatedGame = JSON.parse(JSON.stringify(activeGame));
 
-    setCurrentBoard(currentBoard.map(item => 
-      item.key === selectedBox.key ? { ...item, isShip: !item.isShip, fontSize: 24 } : item
-    ));
-  };
+    if (updatedGame?.playerA?.id === user.id) {
+      updatedGame.playerA.status = PlayerStatus.Started;
+    }
+
+    if (updatedGame?.playerB?.id === user.id) {
+      updatedGame.playerB.status = PlayerStatus.Started;
+    }
+
+    shipBoardService.publishPlayerBoardsetWithStoring(updatedGame, user.id);
+
+    navigation.navigate('PlayGame', { gameId: activeGame.id, isHost: true });
+  }
 
   return (
     <View style={styles.container}>
       <Background />
       <View style={styles.empty} />
 
-
-      {/* <ActiveGameContext.Provider value={values}> */}
-      {/* <View style={styles.newGameContainer}>
+      <View style={styles.newGameContainer}>
         <PaperArea
           areaStyle={styles.areaStyle}
           componentStyle={styles.componentStyle}
@@ -77,22 +92,19 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
             PlayerB: {activeGame.playerB?.id !== undefined ? "Joined" : "NotFound"}
           </Text>
         </View>
-      </View> */}
+      </View>
       <View style={styles.shipBoardContainer}>
-        {/* <ShipBoardContext.Provider value={values}> */}
-          <Board board={currentBoard} onPress={handlePress} disabled={false}/>
-        {/* </ShipBoardContext.Provider> */}
+        <Board board={currentBoard} onPress={onBoardTilePress} disabled={false} />
       </View>
       <View style={styles.empty} />
-      {/* <PaperAreaButton
+      <PaperAreaButton
         areaStyle={styles.startButtonArea}
         buttonStyle={styles.startButton}
         textStyle={styles.startButtonText}
         text="Start game"
-        onPress={onStartGame}
-      /> */}
+        onPress={onStartGamePress}
+      />
       <View style={styles.empty} />
-      {/* </ActiveGameContext.Provider> */}
     </View>
   );
 };
@@ -102,29 +114,6 @@ export default CreateGameScreen;
 
 
 
-
-
-
-
-
-// import React, { useCallback, useEffect, useMemo, useState } from 'react';
-// import { View, Text } from 'react-native';
-// import { Game } from '../../entities/game';
-// import { NativeStackScreenProps } from '@react-navigation/native-stack';
-// import { MainStackParamList } from '../../navigators/MainStackNavigator';
-// import { Background } from '../../components/Background/BackgroundImage';
-// import ShipsBoard from '../../components/Game/ShipsBoard';
-// import { PaperArea } from '../../components/Background/PaperArea';
-// import gameService from '../../services/gameService';
-// import { UserAccount } from '../../entities/user';
-// import { useCurrentUser } from '../../hooks/useCurrentUser';
-// import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
-// 
-// import shipBoardService from '../../services/shipBoardService';
-// import { PlayerStatus } from '../../entities/playerStatus';
-// import { BoardItem } from '../../entities/boardItem';
-// import { ActiveGameContext } from '../../hooks/useActiveGame';
-// import { ShipBoardContext } from '../../hooks/useShipBoard';
 
 
 
@@ -145,8 +134,7 @@ export default CreateGameScreen;
 //   //     }
 //   //   }
 
-//   //   await gameService.updateGameInLocalStorage(updatedGame);
-//   //   setActiveGame(updatedGame);
+
 //   // };
 
 
@@ -159,21 +147,7 @@ export default CreateGameScreen;
 //   //   // await updateGame(currentBoard[itemToUpdateIndex]);
 //   // }
 
-//   const onStartGame = () => {
-//     const updatedGame = JSON.parse(JSON.stringify(activeGame));
 
-//     if (updatedGame?.playerA?.id === user.id) {
-//       updatedGame.playerA.status = PlayerStatus.Started;
-//     }
-
-//     if (updatedGame?.playerB?.id === user.id) {
-//       updatedGame.playerB.status = PlayerStatus.Started;
-//     }
-
-//     shipBoardService.publishPlayerBoardsetWithStoring(updatedGame, user.id);
-
-//     navigation.navigate('PlayGame', { gameId: activeGame.id, isHost: true });
-//   }
 
 //   // const values = useMemo(() => ({ game: activeGame, updateGame: updateGame }), [activeGame]);
 //   // const values = useMemo(() => ({ board: currentBoard, updateBoard: updateBoard }), [currentBoard]);

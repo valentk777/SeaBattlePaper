@@ -1,7 +1,7 @@
 import { BoardItemStatus } from "./boardItemStatus";
 
 export interface BoardItem {
-  key: string; // board location
+  location: string; // board location
   isShip: boolean; // true if originally this is a part of ship
   status: BoardItemStatus; // this is a board item status based on user actions
   // isAttacked: boolean; // true if attacked by oponent

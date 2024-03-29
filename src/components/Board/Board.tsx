@@ -1,133 +1,79 @@
-import React, { memo, useCallback, useMemo, useState } from "react";
-import { FlatList, Pressable, Text, StyleSheet, View, TouchableOpacity } from 'react-native';
-import { BoardItem } from "../../entities/boardItem";
-import constants from '../../constants/constants';
+import React, { memo, useState } from 'react'
+import { FlatList, StyleSheet, View } from 'react-native'
 import { useTheme } from '../../hooks/useTheme';
-import { FlashList } from "@shopify/flash-list";
+import constants from '../../constants/constants';
 import { PaperArea } from '../Background/PaperArea';
+import BoardActiveTile from './BoardActiveTile';
+import { BoardItem } from '../../entities/boardItem';
 import shipBoardService from '../../services/shipBoardService';
+import BoardPresentationTile from './BoardPresentationTile';
 
-interface BoardProps {
+interface ShipsBoardProps {
   board: BoardItem[];
-  onPress: (selectedBox: BoardItem) => void;
+  onPress: (neweItem: BoardItem) => void;
   disabled: boolean;
-  style?: any;
 }
 
-const BoardActiveTile = ({ item, onPress }) => {
+const Board = ({ board, onPress, disabled }: ShipsBoardProps) => {
   const styles = createStyles();
 
-  return (
-    <Pressable
-      style={[styles.gridItemButtom, item.isShip ? styles.ship : null]}
-      onPress={onPress} />
-  )
-};
-
-const BoardDecorationTile = ({  text}) => {
-  const styles = createStyles();
+  const [letters] = useState(shipBoardService.generateLetters());
+  const [numbers] = useState(shipBoardService.generateNumbers());
 
   return (
-    <Pressable
-      disabled={true}
-      style={styles.gridItemButtom}
-    >
-      <View style={styles.symbolTileContainer}>
-        <Text style={styles.symbolTileText}>{text}</Text>
-      </View>
-    </Pressable>
-  )
-};
-
-const Board = ({ board, onPress, disabled, style }: BoardProps) => {
-  const styles = createStyles();
-
-  const [letters] = useState(shipBoardService.generateLetters);
-  const [numbers] = useState(shipBoardService.generateNumbers);
-
-  const renderBodyItem = ({ item }) => (<BoardDecorationTile text={item} />);
-
-  const renderboardItem = ({ item }) => (<BoardActiveTile item={item} onPress={() => onPress(item)} />);
-
-  const RenderBoardLetters = () => {
-    return (
-      <View style={styles.bodyRow}>
-        <View style={styles.cornerBox} />
-        <FlatList
-          data={letters}
-          renderItem={renderBodyItem}
-          numColumns={10}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          refreshing={false}
-          scrollEnabled={false}
-          // estimatedItemSize={constants.BOARD_CELL_LENGHT}
-          horizontal={false}
-          // disableAutoLayout={true}
-        />
-      </View>
-    )
-  };
-
-  const RenderBoardNumbers = () => {
-    return (
-      <View style={{ height: constants.BOARD_FULL_LENGHT, width: constants.BOARD_CELL_LENGHT, }}>
-        <FlatList
-          data={numbers}
-          renderItem={renderBodyItem}
-          numColumns={1}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          refreshing={false}
-          scrollEnabled={false}
-          // estimatedItemSize={constants.BOARD_CELL_LENGHT}
-          horizontal={false}
-          // disableAutoLayout={true}
-        />
-      </View>
-    )
-  };
-
-  const RenderActiveBoard = () => {
-    return (
-      <View style={{ height: constants.BOARD_ACTIVE_LENGHT, width: constants.BOARD_ACTIVE_LENGHT, }}>
-        <FlatList
-          data={board}
-          renderItem={renderboardItem}
-          numColumns={10}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          refreshing={false}
-          scrollEnabled={false}
-          // estimatedItemSize={constants.BOARD_CELL_LENGHT}
-          horizontal={false}
-          // disableAutoLayout={true}
-        />
-      </View>
-    )
-  };
-
-  return (
-    <View style={[disabled ? styles.disabled : null, styles.container, style]}>
+    <View style={[disabled ? styles.disabled : null, styles.container]}>
       <PaperArea
         areaStyle={styles.areaStyle}
         componentStyle={styles.componentStyle}
       >
         <View style={styles.grid}>
-          <RenderBoardLetters />
           <View style={styles.bodyRow}>
-            <RenderBoardNumbers />
-            <RenderActiveBoard />
-
-
+            <View style={styles.cornerBox} />
+            <FlatList
+              data={letters}
+              keyExtractor={(item) => item}
+              renderItem={({ item }) => (<BoardPresentationTile text={item} />)}
+              numColumns={10}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              refreshing={false}
+              initialNumToRender={10}
+              scrollEnabled={false}
+            />
+          </View>
+          <View style={styles.bodyRow}>
+            <View style={styles.numbers}>
+              <FlatList
+                data={numbers}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => (<BoardPresentationTile text={item} />)}
+                numColumns={1}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                refreshing={false}
+                initialNumToRender={10}
+                scrollEnabled={false}
+              />
+            </View>
+            <View style={styles.mainArea}>
+              <FlatList
+                data={board}
+                keyExtractor={(item) => item.location}
+                renderItem={({ item }) => (<BoardActiveTile item={item} onPress={() => onPress(item)} />)}
+                numColumns={10}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                refreshing={false}
+                initialNumToRender={100}
+                scrollEnabled={false}
+              />
+            </View>
           </View>
         </View>
       </PaperArea>
     </View>
   )
 };
-
-
 
 const createStyles = () => {
   const { theme } = useTheme();
@@ -150,6 +96,10 @@ const createStyles = () => {
     bodyRow: {
       flexDirection: 'row',
     },
+    numbers: {
+      height: constants.BOARD_FULL_LENGHT,
+      width: constants.BOARD_CELL_LENGHT
+    },
     cornerBox: {
       backgroundColor: theme.colors.primary,
       height: constants.BOARD_CELL_LENGHT,
@@ -158,28 +108,9 @@ const createStyles = () => {
     disabled: {
       pointerEvents: 'none',
     },
-    gridItemButtom: {
-      height: constants.BOARD_CELL_LENGHT,
-      width: constants.BOARD_CELL_LENGHT,
-      borderColor: theme.colors.canvasInverted,
-      borderWidth: 0.5,
-      backgroundColor: theme.colors.canvas,
-    },
-    ship: {
-      backgroundColor: theme.colors.tertiary,
-    },
-    symbolTileContainer: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      alignSelf: 'center',
-      height: '100%',
-      width: '100%',
-      backgroundColor: theme.colors.primary,
-    },
-    symbolTileText: {
-      fontSize: 18,
-      color: theme.colors.tertiary,
-      fontFamily: theme.fonts.medium,
+    mainArea: {
+      height: constants.BOARD_ACTIVE_LENGHT,
+      width: constants.BOARD_ACTIVE_LENGHT
     }
   });
 
