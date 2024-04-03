@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { useCurrentUser } from '../hooks/useCurrentUser';
-import { UserAccount } from '../entities/user';
 import { MainStackParamList } from '../navigators/MainStackNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import gameService from '../services/gameService';
@@ -12,82 +11,60 @@ import createStyles from './homeScreenStyles';
 import { Background } from '../components/Background/BackgroundImage';
 import { PaperAreaButton } from '../components/ButtonWrapper/PaperAreaButton';
 import { PaperArea } from '../components/Background/PaperArea';
-import { PlayerStatus } from '../entities/playerStatus';
+import remoteGameService from '../services/remoteGameService';
 
 type HomeScreenProps = NativeStackScreenProps<MainStackParamList, 'Home'>;
 
+const CELL_COUNT = 4;
+
 export const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const styles = createStyles();
-  const CELL_COUNT = 4;
 
-  const [gameId, onChangeGameId] = useState('');
+  const [gameId, setGameId] = useState('');
+  const user = useCurrentUser();
+
   const ref = useBlurOnFulfill({ value: gameId, cellCount: CELL_COUNT });
-  const [props, getCellOnLayoutHandler] = useClearByFocusCell({
-    value: gameId,
-    setValue: onChangeGameId,
-  });
+  const [props, getCellOnLayoutHandler] = useClearByFocusCell({ value: gameId, setValue: setGameId });
 
-  const user = useCurrentUser() as UserAccount;
-
-  const handlePlayGame = (game: Game) => {
-    // TODO: store game to local storage + update game status
-    navigation.navigate('PlayGame', {gameId: game.id, isHost: gameService.isHost(game, user.id)});
-  }
-
-  const handleJoinToGame = async (game: Game) => {
-    const isHost = gameService.isHost(game, user.id);
-
-    if (!isHost) {
-      if (game?.playerB?.status != PlayerStatus.Joined) {
-        const playerB = gameService.createNewPlayerTemplate(user);
-
-        const updatedGame = { ...game, playerB: playerB, status: GameProgress.PlayerMatched } as Game;
-
-        await gameService.updateGameInLocalStorage(updatedGame);
-        await gameService.updateGameInRemote(updatedGame);
-      }
-    }
-
-    navigation.navigate('JoinGame', {game: game, isHost:  isHost});
-  }
-
-  const onCreateGamePress = () => {
+  const onStartNewGamePress = () => {
     navigation.navigate('CreateGame');
   };
 
   const onJoinGamePress = async () => {
+    // const gameIdInt = parseInt(gameId, 10);
 
-    const gameIdInt = parseInt(gameId, 10);
+    // if (gameId == '' || gameIdInt < 1000) {
+    //   return;
+    // }
 
-    if (gameId == '' || gameIdInt < 1000) {
-      return;
-    }
+    // const candidateGame: Game = await remoteGameService.getGame(gameId);
 
-    const candidateGame: Game = await gameService.getRemoteGameById(gameId) as Game;
+    // if (candidateGame === undefined || candidateGame.id != gameId) {
+    //   Alert.alert("Game does not exist or game id is not match");
+    //   return;
+    // }
 
-    if (candidateGame === undefined || candidateGame.id != gameId) {
-      console.log("Game does not exist or game id is not match");
-      alert("Game does not exist");
-      return;
-    }
+    // const isGameValid = await gameService.validateGame(candidateGame, user.id);
 
-    const isGameValid = gameService.validateGame(candidateGame, user.id);
+    // if (!isGameValid) {
+    //   Alert.alert("cannot join to game. game is not valid");
+    //   return;
+    // }
 
-    if (!isGameValid) {
-      console.log("cannot join to game. game is not valid");
-      alert("Game does not exist");
-      return;
-    }
+    // if (candidateGame.status == GameProgress.Started) {
+    //   await gameService.handlePlayGame(candidateGame);
 
-    if (candidateGame.status == GameProgress.Started) {
-      handlePlayGame(candidateGame);
-      return;
-    }
+    //   navigation.navigate('PlayGame', { gameId: game.id, isHost: gameService.isHost(game, user.id) });
 
-    if (candidateGame.status == GameProgress.Created || candidateGame.status == GameProgress.PlayerMatched) {
-      await handleJoinToGame(candidateGame);
-      return;
-    }
+    //   return;
+    // }
+
+    // if (candidateGame.status == GameProgress.Created || candidateGame.status == GameProgress.PlayerMatched) {
+    //   await gameService.handleJoinToGame(candidateGame);
+
+    //   navigation.navigate('JoinGame', { game: candidateGame, isHost: isHost });
+
+    // }
   };
 
   return (
@@ -103,7 +80,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
             areaStyle={styles.areaStyle}
             buttonStyle={styles.buttonStyle}
             textStyle={styles.buttonText}
-            onPress={onCreateGamePress}
+            onPress={onStartNewGamePress}
             text={'START NEW GAME'}
           />
         </View>
@@ -115,14 +92,14 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
             ref={ref}
             {...props}
             value={gameId}
-            onChangeText={onChangeGameId}
+            onChangeText={setGameId}
             cellCount={CELL_COUNT}
             rootStyle={styles.codeFieldRoot}
             keyboardType="number-pad"
             textContentType="oneTimeCode"
             renderCell={({ index, symbol, isFocused }) => (
               <PaperArea
-                key={index}  
+                key={index}
                 areaStyle={styles.inputArea}
                 componentStyle={styles.inputComponent}
               >

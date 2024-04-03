@@ -23,7 +23,6 @@ interface IAuthorizationContext {
   signOut: (userId: string | null) => void;
   loginOrSignUpWithGoogle: () => void;
   signInAnonymously: () => void;
-  // loginOrSignUpWithFacebook: () => void;
 }
 
 const AuthContext = createContext<IAuthorizationContext>({
@@ -33,7 +32,6 @@ const AuthContext = createContext<IAuthorizationContext>({
   signOut: (userId: string | null) => { },
   loginOrSignUpWithGoogle: () => { },
   signInAnonymously: () => { },
-  // loginOrSignUpWithFacebook: () => { },
 });
 
 interface AppContextProviderProps
@@ -80,24 +78,6 @@ export const AuthProvider = ({ children }: AppContextProviderProps) => {
       }
     };
 
-    // // this code will be updated on every 'onAuthStateChanged'. 
-    // // So we can use this function to check if user should be logged in after closing an app
-    // function onAuthStateChanged(user) {
-    //     if (user === null) {
-    //         state.isLoading = false;
-    //         return;
-    //     }
-    //     state.isLoading = false;
-    //     // NOTE: user != doaminUser
-    //     // const doaminUser = {id: user.uid, email: user.email, isOnline: true } as UserAccount;
-    //     // setUser(user);
-    // }
-    // const unsubscribe = authManager?.retrievePersistedAuthUser(onAuthStateChanged);
-    // return () => {
-    //     // Unsubscribe from the retrievePersistedAuthUser subscription
-    //     unsubscribe();
-    // };
-
     callLoadAuthStateFromStorage();
   }, []);
 
@@ -113,7 +93,7 @@ export const AuthProvider = ({ children }: AppContextProviderProps) => {
 
           dispatch({ type: 'SIGN_IN', user: signedInUser });
         } else {
-          console.log(response.error);
+          Alert.alert(response.error);
         }
       })
       .catch(error => {
@@ -132,7 +112,7 @@ export const AuthProvider = ({ children }: AppContextProviderProps) => {
           userService.updateUser(signedInUser);
           dispatch({ type: 'SIGN_IN', user: signedInUser });
         } else {
-          console.log(response.error);
+          Alert.alert(response.error);
         }
       })
       .catch(error => {
@@ -167,7 +147,7 @@ export const AuthProvider = ({ children }: AppContextProviderProps) => {
           userService.updateUser(signedInUser);
           dispatch({ type: 'SIGN_IN', user: signedInUser });
         } else {
-          console.log(response.error);
+          Alert.alert(response.error);
         }
       })
       .catch(error => {
@@ -186,31 +166,13 @@ export const AuthProvider = ({ children }: AppContextProviderProps) => {
           userService.updateUser(signedInUser);
           dispatch({ type: 'SIGN_IN', user: signedInUser });
         } else {
-          console.log(response.error);
+          Alert.alert(response.error);
         }
       })
       .catch(error => {
         Alert.alert(error.message);
       });
   }
-
-  // const loginOrSignUpWithFacebook = async () => {
-  //     authManager
-  //         ?.loginOrSignUpWithFacebook()
-  //         .then(response => {
-  //             if (response.isSuccessfull) {
-  //                 const signedInUser = response.result as UserAccount;
-  //                 // do not await
-  //                 userService.updateUser(signedInUser);
-  //                 dispatch({ type: 'SIGN_IN', user: signedInUser });
-  //             } else {
-  //                 console.log(response.error);
-  //             }
-  //         })
-  //         .catch(error => {
-  //             Alert.alert(error.message);
-  //         });
-  // }
 
   const values = useMemo(() => ({
     state,

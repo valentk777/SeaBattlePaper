@@ -2,6 +2,7 @@ import {firebase} from '@react-native-firebase/database'
 import {AppResponse} from '../../entities/appResponse';
 import timeService from '../../services/timeService';
 import { Game } from '../../entities/game';
+import { Alert } from 'react-native';
 
 // https://rnfirebase.io/database/usage
 const database = firebase.app().database('https://seabattlepaper-default-rtdb.europe-west1.firebasedatabase.app/');
@@ -11,7 +12,7 @@ export const getGame = async (gameId: string) => {
     const snapshot = await database.ref(`activeGames/${gameId}`).once('value');
     const activeGame = snapshot.val() as Game;
 
-    console.log('getGame: ', activeGame);
+    Alert.alert('getGame: ', snapshot.val())
 
     if (activeGame === undefined) {
       return {isSuccessfull: true, result: {} as Game} as AppResponse;
@@ -19,7 +20,7 @@ export const getGame = async (gameId: string) => {
 
     return {
       isSuccessfull: true,
-      result: activeGame as Game,
+      result: activeGame,
     } as AppResponse;
   } catch (error) {
     console.error(error);
@@ -28,6 +29,42 @@ export const getGame = async (gameId: string) => {
   }
 };
 
+export const addGame = async (activeGame: Game) => {
+  try {
+    const gameKeyRef = database.ref(`lastActiveGameKey`);
+
+    const lastActiveGameIdResult = await gameKeyRef.transaction(
+      lastActiveGameId => lastActiveGameId + 1,
+    );
+
+    if (lastActiveGameIdResult.snapshot.val() === undefined) {
+      return {isSuccessfull: false, error: 'cannot create id'} as AppResponse;
+    }
+
+    const newId = lastActiveGameIdResult.snapshot.val();
+
+    activeGame.id = newId;
+    activeGame.lastTimeUpdated = timeService.getCurrentDateString();
+
+    const activeGamesRef = database.ref(`activeGames/${activeGame.id}`);
+
+    await activeGamesRef.set(activeGame);
+
+    return {isSuccessfull: true, result: activeGame} as AppResponse;
+  } catch (error) {
+    console.error(error);
+
+    return {isSuccessfull: false, error: error} as AppResponse;
+  }
+};
+
+
+
+
+
+
+
+
 export const getAllActiveGames = async () => {
   try {
     const snapshot = await database.ref('activeGames').once('value');
@@ -35,7 +72,7 @@ export const getAllActiveGames = async () => {
     if (snapshot.exists()) {
       const activeGames = snapshot.val();
 
-      console.log('getAllActiveGames: ', activeGames);
+      Alert.alert('getAllActiveGames: ', activeGames);
 
       if (activeGames === undefined) {
         return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
@@ -46,7 +83,7 @@ export const getAllActiveGames = async () => {
         result: activeGames as Game[],
       } as AppResponse;
     } else {
-      console.log('not exist');
+      Alert.alert('not exist');
       return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
     }
   } catch (error) {
@@ -75,34 +112,7 @@ export const setGameWithTracking = async (gameId: string, setActiveGameOnChange:
   }
 };
 
-export const addActiveGame = async (activeGame: Game) => {
-  try {
-    const gameKeyRef = database.ref(`lastActiveGameKey`);
 
-    const lastActiveGameIdResult = await gameKeyRef.transaction(
-      lastActiveGameId => lastActiveGameId + 1,
-    );
-
-    if (lastActiveGameIdResult.snapshot.val() === undefined) {
-      return {isSuccessfull: false, error: 'cannot create id'} as AppResponse;
-    }
-
-    const newId = lastActiveGameIdResult.snapshot.val();
-
-    activeGame.id = newId;
-    activeGame.lastTimeUpdated = timeService.getCurrentDateString();
-
-    const activeGamesRef = database.ref(`activeGames/${activeGame.id}`);
-
-    await activeGamesRef.set(activeGame);
-
-    return {isSuccessfull: true, result: activeGame} as AppResponse;
-  } catch (error) {
-    console.error(error);
-
-    return {isSuccessfull: false, error: error} as AppResponse;
-  }
-};
 
 export const updateActiveGames = async (activeGame: Game) => {
   if (activeGame === undefined) {
@@ -157,7 +167,7 @@ export const updateActiveGamePlayer = async (activeGame: Game, userId: string) =
 //   gameId: string
 // ) => {
 //   if (gameId == undefined || gameId === '' || gameId == null) {
-//     console.log('Cannot find a game in remote database');
+//     Alert.alert('Cannot find a game in remote database');
 
 //     return;
 //   }
@@ -165,11 +175,11 @@ export const updateActiveGamePlayer = async (activeGame: Game, userId: string) =
 //   try {
 //     await gameRef.doc(gameId).delete();
 
-//     console.log('Game successfully deleted');
+//     Alert.alert('Game successfully deleted');
 
 //     return {isSuccessfull: true} as AppResponse;
 //   } catch (error) {
-//     console.log(error);
+//     Alert.alert(error);
     
 //     return {isSuccessfull: false, error: error} as AppResponse;
 //   }
@@ -177,9 +187,12 @@ export const updateActiveGamePlayer = async (activeGame: Game, userId: string) =
 
 const gamesDbTable = {
   getGame,
+  addGame,
+
+
+  
   getAllActiveGames,
   setGameWithTracking,
-  addActiveGame,
   updateActiveGames,
   updateActiveGamePlayer,
 };

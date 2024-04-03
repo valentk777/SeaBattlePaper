@@ -1,7 +1,6 @@
 import React, { ProviderProps, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { AppTheme } from '../styles/themeModels';
 import { lightBluePaperTheme } from '../styles/lightBluePaperTheme';
-import userService from '../services/userService';
 import { useCurrentUser } from './useCurrentUser';
 
 interface ThemeMap {
@@ -13,14 +12,14 @@ interface ThemeMap {
 
 interface IThemeContext {
   theme: AppTheme;
-  getAllThemes: () => ThemeMap[];
-  setTheme: (theme: ThemeMap) => Promise<void>;
+  // getAllThemes: () => ThemeMap[];
+  // setTheme: (theme: ThemeMap) => Promise<void>;
 }
 
 export const ThemeContext = createContext<IThemeContext>({
   theme: {} as AppTheme, // default theme
-  getAllThemes: () => [] as ThemeMap[],
-  setTheme: (theme: ThemeMap) => { }
+  // getAllThemes: () => [] as ThemeMap[],
+  // setTheme: (theme: ThemeMap) => { }
 });
 
 const themesMap = [
@@ -56,16 +55,20 @@ export const ThemeProvider = ({ children }: ThemeContextProviderProps) => {
     getCurrentThemeOrDefault();
   }, [user]);
 
-  const getAllThemes = () => {
-    return themesMap;
-  }
+  // const getAllThemes = () => {
+  //   return themesMap;
+  // }
 
-  const setTheme = async (theme: ThemeMap) => {
-    setCurrentTheme(theme.theme);
-    await userService.updateUserTheme(theme.name);
-  }
+  // const setTheme = async (theme: ThemeMap) => {
+  //   setCurrentTheme(theme.theme);
+  //   await userService.updateUserTheme(theme.name);
+  // }
 
-  const values = useMemo(() => ({ theme: currentTheme, getAllThemes, setTheme }), [currentTheme]);
+  const values = useMemo(() => ({
+    theme: currentTheme,
+    //  getAllThemes,
+    //   setTheme 
+  }), [currentTheme]);
 
   return (
     <ThemeContext.Provider value={values}>

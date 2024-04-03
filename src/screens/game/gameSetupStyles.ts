@@ -1,6 +1,5 @@
 import {StyleSheet} from 'react-native';
 import {useTheme} from '../../hooks/useTheme';
-import { memo } from 'react';
 
 const createStyles = () => {
   const {theme} = useTheme();

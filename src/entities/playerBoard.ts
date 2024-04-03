@@ -6,5 +6,4 @@ export interface PlayerBoard {
   ships: string[];
   attackedShips: string[];
   markedShips: string[];
-  // board: BoardItem[];
 }

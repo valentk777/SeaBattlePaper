@@ -33,8 +33,6 @@ export const PaperAreaButton = (props: PaperAreaButtonProps) => {
 };
 
 const createStyles = () => {
-  const { theme } = useTheme();
-
   const styles = StyleSheet.create({
     buttonStyle: {
       height: '100%',

@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { Alert, Pressable, StyleSheet } from "react-native";
 import { useTheme } from '../../hooks/useTheme';
 import constants from '../../constants/constants';
 import { BoardItem } from '../../entities/boardItem';
@@ -14,8 +14,6 @@ const BoardActiveTile = ({
   onPress,
 }: BoardActiveTileProps) => {
   const styles = createStyles();
-
-  console.log(`Render shape with location: ${item.location}`);
 
   return (
     <Pressable

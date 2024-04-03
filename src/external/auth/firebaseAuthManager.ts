@@ -20,7 +20,7 @@ const registerWithEmail = (user: LoginUser) => {
           email: user.email,
           createdAt: timeService.getCurrentDateString(),
           profilePictureURL: defaultProfilePhotoURL,
-          language: 'en'
+          language: 'en',
         } as UserAccount;
 
         // Store user info to database. We do not await here.
@@ -29,7 +29,7 @@ const registerWithEmail = (user: LoginUser) => {
         resolve({isSuccessfull: true, result: newUser} as AppResponse);
       })
       .catch(error => {
-        console.log('_error:', error);
+        Alert.alert('_error:', error);
 
         var errorCode = ErrorCode.serverError;
 
@@ -85,7 +85,7 @@ const createAccountWithEmailAndPassword = (loginUser: LoginUser) => {
         }
       })
       .catch(error => {
-        console.log(error);
+        Alert.alert(error);
         resolve({isSuccessfull: false, error: error.message} as AppResponse);
       });
   });
@@ -113,7 +113,7 @@ const loginWithEmailAndPassword = (user: LoginUser) => {
             }
           })
           .catch(function (error) {
-            console.log('_error', error);
+            Alert.alert('_error', error);
             resolve({
               isSuccessfull: false,
               error: ErrorCode.serverError,
@@ -153,7 +153,7 @@ const logout = async (userId: string) => {
   await userDbTable.updateUser(userData);
   await auth().signOut();
 
-  try{
+  try {
     await GoogleSignin?.signOut();
   } catch (error) {
     // do nothing. Maybe not a google loggin.
@@ -178,7 +178,7 @@ const signInWithCredential = (credential: any, socialAuthType: string) => {
           email: email || '',
           profilePictureURL: photoURL || defaultProfilePhotoURL,
           createdAt: timestamp,
-          language: 'en'
+          language: 'en',
         } as UserAccount;
 
         if (isNewUser) {
@@ -206,7 +206,7 @@ const signInWithCredential = (credential: any, socialAuthType: string) => {
               }
             })
             .catch(function (_error) {
-              console.log('_error:', _error);
+              Alert.alert('_error:', _error);
               resolve({
                 isSuccessfull: false,
                 error: ErrorCode.serverError,
@@ -215,7 +215,7 @@ const signInWithCredential = (credential: any, socialAuthType: string) => {
         }
       })
       .catch(_error => {
-        console.log(_error);
+        Alert.alert(_error);
         resolve({error: ErrorCode.serverError});
       });
   });
@@ -224,7 +224,7 @@ const signInWithCredential = (credential: any, socialAuthType: string) => {
 const loginOrSignUpWithGoogle = () => {
   GoogleSignin.configure({
     webClientId:
-      '270930206979-d65g9932hbh9v7p3ifrgmk2eeb0gvrnh.apps.googleusercontent.com',
+      '760131348689-079l9fn5jkb5nhd9a554i4ed1ltcrfq6.apps.googleusercontent.com',
   });
 
   return new Promise(async function (resolve, _reject) {
@@ -240,6 +240,7 @@ const loginOrSignUpWithGoogle = () => {
             },
           );
         } else {
+          console.error(response);
           Alert.alert(ErrorCode.googleSigninFailed);
 
           resolve({
@@ -249,6 +250,7 @@ const loginOrSignUpWithGoogle = () => {
         }
       });
     } catch (error) {
+      console.error(error);
       Alert.alert(ErrorCode.googleSigninFailed);
 
       resolve({
@@ -299,7 +301,7 @@ const signInAnonymously = () => {
           }
         })
         .catch(error => {
-          console.log(error);
+          Alert.alert(error);
 
           resolve({
             isSuccessfull: false,
@@ -317,61 +319,6 @@ const signInAnonymously = () => {
   });
 };
 
-// const loginWithFacebook = (accessToken, appIdentifier) => {
-//   const credential = auth.FacebookAuthProvider.credential(accessToken);
-
-//   return new Promise((resolve, _reject) => {
-//     signInWithCredential(credential, 'Facebook').then(
-//       response => {
-//         resolve(response);
-//       },
-//     )
-//   })
-// }
-
-// const loginOrSignUpWithFacebook = appConfig => {
-//   Facebook.initializeAsync(appConfig.facebookIdentifier)
-
-//   return new Promise(async (resolve, _reject) => {
-//     try {
-//       const { type, token, expires, permissions, declinedPermissions } =
-//         await Facebook.logInWithReadPermissionsAsync({
-//           permissions: ['public_profile', 'email'],
-//         })
-
-//       if (type === 'success') {
-//         // Get the user's name using Facebook's Graph API
-//         // const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-//         // Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
-//         loginWithFacebook(token, appConfig.appIdentifier)
-//           .then(async response => {
-//             if (response?.user) {
-//               const newResponse = {
-//                 user: { ...response.user },
-//                 accountCreated: response.accountCreated,
-//               }
-//               handleSuccessfulLogin(
-//                 newResponse.user,
-//                 response.accountCreated,
-//               ).then(response => {
-//                 // resolve(response);
-//                 resolve({
-//                   ...response,
-//                 })
-//               })
-//             } else {
-//               resolve({ error: ErrorCode.fbAuthFailed })
-//             }
-//           })
-//       } else {
-//         resolve({ error: ErrorCode.fbAuthCancelled })
-//       }
-//     } catch (error) {
-//       resolve({ error: ErrorCode.fbAuthFailed })
-//     }
-//   })
-// }
-
 export interface IAuthManager {
   createAccountWithEmailAndPassword: (user: LoginUser) => Promise<AppResponse>;
   loginWithEmailAndPassword: (user: LoginUser) => Promise<AppResponse>;
@@ -379,7 +326,6 @@ export interface IAuthManager {
   retrievePersistedAuthUser: (listener: any) => () => void;
   loginOrSignUpWithGoogle: () => Promise<AppResponse>;
   signInAnonymously: () => Promise<AppResponse>;
-  // loginOrSignUpWithFacebook: () => Promise<AppResponse>;
 }
 
 export const authManager: IAuthManager = {
@@ -389,5 +335,4 @@ export const authManager: IAuthManager = {
   retrievePersistedAuthUser,
   loginOrSignUpWithGoogle,
   signInAnonymously,
-  // loginOrSignUpWithFacebook,
 };

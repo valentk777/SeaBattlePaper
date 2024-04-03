@@ -27,7 +27,7 @@ export const SaveButton = (props: SaveButtonProps) => {
           isRoundTop ? {
             borderTopLeftRadius: roundRadius != undefined ? roundRadius : 30,
             borderTopRightRadius: roundRadius != undefined ? roundRadius : 30,
-          }: {},
+          } : {},
           isRoundBottom ? {
             borderBottomLeftRadius: roundRadius != undefined ? roundRadius : 30,
             borderBottomRightRadius: roundRadius != undefined ? roundRadius : 30,

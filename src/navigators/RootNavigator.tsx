@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import AuthStackNavigator from "./AuthStackNavigator"
 import MainStackNavigator from "./MainStackNavigator";
 import { useAuth } from "../hooks/useAuth";
-import { Keyboard, View, Text } from "react-native";
+import { Keyboard } from "react-native";
 
 export type RootStackParamList = {
   AuthStack: {};

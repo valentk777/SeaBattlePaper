@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { useTheme } from '../../hooks/useTheme';
 import constants from '../../constants/constants';
 
@@ -9,8 +9,6 @@ type BoardPresentationTileProps = {
 
 const BoardPresentationTile = ({ text }: BoardPresentationTileProps) => {
   const styles = createStyles();
-
-  console.log(`Render shape with location: ${text}`);
 
   return (
     <View style={styles.gridItemButtom}>

@@ -1,106 +1,106 @@
-const combineDateAndTime = (datePart: Date, timePart: Date): Date => {
-  return new Date(
-    datePart.getFullYear(),
-    datePart.getMonth(),
-    datePart.getDate(),
-    timePart.getHours(),
-    timePart.getMinutes(),
-    timePart.getSeconds(),
-  );
-};
+// const combineDateAndTime = (datePart: Date, timePart: Date): Date => {
+//   return new Date(
+//     datePart.getFullYear(),
+//     datePart.getMonth(),
+//     datePart.getDate(),
+//     timePart.getHours(),
+//     timePart.getMinutes(),
+//     timePart.getSeconds(),
+//   );
+// };
 
-const getUtcDateFromLocalString = (date: string): Date => {
-  return getUtcDateFromLocalDate(new Date(date));
-};
+// const getUtcDateFromLocalString = (date: string): Date => {
+//   return getUtcDateFromLocalDate(new Date(date));
+// };
 
-const getUtcDateFromLocalDate = (date: Date): Date => {
-  const currentDate = new Date();
-  const offsetInMinutes = currentDate.getTimezoneOffset();
-  const offsetInHours = offsetInMinutes / 60;
+// const getUtcDateFromLocalDate = (date: Date): Date => {
+//   const currentDate = new Date();
+//   const offsetInMinutes = currentDate.getTimezoneOffset();
+//   const offsetInHours = offsetInMinutes / 60;
 
-  date.setHours(date.getHours() + offsetInHours);
+//   date.setHours(date.getHours() + offsetInHours);
 
-  return date;
-};
+//   return date;
+// };
 
-const getTwoDigitsNumber = (number: number): string => {
-  return number < 10 ? `0${number}` : `${number}`;
-};
+// const getTwoDigitsNumber = (number: number): string => {
+//   return number < 10 ? `0${number}` : `${number}`;
+// };
 
-const dateToLocalTimeString = (date: Date): string => {
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
+// const dateToLocalTimeString = (date: Date): string => {
+//   const hours = date.getHours().toString().padStart(2, '0');
+//   const minutes = date.getMinutes().toString().padStart(2, '0');
 
-  return `${hours}:${minutes}`;
-};
+//   return `${hours}:${minutes}`;
+// };
 
-const addMinutes = (date: Date, minutes: number): Date => {
-  const newDate = new Date(date);
-  newDate.setMinutes(date.getMinutes() + minutes);
+// const addMinutes = (date: Date, minutes: number): Date => {
+//   const newDate = new Date(date);
+//   newDate.setMinutes(date.getMinutes() + minutes);
 
-  return newDate;
-};
+//   return newDate;
+// };
 
-const setLocalTimeToDate = (
-  date: Date,
-  hours: number,
-  minutes: number,
-): Date => {
-  const newDate = new Date(date);
-  newDate.setHours(hours, minutes, 0, 0);
+// const setLocalTimeToDate = (
+//   date: Date,
+//   hours: number,
+//   minutes: number,
+// ): Date => {
+//   const newDate = new Date(date);
+//   newDate.setHours(hours, minutes, 0, 0);
 
-  return newDate;
-};
+//   return newDate;
+// };
 
-const setUtcTimeToDate = (
-  date: Date,
-  hours: number,
-  minutes: number,
-): Date => {
-  const newDate = new Date(date);
-  newDate.setUTCHours(hours, minutes, 0, 0);
+// const setUtcTimeToDate = (
+//   date: Date,
+//   hours: number,
+//   minutes: number,
+// ): Date => {
+//   const newDate = new Date(date);
+//   newDate.setUTCHours(hours, minutes, 0, 0);
 
-  return newDate;
-};
+//   return newDate;
+// };
 
-const getLocalDayStringFromDate = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = date.getMonth().toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
+// const getLocalDayStringFromDate = (date: Date): string => {
+//   const year = date.getFullYear();
+//   const month = date.getMonth().toString().padStart(2, '0');
+//   const day = date.getDate().toString().padStart(2, '0');
 
-  return `${year}-${month}-${day}`;
-};
+//   return `${year}-${month}-${day}`;
+// };
 
-// new day with 00:00:00 time
-const getNextDayDate = (date: Date): Date => {
-  const nextDay = new Date(date);
+// // new day with 00:00:00 time
+// const getNextDayDate = (date: Date): Date => {
+//   const nextDay = new Date(date);
 
-  nextDay.setDate(nextDay.getDate() + 1);
-  nextDay.setHours(0, 0, 0, 0);
+//   nextDay.setDate(nextDay.getDate() + 1);
+//   nextDay.setHours(0, 0, 0, 0);
 
-  return nextDay;
-};
+//   return nextDay;
+// };
 
-const getNextUtcDayDate = (date: Date): Date => {
-  const nextDay = new Date(date);
+// const getNextUtcDayDate = (date: Date): Date => {
+//   const nextDay = new Date(date);
 
-  nextDay.setUTCDate(nextDay.getUTCDate() + 1);
-  nextDay.setUTCHours(0, 0, 0, 0);
+//   nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+//   nextDay.setUTCHours(0, 0, 0, 0);
 
-  return nextDay;
-};
+//   return nextDay;
+// };
 
-const isSameDay = (date1: Date, date2: Date): boolean => {
-  return setUtcTimeToDate(date1, 0, 0).getTime() == setUtcTimeToDate(date2, 0, 0).getTime()
-}
+// const isSameDay = (date1: Date, date2: Date): boolean => {
+//   return setUtcTimeToDate(date1, 0, 0).getTime() == setUtcTimeToDate(date2, 0, 0).getTime()
+// }
 
-const getUTCThisMonthFirstDayDate = (date: Date): Date => {
-  const thisMonthFirstDay = new Date(date);
-  thisMonthFirstDay.setUTCDate(1);
-  thisMonthFirstDay.setUTCHours(0, 0, 0, 0);
+// const getUTCThisMonthFirstDayDate = (date: Date): Date => {
+//   const thisMonthFirstDay = new Date(date);
+//   thisMonthFirstDay.setUTCDate(1);
+//   thisMonthFirstDay.setUTCHours(0, 0, 0, 0);
 
-  return thisMonthFirstDay;
-}
+//   return thisMonthFirstDay;
+// }
 
 
 // const getLocalCurrentTimestamp = (): number => {
@@ -191,8 +191,8 @@ const getUTCThisMonthFirstDayDate = (date: Date): Date => {
 //   const formattedMinutes = getTwoDigitsNumber(minutes);
 
 
-//   console.log(`${formattedHours}:${formattedMinutes}`);
-//   console.log("2 qqqqqqqq")
+//   Alert.alert(`${formattedHours}:${formattedMinutes}`);
+//   Alert.alert("2 qqqqqqqq")
 
 //   return `${formattedHours}:${formattedMinutes}`;
 // };
@@ -220,19 +220,21 @@ const timeService2 = {
   // timestampToLocalString,
   // timestampToLocalDayString,
   // getNextDayTimestamp,
-  getTwoDigitsNumber,
-  dateToLocalTimeString,
-  combineDateAndTime,
-  setLocalTimeToDate,
-  setUtcTimeToDate,
-  getUtcDateFromLocalString,
-  getUtcDateFromLocalDate,
-  addMinutes,
-  getLocalDayStringFromDate,
-  getNextDayDate,
-  getNextUtcDayDate,
-  isSameDay,
-  getUTCThisMonthFirstDayDate,
+
+
+  // getTwoDigitsNumber,
+  // dateToLocalTimeString,
+  // combineDateAndTime,
+  // setLocalTimeToDate,
+  // setUtcTimeToDate,
+  // getUtcDateFromLocalString,
+  // getUtcDateFromLocalDate,
+  // addMinutes,
+  // getLocalDayStringFromDate,
+  // getNextDayDate,
+  // getNextUtcDayDate,
+  // isSameDay,
+  // getUTCThisMonthFirstDayDate,
 };
 
 export default timeService2;

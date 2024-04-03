@@ -1,5 +1,5 @@
 // import React, { useEffect, useMemo, useState } from 'react';
-// import { View, Text } from 'react-native';
+// import { View, Text, Alert } from 'react-native';
 // import { useCurrentUser } from '../../hooks/useCurrentUser';
 // import { UserAccount } from '../../entities/user';
 // import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -11,8 +11,6 @@
 // import createStyles from './gameSetupStyles';
 // import { PaperArea } from '../../components/Background/PaperArea';
 // import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
-// import Board from '../../components/Game/Board';
-// import { ActiveGameContext } from '../../hooks/useActiveGame';
 // import shipBoardService from '../../services/shipBoardService';
 // import { BoardItem } from '../../entities/boardItem';
 // import { ShipBoardContext } from '../../hooks/useShipBoard';
@@ -50,15 +48,15 @@
 //     const joinNewGameAsync = async () => {
 //       try {
 //         if (game?.playerA?.id === user.id) {
-//           console.log("host joined");
+//           Alert.alert("host joined");
 //         }
 //         else if (game?.playerB?.id === user.id) {
-//           console.log('rejoin');
+//           Alert.alert('rejoin');
 //         }
 
 
 
-//         // const gameTemplate = gameService.createNewGameTemplate(user);
+//         // const gameTemplate = gameService.createGameTemplate(user);
 //         // const newGame = await gameService.publishGameWithStoring(gameTemplate);
 
 //         // setActiveGame(newGame);

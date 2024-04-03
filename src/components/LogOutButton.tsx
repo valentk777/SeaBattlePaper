@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, Image, View } from "react-native";
 import { useTheme } from '../hooks/useTheme';
-import { AppTheme } from "../styles/themeModels";
 import { icons } from "../assets";
 import { useAuth } from "../hooks/useAuth";
 import { useCurrentUser } from "../hooks/useCurrentUser";
@@ -38,8 +37,8 @@ const createStyles = () => {
 
   const styles = StyleSheet.create({
     areaStyle: {
-        width: 45,
-        height: 35,
+      width: 45,
+      height: 35,
     },
     buttonStyle: {
       backgroundColor: theme.colors.canvas,

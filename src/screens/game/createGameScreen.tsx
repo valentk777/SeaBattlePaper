@@ -1,33 +1,31 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { MainStackParamList } from '../../navigators/MainStackNavigator';
 import { BoardItem } from '../../entities/boardItem';
 import shipBoardService from '../../services/shipBoardService';
 import createStyles from './gameSetupStyles';
 import { Game } from '../../entities/game';
 import gameService from '../../services/gameService';
-import { UserAccount } from '../../entities/user';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { Background } from '../../components/Background/BackgroundImage';
 import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
 import Board from '../../components/Board/Board';
 import { PaperArea } from '../../components/Background/PaperArea';
-import { PlayerStatus } from '../../entities/playerStatus';
 
 type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateGame'>;
 
 export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
   const styles = createStyles();
 
-  const user = useCurrentUser() as UserAccount;
+  const user = useCurrentUser();
   const [activeGame, setActiveGame] = useState({ id: "" } as Game);
   const [currentBoard, setCurrentBoard] = useState(shipBoardService.generateNewShipBoard());
 
   useEffect(() => {
     const createNewGameAsync = async () => {
       try {
-        const gameTemplate = gameService.createNewGameTemplate(user);
+        const gameTemplate = gameService.createGameTemplate(user);
         const newGame = await gameService.publishGameWithStoring(gameTemplate);
 
         setActiveGame(newGame);
@@ -52,19 +50,19 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
   }, [currentBoard]);
 
   const onStartGamePress = () => {
-    const updatedGame = JSON.parse(JSON.stringify(activeGame));
+    // const updatedGame = JSON.parse(JSON.stringify(activeGame));
 
-    if (updatedGame?.playerA?.id === user.id) {
-      updatedGame.playerA.status = PlayerStatus.Started;
-    }
+    // if (updatedGame?.playerA?.id === user.id) {
+    //   updatedGame.playerA.status = PlayerStatus.Started;
+    // }
 
-    if (updatedGame?.playerB?.id === user.id) {
-      updatedGame.playerB.status = PlayerStatus.Started;
-    }
+    // if (updatedGame?.playerB?.id === user.id) {
+    //   updatedGame.playerB.status = PlayerStatus.Started;
+    // }
 
-    shipBoardService.publishPlayerBoardsetWithStoring(updatedGame, user.id);
+    // shipBoardService.publishPlayerBoardsetWithStoring(updatedGame, user.id);
 
-    navigation.navigate('PlayGame', { gameId: activeGame.id, isHost: true });
+    // navigation.navigate('PlayGame', { gameId: activeGame.id, isHost: true });
   }
 
   return (
