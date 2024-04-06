@@ -5,13 +5,13 @@ import {UserAccount} from '../entities/user';
 
 const getCurrentUser = async (): Promise<UserAccount> => {
   return await localStorageService.getData('current_user').catch(error => {
-    Alert.alert(error.message);
+    console.log(error.message);
   });
 };
 
 const updateUser = async (user: UserAccount | null) => {
   await localStorageService.storeData('current_user', user).catch(error => {
-    Alert.alert(error.message);
+    console.log(error.message);
   });
 };
 
@@ -23,11 +23,11 @@ const updateUser = async (user: UserAccount | null) => {
 //   // TODO: then update remote user storage
 
 //   await storeData('current_user', user).catch(error => {
-//     Alert.alert(error.message);
+//     console.log(error.message);
 //   });
 
 //   await userDbTable.updateUser(user).catch(error => {
-//     Alert.alert(error.message);
+//     console.log(error.message);
 //   });
 // };
 
@@ -36,11 +36,11 @@ const updateUser = async (user: UserAccount | null) => {
 //   user.theme = theme;
 
 //   await storeData('current_user', user).catch(error => {
-//     Alert.alert(error.message);
+//     console.log(error.message);
 //   });
 
 //   await userDbTable.updateUser(user).catch(error => {
-//     Alert.alert(error.message);
+//     console.log(error.message);
 //   });
 // };
 
@@ -49,17 +49,17 @@ const updateUser = async (user: UserAccount | null) => {
 //   user.language = language;
 
 //   await storeData('current_user', user).catch(error => {
-//     Alert.alert(error.message);
+//     console.log(error.message);
 //   });
 
 //   await userDbTable.updateUser(user).catch(error => {
-//     Alert.alert(error.message);
+//     console.log(error.message);
 //   });
 // };
 
 const deleteUser = async () => {
   await localStorageService.removeData('current_user').catch(error => {
-    Alert.alert(error.message);
+    console.log(error.message);
   });
 };
 

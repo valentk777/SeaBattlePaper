@@ -1,45 +1,51 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { MainStackParamList } from '../../navigators/MainStackNavigator';
 import { BoardItem } from '../../entities/boardItem';
 import shipBoardService from '../../services/shipBoardService';
 import createStyles from './gameSetupStyles';
-import { Game } from '../../entities/game';
-import gameService from '../../services/gameService';
-import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { Background } from '../../components/Background/BackgroundImage';
 import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
 import Board from '../../components/Board/Board';
 import { PaperArea } from '../../components/Background/PaperArea';
+import { PlayerStatus } from '../../entities/playerStatus';
+import gameService from '../../services/gameService';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
+import { PlayerPosition } from '../../entities/playerPosition';
 
 type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateGame'>;
 
-export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
+export const CreateGameScreen = ({ navigation, route }: CreateGameScreenProps) => {
   const styles = createStyles();
 
+  const { game } = route.params;
+
   const user = useCurrentUser();
-  const [activeGame, setActiveGame] = useState({ id: "" } as Game);
+  const playerPosition = gameService.getPlayerPosition(game, user.id)
   const [currentBoard, setCurrentBoard] = useState(shipBoardService.generateNewShipBoard());
+  const [ships, setShips] = useState(playerPosition === PlayerPosition.PlayerA ? game.playerA.ships : game.playerB.ships);
 
   useEffect(() => {
-    const createNewGameAsync = async () => {
-      try {
-        const gameTemplate = gameService.createGameTemplate(user);
-        const newGame = await gameService.publishGameWithStoring(gameTemplate);
-
-        setActiveGame(newGame);
-      } catch (error) {
-        console.error('Error creating a new game:', error);
-      }
+    const loadGameBoard = async () => {
+      setCurrentBoard(oldBoard => {
+        return oldBoard.map((item) => ships.some(x => x == item.location) ? { ...item, isShip: true } : item);
+      });
     };
 
-    createNewGameAsync();
+    loadGameBoard();
   }, []);
 
-  const onBoardTilePress = useCallback((selectedBox: BoardItem) => {
-    setCurrentBoard((currentBoard) => {
-      return currentBoard.map((item) => {
+  const onBoardTilePress = (selectedBox: BoardItem) => {
+
+    if (selectedBox.isShip === false) {
+      setShips(oldArray => [...oldArray, selectedBox.location]);
+    } else {
+      setShips(oldArray => oldArray.filter(x => x !== selectedBox.location));
+    }
+
+    setCurrentBoard(oldBoard => {
+      return oldBoard.map((item) => {
         if (item.location === selectedBox.location) {
           return { ...item, isShip: !item.isShip };
         } else {
@@ -47,47 +53,41 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
         }
       });
     });
-  }, [currentBoard]);
+  };
 
-  const onStartGamePress = () => {
-    // const updatedGame = JSON.parse(JSON.stringify(activeGame));
+  const onStartGamePress = async () => {
 
-    // if (updatedGame?.playerA?.id === user.id) {
-    //   updatedGame.playerA.status = PlayerStatus.Started;
-    // }
+    if (playerPosition === PlayerPosition.PlayerA) {
+      await gameService.updatePlayer(game.id, { ...game.playerA, ships: ships, status: PlayerStatus.Started }, playerPosition);
+    } else {
+      await gameService.updatePlayer(game.id, { ...game.playerB, ships: ships, status: PlayerStatus.Started }, playerPosition);
+    }
 
-    // if (updatedGame?.playerB?.id === user.id) {
-    //   updatedGame.playerB.status = PlayerStatus.Started;
-    // }
-
-    // shipBoardService.publishPlayerBoardsetWithStoring(updatedGame, user.id);
-
-    // navigation.navigate('PlayGame', { gameId: activeGame.id, isHost: true });
+    // navigation.navigate('PlayGame', {  });
   }
 
   return (
     <View style={styles.container}>
       <Background />
       <View style={styles.empty} />
-
       <View style={styles.newGameContainer}>
         <PaperArea
           areaStyle={styles.areaStyle}
           componentStyle={styles.componentStyle}
         >
           <Text style={styles.shareText}>Share this number with another player</Text>
-          <Text style={styles.activeGameIdText}>{activeGame.id}</Text>
+          <Text style={styles.activeGameIdText}>{game.id}</Text>
         </PaperArea>
       </View>
       <View style={styles.gamePlayers}>
         <View>
           <Text style={styles.activePlayersText}>
-            PlayerA: {activeGame.playerA?.id !== undefined ? "Joined" : "NotFound"}
+            PlayerA: {game.playerA?.id !== undefined ? "Joined" : "NotFound"}
           </Text>
         </View>
         <View>
           <Text style={styles.activePlayersText}>
-            PlayerB: {activeGame.playerB?.id !== undefined ? "Joined" : "NotFound"}
+            PlayerB: {game?.playerB?.id !== undefined ? "Joined" : "NotFound"}
           </Text>
         </View>
       </View>
@@ -100,7 +100,7 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
         buttonStyle={styles.startButton}
         textStyle={styles.startButtonText}
         text="Start game"
-        onPress={onStartGamePress}
+        onPress={async () => await onStartGamePress()}
       />
       <View style={styles.empty} />
     </View>
@@ -108,48 +108,3 @@ export const CreateGameScreen = ({ navigation }: CreateGameScreenProps) => {
 };
 
 export default CreateGameScreen;
-
-
-
-
-
-
-
-
-//   // const updateGame = async (item: BoardItem) => {
-//   //   const updatedGame = JSON.parse(JSON.stringify(activeGame)) as Game;
-
-//   //   if (item.isShip) {
-//   //     // remove from ship
-//   //     if (activeGame.playerA.ships.includes(item.key)) {
-//   //       updatedGame.playerA.ships = activeGame.playerA.ships.filter((selectedLocation) => selectedLocation !== item.key);
-//   //     }
-//   //   }
-//   //   else {
-//   //     // add to ship
-//   //     if (!activeGame.playerA.ships.includes(item.key)) {
-//   //       updatedGame.playerA.ships = [...activeGame.playerA.ships, item.key];
-//   //     }
-//   //   }
-
-
-//   // };
-
-
-
-//   // const onPressBox = async (boardItemLocation: string) => {
-//   //   // todo refactor
-//   //   // const itemToUpdateIndex = currentBoard.findIndex(currentItem => currentItem.key === boardItemLocation);
-
-//   //   updateBoard(boardItemLocation);
-//   //   // await updateGame(currentBoard[itemToUpdateIndex]);
-//   // }
-
-
-
-//   // const values = useMemo(() => ({ game: activeGame, updateGame: updateGame }), [activeGame]);
-//   // const values = useMemo(() => ({ board: currentBoard, updateBoard: updateBoard }), [currentBoard]);
-
-
-// export default CreateGameScreen;
-

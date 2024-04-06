@@ -31,7 +31,7 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
 
   const handleLoginButton = () => {
     if (password === null || password === "") {
-      Alert.alert("Password cannot be empty");
+      console.log("Password cannot be empty");
       return;
     }
 
@@ -40,7 +40,7 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
     userCandidate.password = password;
 
     if (userCandidate.email === null || userCandidate.email === "") {
-      Alert.alert("Email cannot be empty");
+      console.log("Email cannot be empty");
       return;
     }
 

@@ -3,6 +3,8 @@ import {AppResponse} from '../../entities/appResponse';
 import timeService from '../../services/timeService';
 import { Game } from '../../entities/game';
 import { Alert } from 'react-native';
+import { PlayerBoard } from '../../entities/playerBoard';
+import { PlayerPosition } from '../../entities/playerPosition';
 
 // https://rnfirebase.io/database/usage
 const database = firebase.app().database('https://seabattlepaper-default-rtdb.europe-west1.firebasedatabase.app/');
@@ -12,7 +14,7 @@ export const getGame = async (gameId: string) => {
     const snapshot = await database.ref(`activeGames/${gameId}`).once('value');
     const activeGame = snapshot.val() as Game;
 
-    Alert.alert('getGame: ', snapshot.val())
+    console.log('getGame: ', snapshot.val())
 
     if (activeGame === undefined) {
       return {isSuccessfull: true, result: {} as Game} as AppResponse;
@@ -58,6 +60,68 @@ export const addGame = async (activeGame: Game) => {
   }
 };
 
+export const updateGame = async (activeGame: Game) => {
+  if (activeGame === undefined) {
+    return {isSuccessfull: false, error: "cannot update empty game"} as AppResponse;
+  }
+
+  try {
+    const databaseRef = database.ref(`activeGames/${activeGame.id}`);
+
+    activeGame.lastTimeUpdated = timeService.getCurrentDateString();
+    
+    await databaseRef.update(activeGame);
+
+    return {
+      isSuccessfull: true,
+      result: activeGame,
+    } as AppResponse;
+
+  } catch (error) {
+    console.error(error);
+
+    return {isSuccessfull: false, error: error} as AppResponse;
+  }
+};
+
+export const updatePlayer = async (gameId: string, player: PlayerBoard, playerPositionToUpdate: PlayerPosition) => {
+  if (gameId === undefined) {
+    return {isSuccessfull: false, error: "cannot update unknown game"} as AppResponse;
+  }
+
+  if (player === undefined) {
+    return {isSuccessfull: false, error: "cannot update empty player information"} as AppResponse;
+  }
+
+  if (playerPositionToUpdate === undefined) {
+    return {isSuccessfull: false, error: "cannot update unknown player"} as AppResponse;
+  }
+
+  try {
+    if (playerPositionToUpdate === PlayerPosition.PlayerA) {
+      const databaseRef = database.ref(`activeGames/${gameId}/playerA/`);
+
+      await databaseRef.update(player);
+
+    } else if (playerPositionToUpdate === PlayerPosition.PlayerB) {
+      const databaseRef = database.ref(`activeGames/${gameId}/playerB/`);
+
+      await databaseRef.update(player);
+    }
+
+    return {
+      isSuccessfull: true,
+      result: player,
+    } as AppResponse;
+  } catch (error) {
+    console.error(error);
+
+    return {isSuccessfull: false, error: error} as AppResponse;
+  }
+};
+
+
+
 
 
 
@@ -72,7 +136,7 @@ export const getAllActiveGames = async () => {
     if (snapshot.exists()) {
       const activeGames = snapshot.val();
 
-      Alert.alert('getAllActiveGames: ', activeGames);
+      console.log('getAllActiveGames: ', activeGames);
 
       if (activeGames === undefined) {
         return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
@@ -83,7 +147,7 @@ export const getAllActiveGames = async () => {
         result: activeGames as Game[],
       } as AppResponse;
     } else {
-      Alert.alert('not exist');
+      console.log('not exist');
       return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
     }
   } catch (error) {
@@ -114,60 +178,15 @@ export const setGameWithTracking = async (gameId: string, setActiveGameOnChange:
 
 
 
-export const updateActiveGames = async (activeGame: Game) => {
-  if (activeGame === undefined) {
-    return {isSuccessfull: false, error: "cannot update empty game"} as AppResponse;
-  }
 
-  try {
-    const databaseRef = database.ref(`activeGames/${activeGame.id}`);
 
-    activeGame.lastTimeUpdated = timeService.getCurrentDateString();
-    
-    await databaseRef.update(activeGame);
 
-    return {
-      isSuccessfull: true,
-      result: activeGame,
-    } as AppResponse;
-
-  } catch (error) {
-    console.error(error);
-
-    return {isSuccessfull: false, error: error} as AppResponse;
-  }
-};
-
-export const updateActiveGamePlayer = async (activeGame: Game, userId: string) => {
-  if (activeGame === undefined) {
-    return {isSuccessfull: false, error: "cannot update empty game"} as AppResponse;
-  }
-
-  try {
-    if (activeGame?.playerA?.id === userId) {
-      const databaseRef = database.ref(`activeGames/${activeGame.id}/playerA/`);
-      await databaseRef.update(activeGame.playerA);
-    } else if (activeGame?.playerB?.id === userId) {
-      const databaseRef = database.ref(`activeGames/${activeGame.id}/playerB/`);
-      await databaseRef.update(activeGame.playerB);
-    }
-
-    return {
-      isSuccessfull: true,
-      result: activeGame,
-    } as AppResponse;
-  } catch (error) {
-    console.error(error);
-
-    return {isSuccessfull: false, error: error} as AppResponse;
-  }
-};
 
 // export const removeActiveGame = async (
 //   gameId: string
 // ) => {
 //   if (gameId == undefined || gameId === '' || gameId == null) {
-//     Alert.alert('Cannot find a game in remote database');
+//     console.log('Cannot find a game in remote database');
 
 //     return;
 //   }
@@ -175,11 +194,11 @@ export const updateActiveGamePlayer = async (activeGame: Game, userId: string) =
 //   try {
 //     await gameRef.doc(gameId).delete();
 
-//     Alert.alert('Game successfully deleted');
+//     console.log('Game successfully deleted');
 
 //     return {isSuccessfull: true} as AppResponse;
 //   } catch (error) {
-//     Alert.alert(error);
+//     console.log(error);
     
 //     return {isSuccessfull: false, error: error} as AppResponse;
 //   }
@@ -188,13 +207,13 @@ export const updateActiveGamePlayer = async (activeGame: Game, userId: string) =
 const gamesDbTable = {
   getGame,
   addGame,
-
+  updateGame,
+  updatePlayer,
 
   
   getAllActiveGames,
   setGameWithTracking,
-  updateActiveGames,
-  updateActiveGamePlayer,
+
 };
 
 export default gamesDbTable;

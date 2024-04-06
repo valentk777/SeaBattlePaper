@@ -6,38 +6,57 @@ import {PlayerStatus} from '../entities/playerStatus';
 import {Alert} from 'react-native';
 import userService from './userService';
 import {UserAccount} from '../entities/user';
-import localStorageService, {storeData} from './localStorageService';
+import localStorageService from './localStorageService';
 import remoteGameService from './remoteGameService';
+import {PlayerPosition} from '../entities/playerPosition';
 
 const getGameKey = (userId: string, gameId: string) => {
   return `games/${userId}/${gameId}`;
 };
 
+const getPlayerKey = (
+  userId: string,
+  gameId: string,
+  playerPosition: PlayerPosition,
+) => {
+  if (playerPosition === PlayerPosition.PlayerA) {
+    return `games/${userId}/${gameId}/playerA`;
+  } else if (playerPosition === PlayerPosition.PlayerB) {
+    return `games/${userId}/${gameId}/playerB`;
+  }
+
+  Alert.alert('cannot store information for this player!');
+
+  return '';
+};
+
 const validateGame = async (candidateGame: Game, userId: string) => {
   if (candidateGame.status == GameProgress.Completed) {
-    Alert.alert('Game already completed');
+    console.log('Game already completed');
+
     return false;
   }
 
-  if (candidateGame.playerA.id == userId) {
-    Alert.alert('Host can re-join to active the game');
+  if (candidateGame.playerA?.id == userId) {
+    console.log('Host can re-join to active the game');
 
     return true;
   }
 
-  if (candidateGame.playerB.id == userId) {
-    Alert.alert('Player can re-join to active the game');
+  if (candidateGame.playerB?.id == userId) {
+    console.log('Player can re-join to active the game');
 
     return true;
   }
 
   if (candidateGame.playerB == undefined) {
-    Alert.alert('Player can join as a second player');
+    console.log('Player can join as a second player');
 
     return true;
   }
 
-  Alert.alert('game is not for current player');
+  console.log('game is not for current player');
+
   return false;
 };
 
@@ -46,9 +65,9 @@ const createPlayerTemplate = (user: UserAccount) => {
     id: user.id,
     email: user.email,
     status: PlayerStatus.Joined,
-    ships: [] as string[],
-    attackedShips: [] as string[],
-    markedShips: [] as string[],
+    ships: [''],
+    attackedShips: [''],
+    markedShips: [''],
   } as PlayerBoard;
 };
 
@@ -60,7 +79,7 @@ const createGameTemplate = (user: UserAccount) => {
   } as Game;
 };
 
-const publishGameWithStoring = async (game: Game) => {
+const createNewGameWithStoring = async (game: Game) => {
   const updatedGame = await remoteGameService.storeNewGame(game);
   const user = await userService.getCurrentUser();
 
@@ -74,8 +93,47 @@ const publishGameWithStoring = async (game: Game) => {
 
     return updatedGame;
   } else {
-    Alert.alert('error creating game');
+    console.log('error creating game');
     return game;
+  }
+};
+
+const getPlayerPosition = (game: Game, userId: string) => {
+  if (game?.playerA?.id === userId) {
+    return PlayerPosition.PlayerA;
+  }
+
+  return PlayerPosition.PlayerB;
+};
+
+const updateGame = async (game: Game) => {
+  const user = await userService.getCurrentUser();
+
+  if (user === null || user.id === '' || user.id === null) {
+    return {} as Game;
+  }
+
+  await localStorageService.storeData(getGameKey(user.id, game.id), game);
+  await remoteGameService.updateGame(game);
+};
+
+const updatePlayer = async (
+  gameId: string,
+  player: PlayerBoard,
+  playerPositionToUpdate: PlayerPosition,
+) => {
+  try {
+    await remoteGameService.updatePlayer(
+      gameId,
+      player,
+      playerPositionToUpdate,
+    );
+    await localStorageService.storeData(
+      getPlayerKey(player.id, gameId, playerPositionToUpdate),
+      player,
+    );
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -95,7 +153,7 @@ const publishGameWithStoring = async (game: Game) => {
 //     remoteGameService.updateDbStoredChallenges(user.id, challenges);
 //     return true;
 //   } catch (error) {
-//     Alert.alert(`Issues saving game: Error: ${error}`);
+//     console.log(`Issues saving game: Error: ${error}`);
 //     return false;
 //   }
 // };
@@ -121,20 +179,6 @@ const publishGameWithStoring = async (game: Game) => {
 //   return `${userId}/games/${gameId}`;
 // };
 
-// const isHost = (game: Game, userId: string) => {
-//   return game?.playerA?.id === userId;
-// }
-
-// const updateGameInLocalStorage = async (game: Game) => {
-//   const user = await userService.getCurrentUser();
-
-//   if (user === null || user.id === '' || user.id === null) {
-//     return {} as Game;
-//   }
-
-//   await storeData(getGameStorageKey(user.id, game.id), game);
-// };
-
 // const initGame = async (userId: string, gameId: string) => {
 //   const response = await gamesDbTable.getGame(gameId);
 
@@ -143,7 +187,7 @@ const publishGameWithStoring = async (game: Game) => {
 //     return response.result;
 //   }
 
-//   Alert.alert('Cannot find local game. Create a new one');
+//   console.log('Cannot find local game. Create a new one');
 // };
 
 // const setGameWithTracking = async (
@@ -169,7 +213,7 @@ const publishGameWithStoring = async (game: Game) => {
 
 //     return shipBoard as BoardItem[];
 //   } catch (error) {
-//     Alert.alert(`Issues getting all board item: Error: ${error}`);
+//     console.log(`Issues getting all board item: Error: ${error}`);
 //     return [] as BoardItem[];
 //   }
 // };
@@ -188,8 +232,8 @@ const publishGameWithStoring = async (game: Game) => {
 
 //     return updatedGame;
 //   } catch (error) {
-//     Alert.alert(`Issues updating ship board: Error: ${error}`);
-//     Alert.alert(error);
+//     console.log(`Issues updating ship board: Error: ${error}`);
+//     console.log(error);
 //     return game;
 //   }
 // };
@@ -202,18 +246,18 @@ const publishGameWithStoring = async (game: Game) => {
 //   try {
 //     const updatedGame = getUpdateGameOnPress(game, item, userId);
 
-//     const response = (await gamesDbTable.updateActiveGames(
+//     const response = (await gamesDbTable.updateGame(
 //       updatedGame,
 //     )) as AppResponse;
 
 //     if (!response.isSuccessfull) {
-//       Alert.alert('Cannot update game' + response.error);
+//       console.log('Cannot update game' + response.error);
 //     }
 
 //     return updatedGame;
 //   } catch (error) {
-//     Alert.alert(`Issues updating ship board: Error: ${error}`);
-//     Alert.alert(error);
+//     console.log(`Issues updating ship board: Error: ${error}`);
+//     console.log(error);
 //     return game;
 //   }
 // };
@@ -222,16 +266,16 @@ const publishGameWithStoring = async (game: Game) => {
 //   game: Game,
 // ) => {
 //   try {
-//     const response = (await gamesDbTable.updateActiveGames(
+//     const response = (await gamesDbTable.updateGame(
 //       game,
 //     )) as AppResponse;
 
 //     if (!response.isSuccessfull) {
-//       Alert.alert('Cannot update game' + response.error);
+//       console.log('Cannot update game' + response.error);
 //     }
 //   } catch (error) {
-//     Alert.alert(`Issues updating ship board: Error: ${error}`);
-//     Alert.alert(error);
+//     console.log(`Issues updating ship board: Error: ${error}`);
+//     console.log(error);
 //   }
 // };
 
@@ -239,14 +283,12 @@ const gameService = {
   createPlayerTemplate,
   createGameTemplate,
   validateGame,
-  publishGameWithStoring,
+  createNewGameWithStoring,
+  getPlayerPosition,
+  updateGame,
+  updatePlayer,
 
-
-
-
-  // isHost,
-
-  // publishGameWithStoring,
+  // createNewGameWithStoring,
   // getRemoteGameById,
   // getGameFromStorage,
   // getUpdateGameOnPress,

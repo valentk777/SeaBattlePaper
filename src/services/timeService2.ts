@@ -191,8 +191,8 @@
 //   const formattedMinutes = getTwoDigitsNumber(minutes);
 
 
-//   Alert.alert(`${formattedHours}:${formattedMinutes}`);
-//   Alert.alert("2 qqqqqqqq")
+//   console.log(`${formattedHours}:${formattedMinutes}`);
+//   console.log("2 qqqqqqqq")
 
 //   return `${formattedHours}:${formattedMinutes}`;
 // };

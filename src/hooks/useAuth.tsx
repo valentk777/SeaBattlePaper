@@ -93,11 +93,11 @@ export const AuthProvider = ({ children }: AppContextProviderProps) => {
 
           dispatch({ type: 'SIGN_IN', user: signedInUser });
         } else {
-          Alert.alert(response.error);
+          console.log(response.error);
         }
       })
       .catch(error => {
-        Alert.alert(`Error signing in:', ${error}`);
+        console.log(`Error signing in:', ${error}`);
       });
   }
 
@@ -112,11 +112,11 @@ export const AuthProvider = ({ children }: AppContextProviderProps) => {
           userService.updateUser(signedInUser);
           dispatch({ type: 'SIGN_IN', user: signedInUser });
         } else {
-          Alert.alert(response.error);
+          console.log(response.error);
         }
       })
       .catch(error => {
-        Alert.alert(error.message);
+        console.log(error.message);
       });
   };
 
@@ -147,11 +147,11 @@ export const AuthProvider = ({ children }: AppContextProviderProps) => {
           userService.updateUser(signedInUser);
           dispatch({ type: 'SIGN_IN', user: signedInUser });
         } else {
-          Alert.alert(response.error);
+          console.log(response.error);
         }
       })
       .catch(error => {
-        Alert.alert(error.message);
+        console.log(error.message);
       });
   }
 
@@ -166,11 +166,11 @@ export const AuthProvider = ({ children }: AppContextProviderProps) => {
           userService.updateUser(signedInUser);
           dispatch({ type: 'SIGN_IN', user: signedInUser });
         } else {
-          Alert.alert(response.error);
+          console.log(response.error);
         }
       })
       .catch(error => {
-        Alert.alert(error.message);
+        console.log(error.message);
       });
   }
 

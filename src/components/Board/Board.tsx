@@ -17,8 +17,8 @@ interface ShipsBoardProps {
 const Board = ({ board, onPress, disabled }: ShipsBoardProps) => {
   const styles = createStyles();
 
-  const [letters] = useState(shipBoardService.generateLetters());
-  const [numbers] = useState(shipBoardService.generateNumbers());
+  const [letters, setLetters] = useState(shipBoardService.generateLetters());
+  const [numbers, setNumbers] = useState(shipBoardService.generateNumbers());
 
   return (
     <View style={[disabled ? styles.disabled : null, styles.container]}>

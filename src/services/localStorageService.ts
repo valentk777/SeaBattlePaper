@@ -11,12 +11,12 @@ export const getData = async (key: string) => {
 
     return null;
   } catch (exception) {
-    Alert.alert('Error getting data from storage');
+    console.log('Error getting data from storage');
 
     if (exception instanceof Error) {
-      Alert.alert('Error getting data from storage', exception.message);
+      console.log('Error getting data from storage', exception.message);
     } else {
-      Alert.alert('Unexpected error', exception);
+      console.log('Unexpected error', exception);
     }
 
     return null;
@@ -31,12 +31,12 @@ export const storeData = async (key: string, value: any) => {
 
     return true;
   } catch (exception) {
-    Alert.alert('Error saving to storage');
+    console.log('Error saving to storage');
 
     if (exception instanceof Error) {
-      Alert.alert('Error saving to storage', exception.message);
+      console.log('Error saving to storage', exception.message);
     } else {
-      Alert.alert('Unexpected error', exception);
+      console.log('Unexpected error', exception);
     }
 
     return false;
@@ -49,12 +49,12 @@ export const removeData = async (key: string) => {
 
     return true;
   } catch (exception) {
-    Alert.alert('Error deleting item from storage');
+    console.log('Error deleting item from storage');
 
     if (exception instanceof Error) {
-      Alert.alert('Error deleting item from storage', exception.message);
+      console.log('Error deleting item from storage', exception.message);
     } else {
-      Alert.alert('Unexpected error', exception);
+      console.log('Unexpected error', exception);
     }
 
     return false;

@@ -12,6 +12,7 @@ import { Background } from '../components/Background/BackgroundImage';
 import { PaperAreaButton } from '../components/ButtonWrapper/PaperAreaButton';
 import { PaperArea } from '../components/Background/PaperArea';
 import remoteGameService from '../services/remoteGameService';
+import { PlayerPosition } from '../entities/playerPosition';
 
 type HomeScreenProps = NativeStackScreenProps<MainStackParamList, 'Home'>;
 
@@ -21,50 +22,78 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const styles = createStyles();
 
   const [gameId, setGameId] = useState('');
+  // const [activeGame, setActiveGame] = useState({ id: "" } as Game);
   const user = useCurrentUser();
 
   const ref = useBlurOnFulfill({ value: gameId, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({ value: gameId, setValue: setGameId });
 
-  const onStartNewGamePress = () => {
-    navigation.navigate('CreateGame');
+  const onStartNewGamePress = async () => {
+    try {
+      const gameTemplate = gameService.createGameTemplate(user);
+      const newGame = await gameService.createNewGameWithStoring(gameTemplate);
+
+      navigation.navigate('CreateGame', { game: newGame });
+    } catch (error) {
+      console.error('Error creating a new game:', error);
+    }
   };
 
   const onJoinGamePress = async () => {
-    // const gameIdInt = parseInt(gameId, 10);
+    const gameIdInt = parseInt(gameId, 10);
 
-    // if (gameId == '' || gameIdInt < 1000) {
-    //   return;
-    // }
+    if (gameId == '' || gameIdInt < 1000) {
+      return;
+    }
 
-    // const candidateGame: Game = await remoteGameService.getGame(gameId);
+    const candidateGame: Game = await remoteGameService.getGame(gameId);
 
-    // if (candidateGame === undefined || candidateGame.id != gameId) {
-    //   Alert.alert("Game does not exist or game id is not match");
-    //   return;
-    // }
+    if (candidateGame === undefined || candidateGame.id != gameId) {
+      console.log("Game does not exist or game id is not match");
 
-    // const isGameValid = await gameService.validateGame(candidateGame, user.id);
+      return;
+    }
 
-    // if (!isGameValid) {
-    //   Alert.alert("cannot join to game. game is not valid");
-    //   return;
-    // }
+    const isGameValid = await gameService.validateGame(candidateGame, user.id);
 
-    // if (candidateGame.status == GameProgress.Started) {
-    //   await gameService.handlePlayGame(candidateGame);
+    if (!isGameValid) {
+      console.log("cannot join to game. game is not valid");
 
-    //   navigation.navigate('PlayGame', { gameId: game.id, isHost: gameService.isHost(game, user.id) });
+      return;
+    }
 
-    //   return;
-    // }
+    const playerPosition = gameService.getPlayerPosition(candidateGame, user.id)
 
-    // if (candidateGame.status == GameProgress.Created || candidateGame.status == GameProgress.PlayerMatched) {
-    //   await gameService.handleJoinToGame(candidateGame);
+    if (candidateGame.status == GameProgress.Started) {
+      // await gameService.handlePlayGame(candidateGame);
 
-    //   navigation.navigate('JoinGame', { game: candidateGame, isHost: isHost });
+      // navigation.navigate('PlayGame', { gameId: game.id, isHost: gameService.isHost(game, user.id) });
 
-    // }
+      // return;
+    }
+    else if (candidateGame.status == GameProgress.Created || candidateGame.status == GameProgress.PlayerMatched) {
+      if (playerPosition == PlayerPosition.PlayerA) {
+        // host rejoin game
+        navigation.navigate('CreateGame', { game: candidateGame });
+      }
+      else if (candidateGame.playerB?.id === user.id) {
+        // second player rejoin the game
+        // await gameService.createNewGameWithStoring(candidateGame);
+
+        //TODO: maybe it is better to calculate the player board here and then pass as parameter?
+        navigation.navigate('CreateGame', { game: candidateGame });
+      } else {
+        // new second player
+        const playerB = gameService.createPlayerTemplate(user);
+        const updatedGame = { ...candidateGame, playerB: playerB, status: GameProgress.PlayerMatched } as Game;
+
+        await gameService.updateGame(updatedGame);
+
+        navigation.navigate('CreateGame', { game: updatedGame });
+      }
+    } else {
+      console.log("Game already ended");
+    }
   };
 
   return (
@@ -80,7 +109,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
             areaStyle={styles.areaStyle}
             buttonStyle={styles.buttonStyle}
             textStyle={styles.buttonText}
-            onPress={onStartNewGamePress}
+            onPress={async () => await onStartNewGamePress()}
             text={'START NEW GAME'}
           />
         </View>

@@ -27,7 +27,7 @@
 //   // const [numbers] = useState(shipBoardService.generateNumbers);
 
 //   // useEffect(() => {
-//   //   Alert.alert("RE-RENDERING --- ShipsBoard");
+//   //   console.log("RE-RENDERING --- ShipsBoard");
 //   // }, [board]);
 
 
@@ -48,7 +48,7 @@
 
 //     onPress(newBoard);
 
-//     Alert.alert(newBoard)
+//     console.log(newBoard)
 //     // return newBoardItem;
 //   }, []);
 

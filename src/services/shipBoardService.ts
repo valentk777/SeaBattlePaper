@@ -93,25 +93,7 @@ const generateNewShipBoard = () => {
 //   );
 // };
 
-// const publishPlayerBoardsetWithStoring = async (game: Game, userId: string) => {
-//   try {
-//     await gamesDbTable.updateActiveGamePlayer(game, userId);
 
-//     if (game?.playerA?.id === userId) {
-//       await storeData(
-//         `${getGameStorageKey(userId, game.id)}/playerA`,
-//         game.playerA,
-//       );
-//     } else if (game?.playerB?.id === userId) {
-//       await storeData(
-//         `${getGameStorageKey(userId, game.id)}/playerB`,
-//         game.playerA,
-//       );
-//     }
-//   } catch (error) {
-//     Alert.alert(error);
-//   }
-// };
 
 const shipBoardService = {
   generateLetters,

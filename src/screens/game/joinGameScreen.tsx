@@ -48,16 +48,16 @@
 //     const joinNewGameAsync = async () => {
 //       try {
 //         if (game?.playerA?.id === user.id) {
-//           Alert.alert("host joined");
+//           console.log("host joined");
 //         }
 //         else if (game?.playerB?.id === user.id) {
-//           Alert.alert('rejoin');
+//           console.log('rejoin');
 //         }
 
 
 
 //         // const gameTemplate = gameService.createGameTemplate(user);
-//         // const newGame = await gameService.publishGameWithStoring(gameTemplate);
+//         // const newGame = await gameService.createNewGameWithStoring(gameTemplate);
 
 //         // setActiveGame(newGame);
 //       } catch (error) {

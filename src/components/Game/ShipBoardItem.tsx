@@ -17,7 +17,7 @@
 //   const styles = createStyles();
 
 //   // useEffect(() => {
-//   //   Alert.alert("Data has changed");
+//   //   console.log("Data has changed");
 //   // }, [item]);
 
 
@@ -26,7 +26,7 @@
 //   // const onPress = useCallback(() => setValue(item.key), []);
 
 
-//   Alert.alert(`Rerending this item: ${item.key}`);
+//   console.log(`Rerending this item: ${item.key}`);
 
 //   return (
 //     <TouchableOpacity
