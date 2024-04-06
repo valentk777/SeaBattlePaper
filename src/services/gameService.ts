@@ -141,10 +141,12 @@ const getGameWithTracking = async (
   gameId: string,
   onRemoteGameUpdated: Function,
 ) => {
-  console.log("game updated");
-  await remoteGameService.getGameWithTracking(gameId, onRemoteGameUpdated);
+  console.log('game updated');
+  return await remoteGameService.getGameWithTracking(
+    gameId,
+    onRemoteGameUpdated,
+  );
 };
-
 
 // const storeNewGame = async (game: Game) => {
 //   try {
@@ -198,8 +200,6 @@ const getGameWithTracking = async (
 
 //   console.log('Cannot find local game. Create a new one');
 // };
-
-
 
 // const getGameFromStorage = async (gameId: string) => {
 //   try {

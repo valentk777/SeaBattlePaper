@@ -8,145 +8,161 @@ import { Game } from '../../entities/game';
 import gameService from '../../services/gameService';
 import { GameProgress } from '../../entities/gameProgress';
 import Board from '../../components/Board/Board';
+import { BoardItem } from '../../entities/boardItem';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
+import { PlayerPosition } from '../../entities/playerPosition';
+import shipBoardService from '../../services/shipBoardService';
 
 type PlayGameScreenProps = NativeStackScreenProps<MainStackParamList, 'PlayGame'>;
 
 export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
-  const styles = createStyles();
+    const styles = createStyles();
 
-  const { gameId } = route.params;
+    const { gameId, playerPosition } = route.params;
 
-  const [activeGame, setActiveGame] = useState({ id: gameId } as Game);
-//   const user = useCurrentUser() as UserAccount;
+    const [activeGame, setActiveGame] = useState({ id: gameId } as Game);
 
-  const onRemoteGameUpdated = async (game: Game) => {
-    Alert.alert("Remote game updated")
-    // await gameService.updateGameInLocalStorage(game);
-    setActiveGame(game);
-  };
 
-//   useEffect(() => {
-//     const createNewGameAsync = async () => {
-//       try {
-//         await gameService.getGameWithTracking(gameId, onRemoteGameUpdated);
-//       } catch (error) {
-//         console.error('Error creating a new game:', error);
-//       }
-//     };
 
-//     createNewGameAsync();
-//   }, []);
+    //   const user = useCurrentUser();
+    //   const playerPosition = gameService.getPlayerPosition(game, user.id)
 
-//   const values = useMemo(() => ({ game: activeGame, updateGame: updateGame }), [activeGame]);
+    const [myBoard, setMyBoard] = useState(shipBoardService.generateNewShipBoard());
+    const [opponentBoard, setOpponentBoard] = useState(shipBoardService.generateNewShipBoard());
 
-  const renderMainGame = () => (
-    <View style={styles.mainGame} >
-      <View style={styles.empty} />
-      {/* <View style={styles.newGameContainer}>
-          <PaperArea
-            areaStyle={styles.areaStyle}
-            componentStyle={styles.componentStyle}
-          >
-            <Text style={styles.shareText}>Share this number with another player</Text>
-            <Text style={styles.activeGameIdText}>{activeGame.id}</Text>
-          </PaperArea>
+    const [opponentAttackedShips, setOpponentAttackedShips] = useState([] as string[]);
+    const [myAttackedShips, setMyAttackedShips] = useState([] as string[]);
+    const [myMarkedShips, setMyMarkedShips] = useState([] as string[]);
+
+
+
+    //   const user = useCurrentUser() as UserAccount;
+
+    const onRemoteGameUpdated = async (game: Game) => {
+        Alert.alert("Remote game updated")
+        // await gameService.updateGameInLocalStorage(game);
+
+        setActiveGame(game);
+    };
+
+    useEffect(() => {
+        const createNewGameAsync = async () => {
+            try {
+                console.log("try to create game");
+                const initialGame = await gameService.getGameWithTracking(gameId, onRemoteGameUpdated);
+                setOpponentAttackedShips(playerPosition === PlayerPosition.PlayerA ? initialGame?.playerB?.attackedShips : initialGame.playerA.attackedShips);
+                setMyAttackedShips(playerPosition === PlayerPosition.PlayerA ? initialGame?.playerA?.attackedShips : initialGame.playerB.attackedShips);
+                setMyMarkedShips(playerPosition === PlayerPosition.PlayerA ? initialGame?.playerA?.markedShips : initialGame.playerB.markedShips);
+
+            } catch (error) {
+                console.error('Error creating a new game:', error);
+            }
+        };
+
+        createNewGameAsync();
+    }, []);
+
+    const onBoardTilePress = (selectedBox: BoardItem) => {
+        setMyAttackedShips(oldArray => [...oldArray, selectedBox.location]);
+
+
+        setMyBoard(oldBoard => {
+            return oldBoard.map((item) => {
+                if (item.location === selectedBox.location) {
+                    return { ...item, isShip: !item.isShip };
+                } else {
+                    return item;
+                }
+            });
+        });
+    };
+
+
+
+    //   const values = useMemo(() => ({ game: activeGame, updateGame: updateGame }), [activeGame]);
+
+    const renderMainGame = () => (
+        <View style={styles.mainGame} >
+            <View style={styles.empty} />
+            <View style={styles.competitorShipBoardContainer}>
+                {/* <Board disabled={true} board={activeGame.playerA} onPress={function (neweItem: BoardItem): void {
+                    throw new Error('Function not implemented.');
+                }} /> */}
+            </View>
+            <View style={styles.myShipBoardContainer}>
+                <Board disabled={false} board={myBoard} onPress={onBoardTilePress} />
+            </View>
         </View>
-        <View style={styles.gamePlayers}>
-          <View>
-            <Text style={styles.activePlayersText}>
-              PlayerA: {activeGame.playerA?.id !== undefined ? "Joined" : "NotFound"}
-            </Text>
-          </View>
-          <View>
-            <Text style={styles.activePlayersText}>
-              PlayerB: {activeGame.playerB?.id !== undefined ? "Joined" : "NotFound"}
-            </Text>
-          </View>
-        </View> */}
-      {/* <View style={styles.competitorShipBoardContainer}>
-        <Board disabled={true} />
-      </View>
-      <View style={styles.myShipBoardContainer}>
-        <Board disabled={false} />
-      </View> */}
-      {/* <View style={styles.empty} /> */}
-      {/* <PaperAreaButton
-          areaStyle={styles.startButtonArea}
-          buttonStyle={styles.startButton}
-          textStyle={styles.startButtonText}
-          text="Start game"
-          onPress={onStartGame}
-        /> */}
-      {/* */}
-    </View>
-  );
+    );
 
-  const renderSpinningWheel = () => (
-    <View style={styles.spinningWheel}>
-      <Text style={styles.spinningWheelText}>Another player is not ready</Text>
-    </View>
-  );
+    const renderSpinningWheel = () => (
+        <View style={styles.spinningWheel}>
+            <Text style={styles.spinningWheelText}>Another player is not ready</Text>
+        </View>
+    );
 
-  const renderScreenChange = () => {
-    if (activeGame?.status === GameProgress.Started) {
-      return (
-        renderSpinningWheel()
-      )
-    } else {
-      return (
-        renderMainGame()
-      )
-    }
-  };
+    const renderScreenChange = () => {
+        console.log(activeGame);
 
-  return (
-    <View style={styles.container}>
-      <Background />
-      {/* <ActiveGameContext.Provider value={values}> */}
-        {renderScreenChange()}
-      {/* </ActiveGameContext.Provider> */}
-    </View>
-  );
+        if (activeGame?.status === GameProgress.Started) {
+            return (
+                renderMainGame()
+            )
+        } else {
+            return (
+                renderSpinningWheel()
+            )
+        }
+    };
+
+    return (
+        <View style={styles.container}>
+            <Background />
+            {/* <ActiveGameContext.Provider value={values}> */}
+            {renderScreenChange()}
+            {/* </ActiveGameContext.Provider> */}
+        </View>
+    );
 };
 
 const createStyles = () => {
-  const { theme } = useTheme();
+    const { theme } = useTheme();
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    mainGame: {
-      flex: 1,
-    },
-    spinningWheel: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center'
-    },
-    spinningWheelText: {
-      fontSize: 20,
-      fontFamily: theme.fonts.bold,
-      color: theme.colors.tertiary,
-      textAlign: 'center'
-    },
-    competitorShipBoardContainer: {
-      flex: 5,
-      justifyContent: 'center',
-      alignItems: 'center',
-      pointerEvents: 'none',
-    },
-    myShipBoardContainer: {
-      flex: 5,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    empty: {
-      flex: 1,
-    },
-  });
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+        },
+        mainGame: {
+            flex: 1,
+        },
+        spinningWheel: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
+        spinningWheelText: {
+            fontSize: 20,
+            fontFamily: theme.fonts.bold,
+            color: theme.colors.tertiary,
+            textAlign: 'center'
+        },
+        competitorShipBoardContainer: {
+            flex: 5,
+            justifyContent: 'center',
+            alignItems: 'center',
+            pointerEvents: 'none',
+        },
+        myShipBoardContainer: {
+            flex: 5,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        empty: {
+            flex: 1,
+        },
+    });
 
-  return styles;
+    return styles;
 };
 
 export default PlayGameScreen;

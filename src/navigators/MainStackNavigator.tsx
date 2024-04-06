@@ -9,11 +9,12 @@ import { BackButton } from "../components/BackButton";
 import { useNavigation } from "@react-navigation/native";
 import { Game } from "../entities/game";
 import PlayGameScreen from "../screens/game/playGameScreen";
+import { PlayerPosition } from "../entities/playerPosition";
 
 export type MainStackParamList = {
   Home: {};
   CreateGame: { game: Game };
-  PlayGame: { gameId: string };
+  PlayGame: { gameId: string, playerPosition: PlayerPosition };
   User: {};
 };
 

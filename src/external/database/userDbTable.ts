@@ -2,7 +2,7 @@ import firestore from '@react-native-firebase/firestore';
 import {AppResponse} from '../../entities/appResponse';
 import {UserAccount} from '../../entities/user';
 import timeService from '../../services/timeService';
-import { Alert } from 'react-native';
+import {Alert} from 'react-native';
 
 export const usersRef = firestore().collection('users');
 
@@ -33,7 +33,7 @@ export const updateUser = async (user: UserAccount) => {
     return {isSuccessfull: true} as AppResponse;
   } catch (error) {
     console.log(error);
-    
+
     return {isSuccessfull: false, error: error} as AppResponse;
   }
 };

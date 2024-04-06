@@ -67,7 +67,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
     if (candidateGame.status == GameProgress.Started) {
       // await gameService.handlePlayGame(candidateGame);
 
-      navigation.navigate('PlayGame', { gameId: gameId });
+      navigation.navigate('PlayGame', { gameId: gameId, playerPosition });
     }
     else if (candidateGame.status == GameProgress.Created || candidateGame.status == GameProgress.PlayerMatched) {
       if (playerPosition == PlayerPosition.PlayerA) {

@@ -2,12 +2,6 @@ const getCurrentDateString = () => {
   return new Date().toISOString();
 };
 
-
-
-
-
-
-
 // // TODO: refactor. need to use UTC time and reuse date instead of strings
 
 // const convertUTCToLocalTime = (utcTime: string) => {
@@ -54,7 +48,6 @@ const getCurrentDateString = () => {
 
 //   return `${formattedHours}:${formattedMinutes}`;
 // };
-
 
 // const dateDiffInDays = (date1: Date, date2: Date) => {
 //   const diffTime = Math.abs(date2 - date1);

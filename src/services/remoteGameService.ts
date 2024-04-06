@@ -1,8 +1,8 @@
 import {Alert} from 'react-native';
 import {Game} from '../entities/game';
 import gamesDbTable from '../external/database/gamesDbTable';
-import { PlayerBoard } from '../entities/playerBoard';
-import { PlayerPosition } from '../entities/playerPosition';
+import {PlayerBoard} from '../entities/playerBoard';
+import {PlayerPosition} from '../entities/playerPosition';
 
 const getGame = async (gameId: string) => {
   const response = await gamesDbTable.getGame(gameId);
@@ -37,8 +37,16 @@ const updateGame = async (game: Game) => {
   return {} as Game;
 };
 
-const updatePlayer = async (gameId: string, player: PlayerBoard, playerPositionToUpdate: PlayerPosition) => {
-  const response = await gamesDbTable.updatePlayer(gameId, player, playerPositionToUpdate);
+const updatePlayer = async (
+  gameId: string,
+  player: PlayerBoard,
+  playerPositionToUpdate: PlayerPosition,
+) => {
+  const response = await gamesDbTable.updatePlayer(
+    gameId,
+    player,
+    playerPositionToUpdate,
+  );
 
   if (response.isSuccessfull) {
     return response.result as Game;
@@ -51,7 +59,18 @@ const updatePlayer = async (gameId: string, player: PlayerBoard, playerPositionT
 const getGameWithTracking = async (
   gameId: string,
   onRemoteGameUpdated: Function,
-) => await gamesDbTable.getGameWithTracking(gameId, onRemoteGameUpdated);
+) => {
+  const response = await gamesDbTable.getGameWithTracking(gameId, onRemoteGameUpdated);
+
+  if (response.isSuccessfull) {
+    return response.result as Game;
+  }
+
+  console.log('error getting game with tracking');
+  return {} as Game;
+
+
+};
 
 const remoteGameService = {
   getGame,

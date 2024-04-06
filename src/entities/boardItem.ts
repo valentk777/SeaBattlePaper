@@ -1,4 +1,4 @@
-import { BoardItemStatus } from "./boardItemStatus";
+import {BoardItemStatus} from './boardItemStatus';
 
 export interface BoardItem {
   location: string; // board location

@@ -102,7 +102,6 @@
 //   return thisMonthFirstDay;
 // }
 
-
 // const getLocalCurrentTimestamp = (): number => {
 //   return Date.now();
 // };
@@ -190,7 +189,6 @@
 //   const minutes = newDate.getMinutes();
 //   const formattedMinutes = getTwoDigitsNumber(minutes);
 
-
 //   console.log(`${formattedHours}:${formattedMinutes}`);
 //   console.log("2 qqqqqqqq")
 
@@ -211,8 +209,6 @@
 //   return nextDay;
 // };
 
-
-
 const timeService2 = {
   // getLocalCurrentTimestamp,
   // getLocalCurrentDayTimestamp,
@@ -220,8 +216,6 @@ const timeService2 = {
   // timestampToLocalString,
   // timestampToLocalDayString,
   // getNextDayTimestamp,
-
-
   // getTwoDigitsNumber,
   // dateToLocalTimeString,
   // combineDateAndTime,

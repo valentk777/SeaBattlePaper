@@ -93,8 +93,6 @@ const generateNewShipBoard = () => {
 //   );
 // };
 
-
-
 const shipBoardService = {
   generateLetters,
   generateNumbers,

@@ -1,20 +1,24 @@
-import {firebase} from '@react-native-firebase/database'
+import {firebase} from '@react-native-firebase/database';
 import {AppResponse} from '../../entities/appResponse';
 import timeService from '../../services/timeService';
-import { Game } from '../../entities/game';
-import { Alert } from 'react-native';
-import { PlayerBoard } from '../../entities/playerBoard';
-import { PlayerPosition } from '../../entities/playerPosition';
+import {Game} from '../../entities/game';
+import {Alert} from 'react-native';
+import {PlayerBoard} from '../../entities/playerBoard';
+import {PlayerPosition} from '../../entities/playerPosition';
 
 // https://rnfirebase.io/database/usage
-const database = firebase.app().database('https://seabattlepaper-default-rtdb.europe-west1.firebasedatabase.app/');
+const database = firebase
+  .app()
+  .database(
+    'https://seabattlepaper-default-rtdb.europe-west1.firebasedatabase.app/',
+  );
 
 export const getGame = async (gameId: string) => {
   try {
     const snapshot = await database.ref(`activeGames/${gameId}`).once('value');
     const activeGame = snapshot.val() as Game;
 
-    console.log('getGame: ', snapshot.val())
+    console.log('getGame: ', snapshot.val());
 
     if (activeGame === undefined) {
       return {isSuccessfull: true, result: {} as Game} as AppResponse;
@@ -62,21 +66,23 @@ export const addGame = async (activeGame: Game) => {
 
 export const updateGame = async (activeGame: Game) => {
   if (activeGame === undefined) {
-    return {isSuccessfull: false, error: "cannot update empty game"} as AppResponse;
+    return {
+      isSuccessfull: false,
+      error: 'cannot update empty game',
+    } as AppResponse;
   }
 
   try {
     const databaseRef = database.ref(`activeGames/${activeGame.id}`);
 
     activeGame.lastTimeUpdated = timeService.getCurrentDateString();
-    
+
     await databaseRef.update(activeGame);
 
     return {
       isSuccessfull: true,
       result: activeGame,
     } as AppResponse;
-
   } catch (error) {
     console.error(error);
 
@@ -84,17 +90,30 @@ export const updateGame = async (activeGame: Game) => {
   }
 };
 
-export const updatePlayer = async (gameId: string, player: PlayerBoard, playerPositionToUpdate: PlayerPosition) => {
+export const updatePlayer = async (
+  gameId: string,
+  player: PlayerBoard,
+  playerPositionToUpdate: PlayerPosition,
+) => {
   if (gameId === undefined) {
-    return {isSuccessfull: false, error: "cannot update unknown game"} as AppResponse;
+    return {
+      isSuccessfull: false,
+      error: 'cannot update unknown game',
+    } as AppResponse;
   }
 
   if (player === undefined) {
-    return {isSuccessfull: false, error: "cannot update empty player information"} as AppResponse;
+    return {
+      isSuccessfull: false,
+      error: 'cannot update empty player information',
+    } as AppResponse;
   }
 
   if (playerPositionToUpdate === undefined) {
-    return {isSuccessfull: false, error: "cannot update unknown player"} as AppResponse;
+    return {
+      isSuccessfull: false,
+      error: 'cannot update unknown player',
+    } as AppResponse;
   }
 
   try {
@@ -102,7 +121,6 @@ export const updatePlayer = async (gameId: string, player: PlayerBoard, playerPo
       const databaseRef = database.ref(`activeGames/${gameId}/playerA/`);
 
       await databaseRef.update(player);
-
     } else if (playerPositionToUpdate === PlayerPosition.PlayerB) {
       const databaseRef = database.ref(`activeGames/${gameId}/playerB/`);
 
@@ -120,53 +138,32 @@ export const updatePlayer = async (gameId: string, player: PlayerBoard, playerPo
   }
 };
 
-export const getGameWithTracking = async (gameId: string, onRemoteGameUpdated: Function) => {
+export const getGameWithTracking = async (
+  gameId: string,
+  onRemoteGameUpdated: Function,
+) => {
   try {
     database.ref(`activeGames/${gameId}`).on('value', (snapshot: any) => {
       const activeGame = snapshot.val();
 
       if (activeGame === undefined) {
-        onRemoteGameUpdated({} as Game);
-        return;
+        onRemoteGameUpdated({id: gameId} as Game);
+
+        return {
+          isSuccessfull: false,
+          result: {id: gameId} as Game,
+        } as AppResponse;
       }
 
       onRemoteGameUpdated(activeGame as Game);
-    });
-  } catch (error) {
-    console.error(error);
-
-    return {isSuccessfull: false, error: error} as AppResponse;
-  }
-};
-
-
-
-
-
-
-
-
-export const getAllActiveGames = async () => {
-  try {
-    const snapshot = await database.ref('activeGames').once('value');
-
-    if (snapshot.exists()) {
-      const activeGames = snapshot.val();
-
-      console.log('getAllActiveGames: ', activeGames);
-
-      if (activeGames === undefined) {
-        return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
-      }
 
       return {
         isSuccessfull: true,
-        result: activeGames as Game[],
+        result: activeGame,
       } as AppResponse;
-    } else {
-      console.log('not exist');
-      return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
-    }
+    });
+
+    return {isSuccessfull: false, error: "Issues with database"} as AppResponse;
   } catch (error) {
     console.error(error);
 
@@ -174,13 +171,33 @@ export const getAllActiveGames = async () => {
   }
 };
 
+// export const getAllActiveGames = async () => {
+//   try {
+//     const snapshot = await database.ref('activeGames').once('value');
 
+//     if (snapshot.exists()) {
+//       const activeGames = snapshot.val();
 
+//       console.log('getAllActiveGames: ', activeGames);
 
+//       if (activeGames === undefined) {
+//         return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
+//       }
 
+//       return {
+//         isSuccessfull: true,
+//         result: activeGames as Game[],
+//       } as AppResponse;
+//     } else {
+//       console.log('not exist');
+//       return {isSuccessfull: true, result: [] as Game[]} as AppResponse;
+//     }
+//   } catch (error) {
+//     console.error(error);
 
-
-
+//     return {isSuccessfull: false, error: error} as AppResponse;
+//   }
+// };
 
 // export const removeActiveGame = async (
 //   gameId: string
@@ -199,7 +216,7 @@ export const getAllActiveGames = async () => {
 //     return {isSuccessfull: true} as AppResponse;
 //   } catch (error) {
 //     console.log(error);
-    
+
 //     return {isSuccessfull: false, error: error} as AppResponse;
 //   }
 // };
@@ -211,11 +228,7 @@ const gamesDbTable = {
   updatePlayer,
   getGameWithTracking,
 
-
-
-  
-  getAllActiveGames,
-
+  // getAllActiveGames,
 };
 
 export default gamesDbTable;
