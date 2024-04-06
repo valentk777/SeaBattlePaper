@@ -8,11 +8,12 @@ import { LogOutButton } from "../components/LogOutButton";
 import { BackButton } from "../components/BackButton";
 import { useNavigation } from "@react-navigation/native";
 import { Game } from "../entities/game";
+import PlayGameScreen from "../screens/game/playGameScreen";
 
 export type MainStackParamList = {
   Home: {};
   CreateGame: { game: Game };
-  // PlayGame: { gameId: string, isHost: boolean };
+  PlayGame: { gameId: string };
   User: {};
 };
 
@@ -53,16 +54,6 @@ const MainStackNavigator = () => {
           headerLeft: () => (<BackButton onPress={() => navigation.goBack()} />),
         }}
       />
-      {/* <MainStack.Screen
-        name="JoinGame"
-        component={JoinGameScreen}
-        options={{
-          title: '',
-          headerTransparent: true,
-          headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
-          headerLeft: () => (<BackButton onPress={() => navigation.goBack()} />),
-        }}
-      />
       <MainStack.Screen
         name="PlayGame"
         component={PlayGameScreen}
@@ -72,7 +63,7 @@ const MainStackNavigator = () => {
           headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
           headerLeft: () => (<BackButton onPress={() => navigation.navigate("Home")} />),
         }}
-      /> */}
+      />
       {/* <MainStack.Screen
         name="User"
         component={UserScreen}

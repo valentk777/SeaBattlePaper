@@ -67,9 +67,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
     if (candidateGame.status == GameProgress.Started) {
       // await gameService.handlePlayGame(candidateGame);
 
-      // navigation.navigate('PlayGame', { gameId: game.id, isHost: gameService.isHost(game, user.id) });
-
-      // return;
+      navigation.navigate('PlayGame', { gameId: gameId });
     }
     else if (candidateGame.status == GameProgress.Created || candidateGame.status == GameProgress.PlayerMatched) {
       if (playerPosition == PlayerPosition.PlayerA) {
@@ -78,9 +76,6 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
       }
       else if (candidateGame.playerB?.id === user.id) {
         // second player rejoin the game
-        // await gameService.createNewGameWithStoring(candidateGame);
-
-        //TODO: maybe it is better to calculate the player board here and then pass as parameter?
         navigation.navigate('CreateGame', { game: candidateGame });
       } else {
         // new second player

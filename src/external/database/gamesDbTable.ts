@@ -120,7 +120,24 @@ export const updatePlayer = async (gameId: string, player: PlayerBoard, playerPo
   }
 };
 
+export const getGameWithTracking = async (gameId: string, onRemoteGameUpdated: Function) => {
+  try {
+    database.ref(`activeGames/${gameId}`).on('value', (snapshot: any) => {
+      const activeGame = snapshot.val();
 
+      if (activeGame === undefined) {
+        onRemoteGameUpdated({} as Game);
+        return;
+      }
+
+      onRemoteGameUpdated(activeGame as Game);
+    });
+  } catch (error) {
+    console.error(error);
+
+    return {isSuccessfull: false, error: error} as AppResponse;
+  }
+};
 
 
 
@@ -157,24 +174,7 @@ export const getAllActiveGames = async () => {
   }
 };
 
-export const setGameWithTracking = async (gameId: string, setActiveGameOnChange: Function) => {
-  try {
-    database.ref(`activeGames/${gameId}`).on('value', (snapshot: any) => {
-      const activeGame = snapshot.val();
 
-      if (activeGame === undefined) {
-        setActiveGameOnChange({} as Game);
-        return;
-      }
-
-      setActiveGameOnChange(activeGame as Game);
-    });
-  } catch (error) {
-    console.error(error);
-
-    return {isSuccessfull: false, error: error} as AppResponse;
-  }
-};
 
 
 
@@ -209,10 +209,12 @@ const gamesDbTable = {
   addGame,
   updateGame,
   updatePlayer,
+  getGameWithTracking,
+
+
 
   
   getAllActiveGames,
-  setGameWithTracking,
 
 };
 

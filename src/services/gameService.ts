@@ -137,6 +137,15 @@ const updatePlayer = async (
   }
 };
 
+const getGameWithTracking = async (
+  gameId: string,
+  onRemoteGameUpdated: Function,
+) => {
+  console.log("game updated");
+  await remoteGameService.getGameWithTracking(gameId, onRemoteGameUpdated);
+};
+
+
 // const storeNewGame = async (game: Game) => {
 //   try {
 //     const user = await userService.getCurrentUser();
@@ -190,12 +199,7 @@ const updatePlayer = async (
 //   console.log('Cannot find local game. Create a new one');
 // };
 
-// const setGameWithTracking = async (
-//   gameId: string,
-//   setActiveGameOnChange: Function,
-// ) => {
-//   await gamesDbTable.setGameWithTracking(gameId, setActiveGameOnChange);
-// };
+
 
 // const getGameFromStorage = async (gameId: string) => {
 //   try {
@@ -287,6 +291,7 @@ const gameService = {
   getPlayerPosition,
   updateGame,
   updatePlayer,
+  getGameWithTracking,
 
   // createNewGameWithStoring,
   // getRemoteGameById,

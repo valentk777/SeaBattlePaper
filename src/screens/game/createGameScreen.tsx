@@ -63,7 +63,7 @@ export const CreateGameScreen = ({ navigation, route }: CreateGameScreenProps) =
       await gameService.updatePlayer(game.id, { ...game.playerB, ships: ships, status: PlayerStatus.Started }, playerPosition);
     }
 
-    // navigation.navigate('PlayGame', {  });
+    navigation.navigate('PlayGame', { gameId: game.id });
   }
 
   return (

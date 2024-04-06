@@ -48,12 +48,17 @@ const updatePlayer = async (gameId: string, player: PlayerBoard, playerPositionT
   return {} as Game;
 };
 
+const getGameWithTracking = async (
+  gameId: string,
+  onRemoteGameUpdated: Function,
+) => await gamesDbTable.getGameWithTracking(gameId, onRemoteGameUpdated);
 
 const remoteGameService = {
   getGame,
   storeNewGame,
   updateGame,
   updatePlayer,
+  getGameWithTracking,
 };
 
 export default remoteGameService;
