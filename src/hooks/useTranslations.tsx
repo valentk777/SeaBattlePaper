@@ -25,14 +25,14 @@
 
 // interface ITranslationContext {
 //   currentLanguage: string;
-// //   changeLanguage: (language: string) => Promise<void>;
-// //   tTime: (date: string, timeFormat?: string) => string;
+//   //   changeLanguage: (language: string) => Promise<void>;
+//   //   tTime: (date: string, timeFormat?: string) => string;
 // };
 
 // const TranslationContext = createContext<ITranslationContext>({
 //   currentLanguage: USER_PREFERRED_LANGUAGE,
-// //   changeLanguage: (language: string) => { },
-// //   tTime: (date: string, timeFormat = 'PPPP') => ""
+//   //   changeLanguage: (language: string) => { },
+//   //   tTime: (date: string, timeFormat = 'PPPP') => ""
 // });
 
 // interface TranslationContextProviderProps

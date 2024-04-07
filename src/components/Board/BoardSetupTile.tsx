@@ -4,15 +4,15 @@ import { useTheme } from '../../hooks/useTheme';
 import constants from '../../constants/constants';
 import { BoardItem } from '../../entities/boardItem';
 
-type BoardActiveTileProps = {
+type BoardSetupTileProps = {
   item: BoardItem
   onPress: () => void;
 };
 
-const BoardActiveTile = ({
+const BoardSetupTile = ({
   item,
   onPress,
-}: BoardActiveTileProps) => {
+}: BoardSetupTileProps) => {
   const styles = createStyles();
 
   return (
@@ -42,7 +42,7 @@ const createStyles = () => {
   return styles;
 };
 
-export default memo(BoardActiveTile, (prevProps, nextProps) => {
+export default memo(BoardSetupTile, (prevProps, nextProps) => {
   // This function returns true if passing nextProps would return the same result as passing prevProps to render
   return prevProps.item === nextProps.item;
 });

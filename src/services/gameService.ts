@@ -76,6 +76,7 @@ const createGameTemplate = (user: UserAccount) => {
     playerA: createPlayerTemplate(user),
     timeCreated: timeService.getCurrentDateString(),
     status: GameProgress.Created,
+    turn: PlayerPosition.PlayerA, // Make it random?
   } as Game;
 };
 

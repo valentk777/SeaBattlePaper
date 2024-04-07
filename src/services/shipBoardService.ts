@@ -87,7 +87,7 @@ const generateNewShipBoard = () => {
 //   return generateNewShipBoard();
 // }
 
-// const updateBoardActiveTile = (shipBoard: BoardItem[], item: BoardItem) => {
+// const updateBoardSetupTile = (shipBoard: BoardItem[], item: BoardItem) => {
 //   return shipBoard.map(currentItem =>
 //     currentItem.location === item.location ? item : currentItem,
 //   );
@@ -100,7 +100,7 @@ const shipBoardService = {
 
   // getCurrentPlayerBoard,
   // getCompetitorPlayerBoard,
-  // updateBoardActiveTile,
+  // updateBoardSetupTile,
   // publishPlayerBoardsetWithStoring,
   // generateNewShipBoardLocations,
 };

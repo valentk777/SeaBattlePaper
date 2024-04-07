@@ -3,18 +3,18 @@ import { FlatList, StyleSheet, View } from 'react-native'
 import { useTheme } from '../../hooks/useTheme';
 import constants from '../../constants/constants';
 import { PaperArea } from '../Background/PaperArea';
-import BoardActiveTile from './BoardActiveTile';
 import { BoardItem } from '../../entities/boardItem';
 import shipBoardService from '../../services/shipBoardService';
 import BoardPresentationTile from './BoardPresentationTile';
 
 interface ShipsBoardProps {
   board: BoardItem[];
-  onPress: (neweItem: BoardItem) => void;
+  renderItem: (item: BoardItem) => any;
   disabled: boolean;
+  // heightPercent?: float;
 }
 
-const Board = ({ board, onPress, disabled }: ShipsBoardProps) => {
+const Board = ({ board, renderItem, disabled }: ShipsBoardProps) => {
   const styles = createStyles();
 
   const [letters, setLetters] = useState(shipBoardService.generateLetters());
@@ -59,7 +59,7 @@ const Board = ({ board, onPress, disabled }: ShipsBoardProps) => {
               <FlatList
                 data={board}
                 keyExtractor={(item) => item.location}
-                renderItem={({ item }) => (<BoardActiveTile item={item} onPress={() => onPress(item)} />)}
+                renderItem={({ item }) => renderItem(item)}
                 numColumns={10}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}

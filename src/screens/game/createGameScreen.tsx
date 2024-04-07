@@ -13,6 +13,7 @@ import { PlayerStatus } from '../../entities/playerStatus';
 import gameService from '../../services/gameService';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { PlayerPosition } from '../../entities/playerPosition';
+import BoardSetupTile from '../../components/Board/BoardSetupTile';
 
 type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateGame'>;
 
@@ -45,25 +46,24 @@ export const CreateGameScreen = ({ navigation, route }: CreateGameScreenProps) =
     }
 
     setCurrentBoard(oldBoard => {
-      return oldBoard.map((item) => {
-        if (item.location === selectedBox.location) {
-          return { ...item, isShip: !item.isShip };
-        } else {
-          return item;
-        }
-      });
+      return oldBoard.map((item) => item.location === selectedBox.location ? { ...item, isShip: !item.isShip } : item);
     });
   };
 
   const onStartGamePress = async () => {
-
     if (playerPosition === PlayerPosition.PlayerA) {
-      await gameService.updatePlayer(game.id, { ...game.playerA, ships: ships, status: PlayerStatus.Started }, playerPosition);
-    } else {
-      await gameService.updatePlayer(game.id, { ...game.playerB, ships: ships, status: PlayerStatus.Started }, playerPosition);
-    }
+      const playerBoard = { ...game.playerA, ships: ships, status: PlayerStatus.Started };
 
-    navigation.navigate('PlayGame', { gameId: game.id, playerPosition });
+      await gameService.updatePlayer(game.id, playerBoard, playerPosition);
+
+      navigation.navigate('PlayGame', { gameId: game.id, playerBoard: playerBoard, playerPosition });
+    } else {
+      const playerBoard = { ...game.playerB, ships: ships, status: PlayerStatus.Started };
+
+      await gameService.updatePlayer(game.id, playerBoard, playerPosition);
+      
+      navigation.navigate('PlayGame', { gameId: game.id, playerBoard: playerBoard, playerPosition });
+    }
   }
 
   return (
@@ -92,7 +92,7 @@ export const CreateGameScreen = ({ navigation, route }: CreateGameScreenProps) =
         </View>
       </View>
       <View style={styles.shipBoardContainer}>
-        <Board board={currentBoard} onPress={onBoardTilePress} disabled={false} />
+        <Board board={currentBoard} renderItem={(item) => (<BoardSetupTile item={item} onPress={() => onBoardTilePress(item)} />)} disabled={false} />
       </View>
       <View style={styles.empty} />
       <PaperAreaButton

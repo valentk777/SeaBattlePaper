@@ -10,11 +10,12 @@ import { useNavigation } from "@react-navigation/native";
 import { Game } from "../entities/game";
 import PlayGameScreen from "../screens/game/playGameScreen";
 import { PlayerPosition } from "../entities/playerPosition";
+import { PlayerBoard } from "../entities/playerBoard";
 
 export type MainStackParamList = {
   Home: {};
   CreateGame: { game: Game };
-  PlayGame: { gameId: string, playerPosition: PlayerPosition };
+  PlayGame: { gameId: string, playerBoard: PlayerBoard, playerPosition: PlayerPosition };
   User: {};
 };
 

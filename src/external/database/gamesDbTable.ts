@@ -148,22 +148,12 @@ export const getGameWithTracking = async (
 
       if (activeGame === undefined) {
         onRemoteGameUpdated({id: gameId} as Game);
-
-        return {
-          isSuccessfull: false,
-          result: {id: gameId} as Game,
-        } as AppResponse;
       }
 
       onRemoteGameUpdated(activeGame as Game);
-
-      return {
-        isSuccessfull: true,
-        result: activeGame,
-      } as AppResponse;
     });
 
-    return {isSuccessfull: false, error: "Issues with database"} as AppResponse;
+    return {isSuccessfull: true } as AppResponse;
   } catch (error) {
     console.error(error);
 

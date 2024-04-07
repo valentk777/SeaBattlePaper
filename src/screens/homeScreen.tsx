@@ -13,6 +13,7 @@ import { PaperAreaButton } from '../components/ButtonWrapper/PaperAreaButton';
 import { PaperArea } from '../components/Background/PaperArea';
 import remoteGameService from '../services/remoteGameService';
 import { PlayerPosition } from '../entities/playerPosition';
+import { PlayerStatus } from '../entities/playerStatus';
 
 type HomeScreenProps = NativeStackScreenProps<MainStackParamList, 'Home'>;
 
@@ -22,7 +23,6 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const styles = createStyles();
 
   const [gameId, setGameId] = useState('');
-  // const [activeGame, setActiveGame] = useState({ id: "" } as Game);
   const user = useCurrentUser();
 
   const ref = useBlurOnFulfill({ value: gameId, cellCount: CELL_COUNT });
@@ -46,15 +46,15 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
       return;
     }
 
-    const candidateGame: Game = await remoteGameService.getGame(gameId);
+    const game: Game = await remoteGameService.getGame(gameId);
 
-    if (candidateGame === undefined || candidateGame.id != gameId) {
+    if (game === undefined || game.id != gameId) {
       console.log("Game does not exist or game id is not match");
 
       return;
     }
 
-    const isGameValid = await gameService.validateGame(candidateGame, user.id);
+    const isGameValid = await gameService.validateGame(game, user.id);
 
     if (!isGameValid) {
       console.log("cannot join to game. game is not valid");
@@ -62,32 +62,59 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
       return;
     }
 
-    const playerPosition = gameService.getPlayerPosition(candidateGame, user.id)
+    const playerPosition = gameService.getPlayerPosition(game, user.id)
 
-    if (candidateGame.status == GameProgress.Started) {
-      // await gameService.handlePlayGame(candidateGame);
+    if (game.status == GameProgress.Completed) {
+      console.log("Game already ended");
+      Alert.alert("Game already ended");
 
-      navigation.navigate('PlayGame', { gameId: gameId, playerPosition });
+      return;
     }
-    else if (candidateGame.status == GameProgress.Created || candidateGame.status == GameProgress.PlayerMatched) {
-      if (playerPosition == PlayerPosition.PlayerA) {
-        // host rejoin game
-        navigation.navigate('CreateGame', { game: candidateGame });
-      }
-      else if (candidateGame.playerB?.id === user.id) {
-        // second player rejoin the game
-        navigation.navigate('CreateGame', { game: candidateGame });
+
+    // Both players started the game
+    if (game.status == GameProgress.Started) {
+      navigation.navigate('PlayGame', {
+        gameId: gameId,
+        playerBoard: playerPosition === PlayerPosition.PlayerA ? game.playerA : game.playerB,
+        playerPosition
+      });
+
+      return;
+    }
+
+    // Need to decide per player
+    if (playerPosition == PlayerPosition.PlayerA) {
+      if (game.playerA?.status == PlayerStatus.Started) {
+        // Start game
+        navigation.navigate('PlayGame', { gameId: gameId, playerBoard: game.playerA, playerPosition });
+      } else if (game.playerA?.id === user.id) {
+        // Re-join game
+        navigation.navigate('CreateGame', { game: game });
       } else {
-        // new second player
-        const playerB = gameService.createPlayerTemplate(user);
-        const updatedGame = { ...candidateGame, playerB: playerB, status: GameProgress.PlayerMatched } as Game;
+        // Add new player
+        const playerA = gameService.createPlayerTemplate(user);
+        const updatedGame = { ...game, playerA: playerA, status: GameProgress.Created } as Game;
 
         await gameService.updateGame(updatedGame);
 
         navigation.navigate('CreateGame', { game: updatedGame });
       }
     } else {
-      console.log("Game already ended");
+      if (game.playerB?.status == PlayerStatus.Started) {
+        // Start game
+        navigation.navigate('PlayGame', { gameId: gameId, playerBoard: game.playerB, playerPosition });
+      } else if (game.playerB?.id === user.id) {
+        // Re-join game
+        navigation.navigate('CreateGame', { game: game });
+      } else {
+        // Add new player
+        const playerB = gameService.createPlayerTemplate(user);
+        const updatedGame = { ...game, playerB: playerB, status: GameProgress.PlayerMatched } as Game;
+
+        await gameService.updateGame(updatedGame);
+
+        navigation.navigate('CreateGame', { game: updatedGame });
+      }
     }
   };
 
