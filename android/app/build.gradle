@@ -92,8 +92,8 @@ android {
         applicationId "com.baitupasaulis.seabattlepaper"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 68
-        versionName "1.1.13"
+        versionCode 69
+        versionName "1.1.14"
     }
     signingConfigs {
         release {
