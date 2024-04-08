@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View } from "react-native";
 import { useTheme } from '../../hooks/useTheme';
 import constants from '../../constants/constants';
 import { BoardItem } from '../../entities/boardItem';
@@ -12,22 +12,14 @@ type BoardOpponentGameTileProps = {
 const BoardOpponentGameTile = ({ item }: BoardOpponentGameTileProps) => {
   const styles = createStyles();
 
-  console.log("re-render BoardOpponentGameTile");
-
-  let tileStyle = {};
-
-  if (item.isShip && item.status == BoardItemStatus.Attacked) {
-    tileStyle = styles.attackedShip
-  } else if (!item.isShip && item.status == BoardItemStatus.Attacked) {
-    tileStyle = styles.missed
-  } else if (item.isShip) {
-    tileStyle = styles.ship
-  }
-
   return (
     <View
-      style={[styles.gridItemButtom, tileStyle]}
-    />
+      style={styles.gridItemButtom}
+    >
+      {item.isShip && item.status !== BoardItemStatus.Attacked ? <Text style={styles.ship} /> : null}
+      {item.isShip && item.status === BoardItemStatus.Attacked ? <Text style={styles.attackedShip}>✖</Text> : null}
+      {!item.isShip && item.status === BoardItemStatus.Attacked ? <Text style={styles.missed}>⊙</Text> : <Text />}
+    </View>
   )
 };
 
@@ -43,15 +35,22 @@ const createStyles = () => {
       backgroundColor: theme.colors.canvas,
     },
     ship: {
+      height: "100%",
+      textAlign: "center",
       backgroundColor: theme.colors.tertiary
     },
     attackedShip: {
-      backgroundColor: "red"
+      height: "100%",
+      textAlign: "center",
+      color: theme.colors.secondary,
+      backgroundColor: theme.colors.tertiary
     },
     missed: {
-      backgroundColor: "green"
+      height: "100%",
+      textAlign: "center",
+      color: theme.colors.tertiary,
+      fontSize: theme.sizes.medium
     },
-
   });
 
   return styles;

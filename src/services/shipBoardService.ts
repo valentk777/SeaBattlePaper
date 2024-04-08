@@ -1,6 +1,6 @@
 import {BoardItem} from '../entities/boardItem';
 import {Game} from '../entities/game';
-import gamesDbTable from '../external/database/gamesDbTable';
+import gamesDbTable from '../integrations/repositories/remote/gamesDbTable';
 import {BoardItemStatus} from '../entities/boardItemStatus';
 
 const generateLetters = () => {

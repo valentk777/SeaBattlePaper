@@ -1,5 +1,5 @@
 import React, { ProviderProps, createContext, useContext, useEffect, useMemo, useReducer } from 'react'
-import { authManager } from '../external/auth/firebaseAuthManager';
+import { authManager } from '../integrations/auth/firebaseAuthManager';
 import userService from '../services/userService';
 import { Alert } from 'react-native';
 import { LoginUser, UserAccount } from '../entities/user';

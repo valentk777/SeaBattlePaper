@@ -1,11 +1,11 @@
 // import React, { ProviderProps, createContext, useContext, useEffect, useMemo, useState } from 'react';
-// import i18n, { USER_PREFERRED_LANGUAGE } from '../external/i18next';
+// import i18n, { USER_PREFERRED_LANGUAGE } from '../integrations/i18next';
 // import { format } from 'date-fns'
 // import { lt, enUS, lv, pt, es, fr } from 'date-fns/locale'
 // import userService from '../services/userService';
 // import { useCurrentUser } from './useCurrentUser';
 // import { LocaleConfig } from 'react-native-calendars';
-// import { hourPickerLocales } from '../external/i18next/translations/hourPickerLocales';
+// import { hourPickerLocales } from '../integrations/i18next/translations/hourPickerLocales';
 
 // import 'dayjs/locale/lt'
 // import 'dayjs/locale/en'

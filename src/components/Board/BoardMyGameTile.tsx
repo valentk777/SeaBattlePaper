@@ -16,32 +16,16 @@ const BoardMyGameTile = ({
 }: BoardMyGameTileProps) => {
   const styles = createStyles();
 
-  console.log("re-render BoardMyGameTile");
-
-  let tileStyle = {};
-
-  // if (item.isShip && item.status == BoardItemStatus.Attacked) {
-  //   tileStyle = styles.attackedShip
-  // } else if (!item.isShip && item.status == BoardItemStatus.Attacked) {
-  //   tileStyle = styles.missed
-  // } else if (item.status == BoardItemStatus.Marked) {
-  //   tileStyle = styles.marked
-  // }
-
   return (
     <Pressable
       style={styles.gridItemButtom}
       onPress={onPress}
       disabled={item.status !== BoardItemStatus.NotSelected}
     >
-      {item.isShip && item.status === BoardItemStatus.Attacked ? <Text style={styles.attackedShip}/> : null}
-      {!item.isShip && item.status === BoardItemStatus.Attacked ? <Text style={styles.missed}>•</Text> : <Text/>}
-      {item.status === BoardItemStatus.Marked ? <Text style={styles.marked}>?</Text> : <Text/>}
-
-
-
-
-      </Pressable>
+      {item.isShip && item.status === BoardItemStatus.Attacked ? <Text style={styles.attackedShip}>✖</Text> : null}
+      {!item.isShip && item.status === BoardItemStatus.Attacked ? <Text style={styles.missed}>⊙</Text> : null}
+      {item.status === BoardItemStatus.Marked ? <Text style={styles.marked}>✔</Text> : null}
+    </Pressable>
   )
 };
 
@@ -59,17 +43,19 @@ const createStyles = () => {
     attackedShip: {
       height: "100%",
       textAlign: "center",
+      color: theme.colors.secondary,
       backgroundColor: theme.colors.tertiary
     },
     missed: {
       height: "100%",
       textAlign: "center",
-      backgroundColor: "green"
+      color: theme.colors.tertiary,
+      fontSize: theme.sizes.medium
     },
     marked: {
       height: "100%",
       textAlign: "center",
-      backgroundColor: "red"
+      color: theme.colors.tertiary,
     }
   });
 

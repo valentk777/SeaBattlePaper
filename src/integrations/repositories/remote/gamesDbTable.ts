@@ -1,10 +1,10 @@
 import {firebase} from '@react-native-firebase/database';
-import {AppResponse} from '../../entities/appResponse';
-import timeService from '../../services/timeService';
-import {Game} from '../../entities/game';
+import {AppResponse} from '../../../entities/appResponse';
+import timeService from '../../../services/timeService';
+import {Game} from '../../../entities/game';
 import {Alert} from 'react-native';
-import {PlayerBoard} from '../../entities/playerBoard';
-import {PlayerPosition} from '../../entities/playerPosition';
+import {PlayerBoard} from '../../../entities/playerBoard';
+import {PlayerPosition} from '../../../entities/playerPosition';
 
 // https://rnfirebase.io/database/usage
 const database = firebase

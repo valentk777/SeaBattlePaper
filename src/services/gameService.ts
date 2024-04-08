@@ -6,7 +6,7 @@ import {PlayerStatus} from '../entities/playerStatus';
 import {Alert} from 'react-native';
 import userService from './userService';
 import {UserAccount} from '../entities/user';
-import localStorageService from './localStorageService';
+import localRepository from '../integrations/repositories/localRepository';
 import remoteGameService from './remoteGameService';
 import {PlayerPosition} from '../entities/playerPosition';
 
@@ -36,6 +36,8 @@ const validateGame = async (candidateGame: Game, userId: string) => {
 
     return false;
   }
+
+  console.log(candidateGame);
 
   if (candidateGame.playerA?.id == userId) {
     console.log('Host can re-join to active the game');
@@ -90,7 +92,7 @@ const createNewGameWithStoring = async (game: Game) => {
 
   if (updatedGame?.id) {
     const gameKey = getGameKey(user.id, updatedGame.id);
-    await localStorageService.storeData(gameKey, updatedGame);
+    await localRepository.storeData(gameKey, updatedGame);
 
     return updatedGame;
   } else {
@@ -100,6 +102,10 @@ const createNewGameWithStoring = async (game: Game) => {
 };
 
 const getPlayerPosition = (game: Game, userId: string) => {
+  if (userId == undefined) {
+    console.error("Cannot find position, because user is undefined")
+  }
+
   if (game?.playerA?.id === userId) {
     return PlayerPosition.PlayerA;
   }
@@ -114,7 +120,7 @@ const updateGame = async (game: Game) => {
     return {} as Game;
   }
 
-  await localStorageService.storeData(getGameKey(user.id, game.id), game);
+  await localRepository.storeData(getGameKey(user.id, game.id), game);
   await remoteGameService.updateGame(game);
 };
 
@@ -129,7 +135,7 @@ const updatePlayer = async (
       player,
       playerPositionToUpdate,
     );
-    await localStorageService.storeData(
+    await localRepository.storeData(
       getPlayerKey(player.id, gameId, playerPositionToUpdate),
       player,
     );
@@ -158,7 +164,7 @@ const getGameWithTracking = async (
 //       return false;
 //     }
 
-//     localStorageService.storeData(getGameKey(user.id, game.id), game);
+//     localRepository.storeData(getGameKey(user.id, game.id), game);
 
 //     const response = await gamesDbTable.addActiveGame(game);
 

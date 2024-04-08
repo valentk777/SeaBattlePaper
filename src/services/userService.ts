@@ -1,16 +1,16 @@
 import {Alert} from 'react-native';
-import localStorageService from './localStorageService';
+import localRepository from '../integrations/repositories/localRepository';
 import {UserAccount} from '../entities/user';
-// import userDbTable from '../external/database/userDbTable';
+// import userDbTable from '../integrations/database/userDbTable';
 
 const getCurrentUser = async (): Promise<UserAccount> => {
-  return await localStorageService.getData('current_user').catch(error => {
+  return await localRepository.getData('current_user').catch(error => {
     console.log(error.message);
   });
 };
 
 const updateUser = async (user: UserAccount | null) => {
-  await localStorageService.storeData('current_user', user).catch(error => {
+  await localRepository.storeData('current_user', user).catch(error => {
     console.log(error.message);
   });
 };
@@ -58,7 +58,7 @@ const updateUser = async (user: UserAccount | null) => {
 // };
 
 const deleteUser = async () => {
-  await localStorageService.removeData('current_user').catch(error => {
+  await localRepository.removeData('current_user').catch(error => {
     console.log(error.message);
   });
 };

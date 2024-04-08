@@ -15,6 +15,9 @@ import BoardMyGameTile from '../../components/Board/BoardMyGameTile';
 import BoardOpponentGameTile from '../../components/Board/BoardOpponentGameTile';
 import { BoardItemStatus } from '../../entities/boardItemStatus';
 import { PaperArea } from '../../components/Background/PaperArea';
+import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
+import { ActiveGameHeader } from '../../navigators/ActiveGameHeader';
+import { BackButton } from '../../components/BackButton';
 
 type PlayGameScreenProps = NativeStackScreenProps<MainStackParamList, 'PlayGame'>;
 
@@ -25,7 +28,7 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
 
   const [activeGame, setActiveGame] = useState({ id: gameId } as Game);
   const [isYourTurn, setIsYourTurn] = useState(activeGame.turn === playerPosition);
-  const [isMarkerMode, setIsMarkerMode] = useState(false);
+  const [isMarkingMode, setIsMarkingMode] = useState(true);
 
   const [myBoard, setMyBoard] = useState(shipBoardService.generateNewShipBoard());
   const [opponentBoard, setOpponentBoard] = useState(shipBoardService.generateNewShipBoard());
@@ -36,8 +39,6 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
   useEffect(() => {
     const createNewGameAsync = async () => {
       try {
-        console.log("try to create game");
-
         setOpponentBoard(oldBoard => {
           return oldBoard.map((item) => playerBoard.ships.some(x => x == item.location) ? { ...item, isShip: true } : item);
         });
@@ -66,7 +67,6 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
   }, []);
 
   const onRemoteGameUpdated = async (game: Game) => {
-    Alert.alert("Remote game updated")
     const opponent = playerPosition === PlayerPosition.PlayerA ? game?.playerB : game.playerA;
 
     // this one could be done once.
@@ -89,7 +89,12 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
   }
 
   const onBoardTilePress = async (selectedBox: BoardItem) => {
-    if (isMarkerMode) {
+    console.log(activeGame);
+
+    console.warn(isMarkingMode);
+
+    if (isMarkingMode) {
+      Alert.alert("edit mode");
       setMyMarkedShips(oldArray => {
         return [...oldArray, selectedBox.location]
       });
@@ -112,8 +117,6 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
   };
 
   const updateGame = async () => {
-    console.error(isYourTurn);
-
     if (playerPosition === PlayerPosition.PlayerA) {
       const updatedGame = {
         ...activeGame,
@@ -135,14 +138,9 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
 
   const renderMainGame = () => (
     <View style={styles.mainGame} >
-      <PaperArea
-        areaStyle={styles.turnSection}
-        componentStyle={styles.turnSectionComponentStyle}
-      >
-        {isYourTurn
-          ? (<Text style={styles.turnText}>Your turn</Text>)
-          : (<Text style={styles.turnText}>Another player turn</Text>)}
-      </PaperArea>
+      <View style={styles.empty} >
+        <ActiveGameHeader game={activeGame} navigation={navigation} isYourTurn={isYourTurn} isMarkingMode={isMarkingMode} onMarkingMode={() => { setIsMarkingMode(true) }} />
+      </View>
       <View style={styles.competitorShipBoardContainer}>
         <Board board={opponentBoard} renderItem={(item) => (<BoardOpponentGameTile item={item} />)} disabled={!isYourTurn} />
       </View>
@@ -155,6 +153,7 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
   const renderSpinningWheel = () => (
     <View style={styles.spinningWheel}>
       <Text style={styles.spinningWheelText}>Another player is not ready</Text>
+      <Text style={styles.spinningWheelText}>Game ID: {gameId}</Text>
     </View>
   );
 
@@ -184,10 +183,10 @@ const createStyles = () => {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
+      height: '100%',
     },
     mainGame: {
-      flex: 1,
+      height: '100%',
     },
     spinningWheel: {
       flex: 1,
@@ -211,24 +210,9 @@ const createStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
     },
-    turnSection: {
-      flex: 0.9,
-      width: '60%',
-      alignSelf: 'center',
-      justifyContent: 'center',
+    empty: {
+      flex: 1,
     },
-    turnSectionComponentStyle: {
-      backgroundColor: theme.colors.canvas,
-      height: 32
-    },
-    turnText: {
-      fontSize: theme.sizes.medium,
-      fontFamily: theme.fonts.medium,
-      color: theme.colors.tertiary,
-      textAlign: 'center',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }
   });
 
   return styles;

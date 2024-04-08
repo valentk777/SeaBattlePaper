@@ -1,6 +1,6 @@
 import {Alert} from 'react-native';
 import {Game} from '../entities/game';
-import gamesDbTable from '../external/database/gamesDbTable';
+import gamesDbTable from '../integrations/repositories/remote/gamesDbTable';
 import {PlayerBoard} from '../entities/playerBoard';
 import {PlayerPosition} from '../entities/playerPosition';
 

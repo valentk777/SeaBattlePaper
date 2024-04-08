@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
-import {AppResponse} from '../../entities/appResponse';
-import {UserAccount} from '../../entities/user';
-import timeService from '../../services/timeService';
+import {AppResponse} from '../../../entities/appResponse';
+import {UserAccount} from '../../../entities/user';
+import timeService from '../../../services/timeService';
 import {Alert} from 'react-native';
 
 export const usersRef = firestore().collection('users');

@@ -14,6 +14,7 @@ import gameService from '../../services/gameService';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { PlayerPosition } from '../../entities/playerPosition';
 import BoardSetupTile from '../../components/Board/BoardSetupTile';
+import { GameProgress } from '../../entities/gameProgress';
 
 type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateGame'>;
 
@@ -53,15 +54,17 @@ export const CreateGameScreen = ({ navigation, route }: CreateGameScreenProps) =
   const onStartGamePress = async () => {
     if (playerPosition === PlayerPosition.PlayerA) {
       const playerBoard = { ...game.playerA, ships: ships, status: PlayerStatus.Started };
+      const updatedGame = { ...game, playerA: playerBoard }
 
-      await gameService.updatePlayer(game.id, playerBoard, playerPosition);
+      await gameService.updateGame(updatedGame);
 
       navigation.navigate('PlayGame', { gameId: game.id, playerBoard: playerBoard, playerPosition });
     } else {
       const playerBoard = { ...game.playerB, ships: ships, status: PlayerStatus.Started };
+      const updatedGame = { ...game, status: GameProgress.Started, playerB: playerBoard }
 
-      await gameService.updatePlayer(game.id, playerBoard, playerPosition);
-      
+      await gameService.updateGame(updatedGame);
+
       navigation.navigate('PlayGame', { gameId: game.id, playerBoard: playerBoard, playerPosition });
     }
   }

@@ -48,6 +48,9 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
     const game: Game = await remoteGameService.getGame(gameId);
 
+    console.log("remote game");
+    console.log(game);
+
     if (game === undefined || game.id != gameId) {
       console.log("Game does not exist or game id is not match");
 

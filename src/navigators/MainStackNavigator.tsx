@@ -1,7 +1,7 @@
 import React, { createNativeStackNavigator } from "@react-navigation/native-stack"
 import CreateGameScreen from "../screens/game/createGameScreen";
 import HomeScreen from "../screens/homeScreen";
-import { StyleSheet } from 'react-native';
+import { Text, StyleSheet, View } from 'react-native';
 import { AppTheme } from '../styles/themeModels';
 import { useTheme } from "../hooks/useTheme";
 import { LogOutButton } from "../components/LogOutButton";
@@ -43,7 +43,7 @@ const MainStackNavigator = () => {
           title: '',
           headerTransparent: true,
           headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
-          headerRight: () => (<LogOutButton />),
+          headerRight: () => <LogOutButton />,
         }}
       />
       <MainStack.Screen
@@ -53,7 +53,7 @@ const MainStackNavigator = () => {
           title: '',
           headerTransparent: true,
           headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
-          headerLeft: () => (<BackButton onPress={() => navigation.goBack()} />),
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         }}
       />
       <MainStack.Screen
@@ -61,9 +61,12 @@ const MainStackNavigator = () => {
         component={PlayGameScreen}
         options={{
           title: '',
-          headerTransparent: true,
-          headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
-          headerLeft: () => (<BackButton onPress={() => navigation.navigate("Home")} />),
+          headerShown: false,
+          // headerTransparent: true,
+          // headerStyle: { backgroundColor: 'rgba(0, 0, 0, 0.0)' },
+          // headerLeft: () => <View />,
+          // headerTitle: (props) => (<Text > {props.gameId}</Text>),
+          // headerRight: (game) => <BackButton onPress={() => navigation.goBack()} />,
         }}
       />
       {/* <MainStack.Screen

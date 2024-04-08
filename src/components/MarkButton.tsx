@@ -4,12 +4,12 @@ import { useTheme } from '../hooks/useTheme';
 import { icons } from "../assets";
 import { PaperAreaButton } from "./ButtonWrapper/PaperAreaButton";
 
-interface BackButtonProps {
+interface MarkButtonProps {
   style?: any;
   onPress: any;
 }
 
-export const BackButton = ({ style, onPress }: BackButtonProps) => {
+export const MarkButton = ({ style, onPress }: MarkButtonProps) => {
   const styles = createStyles();
 
   return (
@@ -19,7 +19,7 @@ export const BackButton = ({ style, onPress }: BackButtonProps) => {
       onPress={onPress}
     >
       <Image
-        source={icons['back-arrow.png']}
+        source={icons['editing.png']}
         resizeMode="contain"
         style={styles.image}
       />
@@ -37,6 +37,7 @@ const createStyles = () => {
     },
     buttonStyle: {
       backgroundColor: theme.colors.canvas,
+      height: '100%'
     },
     image: {
       top: 10,

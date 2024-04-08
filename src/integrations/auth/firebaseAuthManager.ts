@@ -3,7 +3,7 @@ import {AppResponse} from '../../entities/appResponse';
 import {LoginUser, UserAccount} from '../../entities/user';
 import auth from '@react-native-firebase/auth';
 import {ErrorCode} from '../../entities/errorCodes';
-import userDbTable from '../database/userDbTable';
+import userDbTable from '../repositories/remote/userDbTable';
 import {Alert} from 'react-native';
 import timeService from '../../services/timeService';
 

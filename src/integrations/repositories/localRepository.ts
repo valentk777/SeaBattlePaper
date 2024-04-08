@@ -61,10 +61,10 @@ export const removeData = async (key: string) => {
   }
 };
 
-const localStorageService = {
+const localRepository = {
   getData,
   storeData,
   removeData,
 };
 
-export default localStorageService;
+export default localRepository;
