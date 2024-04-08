@@ -32,7 +32,7 @@ const getPlayerKey = (
 
 const validateGame = async (candidateGame: Game, userId: string) => {
   if (candidateGame.status == GameProgress.Completed) {
-    console.log('Game already completed');
+    Alert.alert('Game already completed');
 
     return false;
   }
@@ -67,6 +67,7 @@ const createPlayerTemplate = (user: UserAccount) => {
     id: user.id,
     email: user.email,
     status: PlayerStatus.Joined,
+    isActive: true,
     ships: [''],
     attackedShips: [''],
     markedShips: [''],
@@ -103,12 +104,16 @@ const createNewGameWithStoring = async (game: Game) => {
 
 const getPlayerPosition = (game: Game, userId: string) => {
   if (userId == undefined) {
-    console.error("Cannot find position, because user is undefined")
+    console.error('Cannot find position, because user is undefined');
   }
 
   if (game?.playerA?.id === userId) {
     return PlayerPosition.PlayerA;
+  } else if (game?.playerB?.id === userId) {
+    return PlayerPosition.PlayerB;
   }
+
+  Alert.alert('Player position unknown');
 
   return PlayerPosition.PlayerB;
 };
@@ -140,7 +145,7 @@ const updatePlayer = async (
       player,
     );
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -148,11 +153,34 @@ const getGameWithTracking = async (
   gameId: string,
   onRemoteGameUpdated: Function,
 ) => {
-  console.log('game updated');
   return await remoteGameService.getGameWithTracking(
     gameId,
     onRemoteGameUpdated,
   );
+};
+
+const stopGameTracking = async (
+  gameId: string,
+  functionToStopTracking: any,
+) => {
+  return await remoteGameService.stopGameTracking(
+    gameId,
+    functionToStopTracking,
+  );
+};
+
+const getPlayerOrDefault = (game: Game, user: UserAccount) => {
+  if (user == undefined) {
+    console.error('Cannot find position, because user is undefined');
+  }
+
+  if (game?.playerA?.id === user.id) {
+    return game.playerA;
+  } else if (game?.playerB?.id === user.id) {
+    return game.playerB;
+  }
+
+  return null;
 };
 
 // const storeNewGame = async (game: Game) => {
@@ -299,6 +327,8 @@ const gameService = {
   updateGame,
   updatePlayer,
   getGameWithTracking,
+  stopGameTracking,
+  getPlayerOrDefault,
 
   // createNewGameWithStoring,
   // getRemoteGameById,

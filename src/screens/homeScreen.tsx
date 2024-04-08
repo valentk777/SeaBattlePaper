@@ -33,7 +33,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
       const gameTemplate = gameService.createGameTemplate(user);
       const newGame = await gameService.createNewGameWithStoring(gameTemplate);
 
-      navigation.navigate('CreateGame', { game: newGame });
+      navigation.navigate('CreateGame', { game: newGame, player: gameTemplate.playerA, playerPosition: PlayerPosition.PlayerA });
     } catch (error) {
       console.error('Error creating a new game:', error);
     }
@@ -46,13 +46,10 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
       return;
     }
 
-    const game: Game = await remoteGameService.getGame(gameId);
-
-    console.log("remote game");
-    console.log(game);
+    let game: Game = await remoteGameService.getGame(gameId);
 
     if (game === undefined || game.id != gameId) {
-      console.log("Game does not exist or game id is not match");
+      Alert.alert("Game does not exist or game id is not match");
 
       return;
     }
@@ -60,64 +57,47 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
     const isGameValid = await gameService.validateGame(game, user.id);
 
     if (!isGameValid) {
-      console.log("cannot join to game. game is not valid");
+      Alert.alert("cannot join to game. game is not valid");
 
       return;
     }
 
-    const playerPosition = gameService.getPlayerPosition(game, user.id)
-
     if (game.status == GameProgress.Completed) {
-      console.log("Game already ended");
       Alert.alert("Game already ended");
 
       return;
     }
 
-    // Both players started the game
+    let currentPlayer = gameService.getPlayerOrDefault(game, user)
+
+    if (currentPlayer === null) {
+      const playerB = gameService.createPlayerTemplate(user);
+      currentPlayer = playerB;
+
+      game = { ...game, playerB: playerB, status: GameProgress.PlayerMatched } as Game;
+
+      await gameService.updateGame(game);
+    }
+
+    const playerPosition = gameService.getPlayerPosition(game, user.id);
+    console.log("current player position", playerPosition);
+
     if (game.status == GameProgress.Started) {
+      console.log("Both players started the game");
+
       navigation.navigate('PlayGame', {
-        gameId: gameId,
-        playerBoard: playerPosition === PlayerPosition.PlayerA ? game.playerA : game.playerB,
-        playerPosition
+        gameId: gameId, player: currentPlayer, playerPosition: playerPosition
       });
 
       return;
     }
 
-    // Need to decide per player
-    if (playerPosition == PlayerPosition.PlayerA) {
-      if (game.playerA?.status == PlayerStatus.Started) {
-        // Start game
-        navigation.navigate('PlayGame', { gameId: gameId, playerBoard: game.playerA, playerPosition });
-      } else if (game.playerA?.id === user.id) {
-        // Re-join game
-        navigation.navigate('CreateGame', { game: game });
-      } else {
-        // Add new player
-        const playerA = gameService.createPlayerTemplate(user);
-        const updatedGame = { ...game, playerA: playerA, status: GameProgress.Created } as Game;
-
-        await gameService.updateGame(updatedGame);
-
-        navigation.navigate('CreateGame', { game: updatedGame });
-      }
-    } else {
-      if (game.playerB?.status == PlayerStatus.Started) {
-        // Start game
-        navigation.navigate('PlayGame', { gameId: gameId, playerBoard: game.playerB, playerPosition });
-      } else if (game.playerB?.id === user.id) {
-        // Re-join game
-        navigation.navigate('CreateGame', { game: game });
-      } else {
-        // Add new player
-        const playerB = gameService.createPlayerTemplate(user);
-        const updatedGame = { ...game, playerB: playerB, status: GameProgress.PlayerMatched } as Game;
-
-        await gameService.updateGame(updatedGame);
-
-        navigation.navigate('CreateGame', { game: updatedGame });
-      }
+    if (currentPlayer.status == PlayerStatus.Joined) {
+      console.log("Re-join game");
+      navigation.navigate('CreateGame', { game: game, player: currentPlayer, playerPosition: playerPosition });
+    } else if (currentPlayer.status == PlayerStatus.Started) {
+      console.log("Already started a game");
+      navigation.navigate('PlayGame', { gameId: gameId, player: currentPlayer, playerPosition: playerPosition });
     }
   };
 

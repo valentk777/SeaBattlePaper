@@ -11,7 +11,7 @@ const getGame = async (gameId: string) => {
     return response.result as Game;
   }
 
-  console.log('error creating game');
+  console.error('error creating game', response.error);
   return {} as Game;
 };
 
@@ -22,7 +22,7 @@ const storeNewGame = async (game: Game) => {
     return response.result as Game;
   }
 
-  console.log('error creating game');
+  console.error('error creating game', response.error);
   return {} as Game;
 };
 
@@ -33,7 +33,7 @@ const updateGame = async (game: Game) => {
     return response.result as Game;
   }
 
-  console.log('error updating game');
+  console.error('error updating game', response.error);
   return {} as Game;
 };
 
@@ -52,7 +52,7 @@ const updatePlayer = async (
     return response.result as Game;
   }
 
-  console.log('error updating player');
+  console.error('error updating player', response.error);
   return {} as Game;
 };
 
@@ -60,16 +60,36 @@ const getGameWithTracking = async (
   gameId: string,
   onRemoteGameUpdated: Function,
 ) => {
-  const response = await gamesDbTable.getGameWithTracking(gameId, onRemoteGameUpdated);
+  const response = await gamesDbTable.getGameWithTracking(
+    gameId,
+    onRemoteGameUpdated,
+  );
 
   if (response.isSuccessfull) {
-    return response.result as Game;
+    return response.result;
   }
 
-  console.log('error getting game with tracking');
+  console.error('error getting game with tracking', response.error);
+
   return {} as Game;
+};
 
+const stopGameTracking = async (
+  gameId: string,
+  functionToStopTracking: any,
+) => {
+  const response = await gamesDbTable.stopGameTracking(
+    gameId,
+    functionToStopTracking,
+  );
 
+  if (response.isSuccessfull) {
+    return response.result;
+  }
+
+  console.error('error stopping game with tracking');
+
+  return {} as Game;
 };
 
 const remoteGameService = {
@@ -78,6 +98,7 @@ const remoteGameService = {
   updateGame,
   updatePlayer,
   getGameWithTracking,
+  stopGameTracking,
 };
 
 export default remoteGameService;

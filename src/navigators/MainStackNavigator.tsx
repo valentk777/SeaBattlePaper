@@ -14,8 +14,8 @@ import { PlayerBoard } from "../entities/playerBoard";
 
 export type MainStackParamList = {
   Home: {};
-  CreateGame: { game: Game };
-  PlayGame: { gameId: string, playerBoard: PlayerBoard, playerPosition: PlayerPosition };
+  CreateGame: { game: Game, player: PlayerBoard, playerPosition: PlayerPosition };
+  PlayGame: { gameId: string, player: PlayerBoard, playerPosition: PlayerPosition };
   User: {};
 };
 

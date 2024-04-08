@@ -5,13 +5,13 @@ import {UserAccount} from '../entities/user';
 
 const getCurrentUser = async (): Promise<UserAccount> => {
   return await localRepository.getData('current_user').catch(error => {
-    console.log(error.message);
+    console.error(error.message);
   });
 };
 
 const updateUser = async (user: UserAccount | null) => {
   await localRepository.storeData('current_user', user).catch(error => {
-    console.log(error.message);
+    console.error(error.message);
   });
 };
 
@@ -59,7 +59,7 @@ const updateUser = async (user: UserAccount | null) => {
 
 const deleteUser = async () => {
   await localRepository.removeData('current_user').catch(error => {
-    console.log(error.message);
+    console.error(error.message);
   });
 };
 

@@ -29,7 +29,7 @@ const registerWithEmail = (user: LoginUser) => {
         resolve({isSuccessfull: true, result: newUser} as AppResponse);
       })
       .catch(error => {
-        console.log('_error:', error);
+        console.error('_error:', error);
 
         var errorCode = ErrorCode.serverError;
 
@@ -50,7 +50,7 @@ const registerWithEmail = (user: LoginUser) => {
             errorCode = ErrorCode.serverError;
         }
 
-        console.log(errorCode);
+        console.error(errorCode);
 
         resolve({isSuccessfull: false, error: errorCode} as AppResponse);
       });
@@ -85,7 +85,7 @@ const createAccountWithEmailAndPassword = (loginUser: LoginUser) => {
         }
       })
       .catch(error => {
-        console.log(error);
+        console.error(error);
         resolve({isSuccessfull: false, error: error.message} as AppResponse);
       });
   });
@@ -113,7 +113,7 @@ const loginWithEmailAndPassword = (user: LoginUser) => {
             }
           })
           .catch(function (error) {
-            console.log('_error', error);
+            console.error('_error', error);
             resolve({
               isSuccessfull: false,
               error: ErrorCode.serverError,
@@ -137,7 +137,7 @@ const loginWithEmailAndPassword = (user: LoginUser) => {
             errorCode = ErrorCode.serverError;
         }
 
-        console.log(errorCode);
+        console.error(errorCode);
 
         resolve({isSuccessfull: false, error: errorCode} as AppResponse);
       });
@@ -197,7 +197,7 @@ const signInWithCredential = (credential: any, socialAuthType: string) => {
                   resolve(response as AppResponse);
                 });
               } else {
-                console.log(ErrorCode.noUser);
+                console.error(ErrorCode.noUser);
 
                 resolve({
                   isSuccessfull: false,
@@ -206,7 +206,7 @@ const signInWithCredential = (credential: any, socialAuthType: string) => {
               }
             })
             .catch(function (_error) {
-              console.log('_error:', _error);
+              console.error('_error:', _error);
               resolve({
                 isSuccessfull: false,
                 error: ErrorCode.serverError,
@@ -215,7 +215,7 @@ const signInWithCredential = (credential: any, socialAuthType: string) => {
         }
       })
       .catch(_error => {
-        console.log(_error);
+        console.error(_error);
         resolve({error: ErrorCode.serverError});
       });
   });
@@ -241,7 +241,7 @@ const loginOrSignUpWithGoogle = () => {
           );
         } else {
           console.error(response);
-          console.log(ErrorCode.googleSigninFailed);
+          console.error(ErrorCode.googleSigninFailed);
 
           resolve({
             isSuccessfull: false,
@@ -251,7 +251,7 @@ const loginOrSignUpWithGoogle = () => {
       });
     } catch (error) {
       console.error(error);
-      console.log(ErrorCode.googleSigninFailed);
+      console.error(ErrorCode.googleSigninFailed);
 
       resolve({
         isSuccessfull: false,
@@ -290,7 +290,7 @@ const signInAnonymously = () => {
                   resolve(response as AppResponse);
                 });
               } else {
-                console.log(ErrorCode.noUser);
+                console.error(ErrorCode.noUser);
 
                 resolve({
                   isSuccessfull: false,
@@ -301,7 +301,7 @@ const signInAnonymously = () => {
           }
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
 
           resolve({
             isSuccessfull: false,
@@ -309,7 +309,7 @@ const signInAnonymously = () => {
           } as AppResponse);
         });
     } catch (error) {
-      console.log(ErrorCode.anonymousSigninFailed);
+      console.error(ErrorCode.anonymousSigninFailed);
 
       resolve({
         isSuccessfull: false,

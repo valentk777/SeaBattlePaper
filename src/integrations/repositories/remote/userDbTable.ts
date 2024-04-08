@@ -16,7 +16,7 @@ export const addNewUser = async (user: UserAccount) => {
     await usersRef.doc(user.id).set(dataWithOnlineStatus, {merge: true});
     return {isSuccessfull: true, result: dataWithOnlineStatus} as AppResponse;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {isSuccessfull: false, error: error} as AppResponse;
   }
 };
@@ -32,7 +32,7 @@ export const updateUser = async (user: UserAccount) => {
 
     return {isSuccessfull: true} as AppResponse;
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
     return {isSuccessfull: false, error: error} as AppResponse;
   }
@@ -48,7 +48,7 @@ export const getUserByID = async (userID: string) => {
 
     return null;
   } catch (error) {
-    console.log('getUserByID', error);
+    console.error('getUserByID', error);
     return null;
   }
 };
@@ -61,7 +61,7 @@ export const updateProfilePhoto = async (
     await usersRef.doc(userID).update({profilePictureURL: profilePictureURL});
     return {success: true};
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {error: error};
   }
 };

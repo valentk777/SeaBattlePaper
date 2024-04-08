@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import { MainStackParamList } from '../../navigators/MainStackNavigator';
 import { BoardItem } from '../../entities/boardItem';
 import shipBoardService from '../../services/shipBoardService';
@@ -11,9 +11,9 @@ import Board from '../../components/Board/Board';
 import { PaperArea } from '../../components/Background/PaperArea';
 import { PlayerStatus } from '../../entities/playerStatus';
 import gameService from '../../services/gameService';
-import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { PlayerPosition } from '../../entities/playerPosition';
 import BoardSetupTile from '../../components/Board/BoardSetupTile';
+import { Game } from '../../entities/game';
 import { GameProgress } from '../../entities/gameProgress';
 
 type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateGame'>;
@@ -21,25 +21,34 @@ type CreateGameScreenProps = NativeStackScreenProps<MainStackParamList, 'CreateG
 export const CreateGameScreen = ({ navigation, route }: CreateGameScreenProps) => {
   const styles = createStyles();
 
-  const { game } = route.params;
+  const { game, player, playerPosition } = route.params;
+  console.log("CreateGameScreen initial game", game);
+  console.log("CreateGameScreen initial player", player);
+  console.log("CreateGameScreen initial playerPosition", playerPosition);
 
-  const user = useCurrentUser();
-  const playerPosition = gameService.getPlayerPosition(game, user.id)
+  const [activeGame, setActiveGame] = useState(game);
   const [currentBoard, setCurrentBoard] = useState(shipBoardService.generateNewShipBoard());
-  const [ships, setShips] = useState(playerPosition === PlayerPosition.PlayerA ? game.playerA.ships : game.playerB.ships);
+  const [ships, setShips] = useState(player.ships);
+  // const [callbackFunction, setCallbackFunction] = useState(() => {} );
 
   useEffect(() => {
     const loadGameBoard = async () => {
       setCurrentBoard(oldBoard => {
         return oldBoard.map((item) => ships.some(x => x == item.location) ? { ...item, isShip: true } : item);
       });
+
+      await gameService.getGameWithTracking(game.id, onRemoteGameUpdated);
     };
 
     loadGameBoard();
   }, []);
+  
+  const onRemoteGameUpdated = async (game: Game) => {
+    // Alert.alert("Game updated");
+    setActiveGame(game);
+  };
 
   const onBoardTilePress = (selectedBox: BoardItem) => {
-
     if (selectedBox.isShip === false) {
       setShips(oldArray => [...oldArray, selectedBox.location]);
     } else {
@@ -52,21 +61,15 @@ export const CreateGameScreen = ({ navigation, route }: CreateGameScreenProps) =
   };
 
   const onStartGamePress = async () => {
-    if (playerPosition === PlayerPosition.PlayerA) {
-      const playerBoard = { ...game.playerA, ships: ships, status: PlayerStatus.Started };
-      const updatedGame = { ...game, playerA: playerBoard }
+    const playerBoard = { ...player, ships: ships, status: PlayerStatus.Started };
+    const updatedGame = playerPosition === PlayerPosition.PlayerA
+    ? { ...activeGame, playerA: playerBoard, status: activeGame?.playerB?.status === PlayerStatus.Started ? GameProgress.Started : activeGame.status } 
+    : { ...activeGame, playerB: playerBoard, status: activeGame?.playerA?.status === PlayerStatus.Started ? GameProgress.Started : activeGame.status } 
+    
+    await gameService.updateGame(updatedGame);
+    // await gameService.stopGameTracking(game.id, callbackFunction);
 
-      await gameService.updateGame(updatedGame);
-
-      navigation.navigate('PlayGame', { gameId: game.id, playerBoard: playerBoard, playerPosition });
-    } else {
-      const playerBoard = { ...game.playerB, ships: ships, status: PlayerStatus.Started };
-      const updatedGame = { ...game, status: GameProgress.Started, playerB: playerBoard }
-
-      await gameService.updateGame(updatedGame);
-
-      navigation.navigate('PlayGame', { gameId: game.id, playerBoard: playerBoard, playerPosition });
-    }
+    navigation.navigate('PlayGame', { gameId: game.id, player: playerBoard, playerPosition: playerPosition  });
   }
 
   return (
@@ -85,12 +88,12 @@ export const CreateGameScreen = ({ navigation, route }: CreateGameScreenProps) =
       <View style={styles.gamePlayers}>
         <View>
           <Text style={styles.activePlayersText}>
-            PlayerA: {game.playerA?.id !== undefined ? "Joined" : "NotFound"}
+            PlayerA: {activeGame.playerA?.isActive === true ? "Active" : "Inactive"}
           </Text>
         </View>
         <View>
           <Text style={styles.activePlayersText}>
-            PlayerB: {game?.playerB?.id !== undefined ? "Joined" : "NotFound"}
+            PlayerB: {activeGame?.playerB?.isActive === true ? "Active" : "Inactive"}
           </Text>
         </View>
       </View>

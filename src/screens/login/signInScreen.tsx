@@ -31,7 +31,7 @@ export const SingInScreen = ({ navigation }: SingInScreenProps) => {
 
   const handleLoginButton = () => {
     if (password === null || password === "") {
-      console.log("Password cannot be empty");
+      Alert.alert("Password cannot be empty");
       return;
     }
 
@@ -40,7 +40,7 @@ export const SingInScreen = ({ navigation }: SingInScreenProps) => {
     userCandidate.password = password;
 
     if (userCandidate.email === null || userCandidate.email === "") {
-      console.log("Email cannot be empty");
+      Alert.alert("Email cannot be empty");
       return;
     }
 

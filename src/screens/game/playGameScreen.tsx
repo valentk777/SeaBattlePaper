@@ -24,23 +24,23 @@ type PlayGameScreenProps = NativeStackScreenProps<MainStackParamList, 'PlayGame'
 export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
   const styles = createStyles();
 
-  const { gameId, playerBoard, playerPosition } = route.params;
+  const { gameId, player, playerPosition } = route.params;
 
   const [activeGame, setActiveGame] = useState({ id: gameId } as Game);
   const [isYourTurn, setIsYourTurn] = useState(activeGame.turn === playerPosition);
-  const [isMarkingMode, setIsMarkingMode] = useState(true);
+  const [isMarkingMode, setIsMarkingMode] = useState(false);
 
   const [myBoard, setMyBoard] = useState(shipBoardService.generateNewShipBoard());
   const [opponentBoard, setOpponentBoard] = useState(shipBoardService.generateNewShipBoard());
 
-  const [myAttackedShips, setMyAttackedShips] = useState(playerBoard.attackedShips);
-  const [myMarkedShips, setMyMarkedShips] = useState(playerBoard.markedShips);
+  const [myAttackedShips, setMyAttackedShips] = useState(player.attackedShips);
+  const [myMarkedShips, setMyMarkedShips] = useState(player.markedShips);
 
   useEffect(() => {
     const createNewGameAsync = async () => {
       try {
         setOpponentBoard(oldBoard => {
-          return oldBoard.map((item) => playerBoard.ships.some(x => x == item.location) ? { ...item, isShip: true } : item);
+          return oldBoard.map((item) => player.ships.some(x => x == item.location) ? { ...item, isShip: true } : item);
         });
 
         setMyBoard(oldBoard => {
@@ -89,12 +89,10 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
   }
 
   const onBoardTilePress = async (selectedBox: BoardItem) => {
-    console.log(activeGame);
-
-    console.warn(isMarkingMode);
+    console.log(isMarkingMode);
 
     if (isMarkingMode) {
-      Alert.alert("edit mode");
+      // Alert.alert("edit mode");
       setMyMarkedShips(oldArray => {
         return [...oldArray, selectedBox.location]
       });
@@ -164,8 +162,8 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
       )
     } else {
       return (
-        renderMainGame()
-        // renderSpinningWheel()
+        // renderMainGame()
+        renderSpinningWheel()
       )
     }
   };

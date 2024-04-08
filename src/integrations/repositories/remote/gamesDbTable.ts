@@ -18,7 +18,7 @@ export const getGame = async (gameId: string) => {
     const snapshot = await database.ref(`activeGames/${gameId}`).once('value');
     const activeGame = snapshot.val() as Game;
 
-    console.log('getGame: ', snapshot.val());
+    console.log('REMOTE: getGame: ', snapshot.val());
 
     if (activeGame === undefined) {
       return {isSuccessfull: true, result: {} as Game} as AppResponse;
@@ -56,6 +56,8 @@ export const addGame = async (activeGame: Game) => {
 
     await activeGamesRef.set(activeGame);
 
+    console.log('REMOTE: addGame: ', activeGame);
+
     return {isSuccessfull: true, result: activeGame} as AppResponse;
   } catch (error) {
     console.error(error);
@@ -78,6 +80,8 @@ export const updateGame = async (activeGame: Game) => {
     activeGame.lastTimeUpdated = timeService.getCurrentDateString();
 
     await databaseRef.update(activeGame);
+
+    console.log('REMOTE: updateGame: ', activeGame);
 
     return {
       isSuccessfull: true,
@@ -117,15 +121,12 @@ export const updatePlayer = async (
   }
 
   try {
-    if (playerPositionToUpdate === PlayerPosition.PlayerA) {
-      const databaseRef = database.ref(`activeGames/${gameId}/playerA/`);
+    const databaseKey = playerPositionToUpdate === PlayerPosition.PlayerA ? `activeGames/${gameId}/playerA/` : `activeGames/${gameId}/playerB/`;
+    const databaseRef = database.ref(databaseKey)
+    await databaseRef.update(player);
 
-      await databaseRef.update(player);
-    } else if (playerPositionToUpdate === PlayerPosition.PlayerB) {
-      const databaseRef = database.ref(`activeGames/${gameId}/playerB/`);
-
-      await databaseRef.update(player);
-    }
+    console.log('REMOTE: updatePlayer: ', playerPositionToUpdate);
+    console.log('REMOTE: updatePlayer - player: ', player);
 
     return {
       isSuccessfull: true,
@@ -143,15 +144,34 @@ export const getGameWithTracking = async (
   onRemoteGameUpdated: Function,
 ) => {
   try {
-    database.ref(`activeGames/${gameId}`).on('value', (snapshot: any) => {
+    const onValueChange = database.ref(`activeGames/${gameId}`).on('value', (snapshot: any) => {
       const activeGame = snapshot.val();
 
       if (activeGame === undefined) {
+        console.log('Remote game undefined');
+
         onRemoteGameUpdated({id: gameId} as Game);
       }
 
+      console.log('REMOTE: getGameWithTracking: ', activeGame);
+
       onRemoteGameUpdated(activeGame as Game);
     });
+
+    return {isSuccessfull: true, result: onValueChange } as AppResponse;
+  } catch (error) {
+    console.error(error);
+
+    return {isSuccessfull: false, error: error} as AppResponse;
+  }
+};
+
+export const stopGameTracking = async (
+  gameId: string,
+  functionToStopTracking: any,
+) => {
+  try {
+    database.ref(`activeGames/${gameId}`).off('value', functionToStopTracking);
 
     return {isSuccessfull: true } as AppResponse;
   } catch (error) {
@@ -217,6 +237,7 @@ const gamesDbTable = {
   updateGame,
   updatePlayer,
   getGameWithTracking,
+  stopGameTracking,
 
   // getAllActiveGames,
 };
