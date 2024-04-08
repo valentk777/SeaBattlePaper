@@ -42,7 +42,7 @@ export const CreateGameScreen = ({ navigation, route }: CreateGameScreenProps) =
 
     loadGameBoard();
   }, []);
-  
+
   const onRemoteGameUpdated = async (game: Game) => {
     // Alert.alert("Game updated");
     setActiveGame(game);
@@ -63,13 +63,13 @@ export const CreateGameScreen = ({ navigation, route }: CreateGameScreenProps) =
   const onStartGamePress = async () => {
     const playerBoard = { ...player, ships: ships, status: PlayerStatus.Started };
     const updatedGame = playerPosition === PlayerPosition.PlayerA
-    ? { ...activeGame, playerA: playerBoard, status: activeGame?.playerB?.status === PlayerStatus.Started ? GameProgress.Started : activeGame.status } 
-    : { ...activeGame, playerB: playerBoard, status: activeGame?.playerA?.status === PlayerStatus.Started ? GameProgress.Started : activeGame.status } 
-    
+      ? { ...activeGame, playerA: playerBoard, status: activeGame?.playerB?.status === PlayerStatus.Started ? GameProgress.Started : activeGame.status }
+      : { ...activeGame, playerB: playerBoard, status: activeGame?.playerA?.status === PlayerStatus.Started ? GameProgress.Started : activeGame.status }
+
     await gameService.updateGame(updatedGame);
     // await gameService.stopGameTracking(game.id, callbackFunction);
 
-    navigation.navigate('PlayGame', { gameId: game.id, player: playerBoard, playerPosition: playerPosition  });
+    navigation.navigate('PlayGame', { gameId: game.id, player: playerBoard, playerPosition: playerPosition });
   }
 
   return (
