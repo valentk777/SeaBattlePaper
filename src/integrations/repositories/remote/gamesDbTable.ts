@@ -18,8 +18,6 @@ export const getGame = async (gameId: string) => {
     const snapshot = await database.ref(`activeGames/${gameId}`).once('value');
     const activeGame = snapshot.val() as Game;
 
-    console.log('REMOTE: getGame: ', snapshot.val());
-
     if (activeGame === undefined) {
       return {isSuccessfull: true, result: {} as Game} as AppResponse;
     }
@@ -56,8 +54,6 @@ export const addGame = async (activeGame: Game) => {
 
     await activeGamesRef.set(activeGame);
 
-    console.log('REMOTE: addGame: ', activeGame);
-
     return {isSuccessfull: true, result: activeGame} as AppResponse;
   } catch (error) {
     console.error(error);
@@ -80,8 +76,6 @@ export const updateGame = async (activeGame: Game) => {
     activeGame.lastTimeUpdated = timeService.getCurrentDateString();
 
     await databaseRef.update(activeGame);
-
-    console.log('REMOTE: updateGame: ', activeGame);
 
     return {
       isSuccessfull: true,
@@ -125,9 +119,6 @@ export const updatePlayer = async (
     const databaseRef = database.ref(databaseKey)
     await databaseRef.update(player);
 
-    console.log('REMOTE: updatePlayer: ', playerPositionToUpdate);
-    console.log('REMOTE: updatePlayer - player: ', player);
-
     return {
       isSuccessfull: true,
       result: player,
@@ -152,8 +143,6 @@ export const getGameWithTracking = async (
 
         onRemoteGameUpdated({id: gameId} as Game);
       }
-
-      console.log('REMOTE: getGameWithTracking: ', activeGame);
 
       onRemoteGameUpdated(activeGame as Game);
     });

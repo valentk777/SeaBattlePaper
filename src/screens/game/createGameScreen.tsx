@@ -22,10 +22,6 @@ export const CreateGameScreen = ({ navigation, route }: CreateGameScreenProps) =
   const styles = createStyles();
 
   const { game, player, playerPosition } = route.params;
-  console.log("CreateGameScreen initial game", game);
-  console.log("CreateGameScreen initial player", player);
-  console.log("CreateGameScreen initial playerPosition", playerPosition);
-
   const [activeGame, setActiveGame] = useState(game);
   const [currentBoard, setCurrentBoard] = useState(shipBoardService.generateNewShipBoard());
   const [ships, setShips] = useState(player.ships);

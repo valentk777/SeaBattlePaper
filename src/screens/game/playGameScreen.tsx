@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Alert } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../navigators/MainStackNavigator';
@@ -14,10 +14,7 @@ import shipBoardService from '../../services/shipBoardService';
 import BoardMyGameTile from '../../components/Board/BoardMyGameTile';
 import BoardOpponentGameTile from '../../components/Board/BoardOpponentGameTile';
 import { BoardItemStatus } from '../../entities/boardItemStatus';
-import { PaperArea } from '../../components/Background/PaperArea';
-import { PaperAreaButton } from '../../components/ButtonWrapper/PaperAreaButton';
 import { ActiveGameHeader } from '../../navigators/ActiveGameHeader';
-import { BackButton } from '../../components/BackButton';
 
 type PlayGameScreenProps = NativeStackScreenProps<MainStackParamList, 'PlayGame'>;
 
@@ -27,13 +24,11 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
   const { gameId, player, playerPosition } = route.params;
 
   const [activeGame, setActiveGame] = useState({ id: gameId } as Game);
-  const [isYourTurn, setIsYourTurn] = useState(activeGame.turn === playerPosition);
+  const [isMyTurn, setIsMyTurn] = useState(activeGame.turn === playerPosition);
   const [isMarkingMode, setIsMarkingMode] = useState(false);
 
   const [myBoard, setMyBoard] = useState(shipBoardService.generateNewShipBoard());
   const [opponentBoard, setOpponentBoard] = useState(shipBoardService.generateNewShipBoard());
-
-  const [myAttackedShips, setMyAttackedShips] = useState(player.attackedShips);
   const [myMarkedShips, setMyMarkedShips] = useState(player.markedShips);
 
   useEffect(() => {
@@ -45,7 +40,7 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
 
         setMyBoard(oldBoard => {
           return oldBoard.map((item) => {
-            if (myAttackedShips.some(x => x == item.location)) {
+            if (player.attackedShips.some(x => x == item.location)) {
               return { ...item, status: BoardItemStatus.Attacked };
             }
 
@@ -67,19 +62,29 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
   }, []);
 
   const onRemoteGameUpdated = async (game: Game) => {
-    const opponent = playerPosition === PlayerPosition.PlayerA ? game?.playerB : game.playerA;
+    console.log("Ka gavau");
+    console.log(game);
+
+    if (game?.playerB === undefined) {
+      console.log("Game is not started");
+
+      return;
+    }
+
+    const opponent = playerPosition === PlayerPosition.PlayerA ? game.playerB : game.playerA;
 
     // this one could be done once.
-    setMyBoard(oldBoard => {
+    setMyBoard((oldBoard) => {
       return oldBoard.map((item) => opponent?.ships?.some(x => x == item.location) ? { ...item, isShip: true } : item);
     });
 
-    setOpponentBoard(oldBoard => {
+    setOpponentBoard((oldBoard) => {
       return oldBoard.map((item) => opponent?.attackedShips?.some(x => x == item.location) ? { ...item, status: BoardItemStatus.Attacked } : item);
     });
 
-    setActiveGame(game);
-    setIsYourTurn(game.turn === playerPosition);
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    setActiveGame((oldGame) => game);
+    setIsMyTurn((oldIsYourTurn) => game.turn === playerPosition);
     checkIfWon(game);
   };
 
@@ -89,61 +94,70 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
   }
 
   const onBoardTilePress = async (selectedBox: BoardItem) => {
-    console.log(isMarkingMode);
+    console.log("selectedBox");
+    console.log(selectedBox);
 
     if (isMarkingMode) {
       // Alert.alert("edit mode");
-      setMyMarkedShips(oldArray => {
+      setMyMarkedShips((oldArray) => {
         return [...oldArray, selectedBox.location]
       });
 
-      setMyBoard(oldBoard => {
+      setMyBoard((oldBoard) => {
         return oldBoard.map((item) => item.location === selectedBox.location ? { ...item, status: BoardItemStatus.Marked } : item);
       });
 
       return;
     }
 
-    setIsYourTurn(selectedBox.isShip);
-    setMyAttackedShips(oldArray => { return [...oldArray, selectedBox.location] });
-
     setMyBoard(oldBoard => {
       return oldBoard.map((item) => item.location === selectedBox.location ? { ...item, status: BoardItemStatus.Attacked } : item);
     });
 
-    await updateGame();
+    setIsMyTurn((old) => selectedBox.isShip === true);
+
+    await updateGame(selectedBox);
   };
 
-  const updateGame = async () => {
+  const updateGame = async (selectedBox: BoardItem) => {
+    console.log("updateGame - before update");
+    console.log(activeGame);
+
     if (playerPosition === PlayerPosition.PlayerA) {
       const updatedGame = {
         ...activeGame,
-        turn: isYourTurn ? PlayerPosition.PlayerA : PlayerPosition.PlayerB,
-        playerA: { ...activeGame.playerA, attackedShips: myAttackedShips }
+        turn: selectedBox.isShip === true ? PlayerPosition.PlayerA : PlayerPosition.PlayerB,
+        playerA: { ...activeGame.playerA, attackedShips: [...activeGame.playerA.attackedShips, selectedBox.location] }
       }
 
       await gameService.updateGame(updatedGame);
+
+      console.log("updateGame - after update");
+      console.log(updatedGame);
     } else {
       const updatedGame = {
         ...activeGame,
-        turn: isYourTurn ? PlayerPosition.PlayerB : PlayerPosition.PlayerA,
-        playerB: { ...activeGame.playerA, attackedShips: myAttackedShips }
+        turn: selectedBox.isShip === true ? PlayerPosition.PlayerB : PlayerPosition.PlayerA,
+        playerB: { ...activeGame.playerB, attackedShips: [...activeGame.playerB.attackedShips, selectedBox.location] }
       }
 
       await gameService.updateGame(updatedGame);
+
+      console.log("updateGame - after update");
+      console.log(updatedGame);
     }
   }
 
   const renderMainGame = () => (
     <View style={styles.mainGame} >
       <View style={styles.empty} >
-        <ActiveGameHeader game={activeGame} navigation={navigation} isYourTurn={isYourTurn} isMarkingMode={isMarkingMode} onMarkingMode={() => { setIsMarkingMode(true) }} />
+        <ActiveGameHeader game={activeGame} navigation={navigation} isYourTurn={isMyTurn} isMarkingMode={isMarkingMode} onMarkingMode={() => { setIsMarkingMode(false) }} />
       </View>
       <View style={styles.competitorShipBoardContainer}>
-        <Board board={opponentBoard} renderItem={(item) => (<BoardOpponentGameTile item={item} />)} disabled={!isYourTurn} />
+        <Board board={opponentBoard} renderItem={(item) => (<BoardOpponentGameTile item={item} />)} disabled={!isMyTurn} />
       </View>
       <View style={styles.myShipBoardContainer}>
-        <Board board={myBoard} renderItem={(item) => (<BoardMyGameTile item={item} onPress={async () => await onBoardTilePress(item)} />)} disabled={false} />
+        <Board board={myBoard} renderItem={(item) => (<BoardMyGameTile item={item} onPress={async () => await onBoardTilePress(item)} />)} disabled={!isMyTurn} />
       </View>
     </View>
   );
@@ -162,7 +176,6 @@ export const PlayGameScreen = ({ navigation, route }: PlayGameScreenProps) => {
       )
     } else {
       return (
-        // renderMainGame()
         renderSpinningWheel()
       )
     }
