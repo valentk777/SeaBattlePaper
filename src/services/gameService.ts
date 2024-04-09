@@ -31,8 +31,8 @@ const getPlayerKey = (
 };
 
 const validateGame = async (candidateGame: Game, userId: string) => {
-  if (candidateGame.status == GameProgress.Completed) {
-    Alert.alert('Game already completed');
+  if (candidateGame.status == GameProgress.WonPlayerA || candidateGame.status == GameProgress.WonPlayerB) {
+    console.log('Game already completed');
 
     return false;
   }

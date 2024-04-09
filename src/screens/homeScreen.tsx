@@ -48,7 +48,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
     let game: Game = await remoteGameService.getGame(gameId);
 
-    if (game === undefined || game.id != gameId) {
+    if (game === undefined || game?.id != gameId) {
       Alert.alert("Game does not exist or game id is not match");
 
       return;
@@ -56,14 +56,14 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
     const isGameValid = await gameService.validateGame(game, user.id);
 
-    if (!isGameValid) {
-      Alert.alert("cannot join to game. game is not valid");
+    if (game.status == GameProgress.WonPlayerA || game.status == GameProgress.WonPlayerB) {
+      Alert.alert("Game already ended");
 
       return;
     }
 
-    if (game.status == GameProgress.Completed) {
-      Alert.alert("Game already ended");
+    if (!isGameValid) {
+      Alert.alert("cannot join to game. game is not valid");
 
       return;
     }

@@ -19,6 +19,12 @@ interface ActiveGameHeaderProps {
 export const ActiveGameHeader = ({ game, navigation, isYourTurn, isMarkingMode, onMarkingMode }: ActiveGameHeaderProps) => {
   const styles = createStyles();
 
+  // if (isMarkingMode === true)
+
+
+
+
+
   return (
     <View style={styles.container}>
       <BackButton style={styles.back} onPress={() => navigation.navigate("Home")} />
@@ -26,11 +32,11 @@ export const ActiveGameHeader = ({ game, navigation, isYourTurn, isMarkingMode, 
         areaStyle={styles.turnSection}
         componentStyle={styles.turnSectionComponentStyle}
       >
-        {isMarkingMode === true 
-          ? (<Text style={styles.turnText}>Marking mode!</Text>) 
+        {isMarkingMode === true
+          ? (<Text style={styles.turnText}>Marking mode!</Text>)
           : (isYourTurn === true
-          ? (<Text style={styles.turnText}>Game: {game.id}. Your turn!</Text>)
-          : (<Text style={styles.turnText}>Game: {game.id}. Another player turn!</Text>)
+            ? (<Text style={styles.turnText}>Game: {game.id}. Your turn!</Text>)
+            : (<Text style={styles.turnText}>Game: {game.id}. Another player turn!</Text>)
           )}
       </PaperArea>
       <MarkButton style={styles.mark} onPress={onMarkingMode} />
