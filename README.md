@@ -107,3 +107,35 @@ GOOGLE_SERVICES_JSON - Base64 excoded google-service.json with project_info and 
 SERVICE_ACCOUNT_JSON - service accound from google console where private_key and client_email is listed. Set as PLAIN TEXT
 SONAR_CLOUD_TOKEN - Generated token in sonar cloud. it is NOT project key
 -->
+
+
+<!-- 
+
+NOTES:
+
+* Panaikinti konteksta. Jo nereikia
+Padaryti kad game board rodytu duomenis kuriuos paduodu ir funkcija juos keistu
+Prideti parametra kad board active arba ne. Kad isjungt board kai pasirenka kazka iki kito ejimo
+Naujas item objektas:
+IsShip: true/false
+Value: raide, skaicius, x kai pasauna?
+IsSelected:
+IsVisible: true false
+
+
+O gal remote tiesiog saugoti array key:
+Ships: array key (bus visi laivai kurie yra) 
+Selected: (visi laivai kurie yra selected priesininko ant mano board)
+
+
+Tada skirtingai renderinam ship objekta.
+
+Norint lokaliai pasizymeti kur tikrai nebus kazko, galima prideti dar viena array kaip marked: ir pazymet juos kita spalva.
+Norint padaryt marked mode prideti mygtuka kuris leis ta padaryt.
+
+Sukurti laivu musi kur gali neprisijunges start game arba join game. Ir tada paspaudus ant start game sugeneruoja skaiciu koda (unikalu. Gal 4 skaiciu uztektu) ir kitam zmogui suvedus prisijungia jie i bendra kambari. Ten yra galimybe susidet laivus ir paspaudus start - pradet zaidima.
+
+Sukurti lentele kurioje yra tik aktyvus zaidimai arba ju kodai. Ir kita lentele kur yra bet kokir zaidimaj. Taigi kai kuriamas naujas ten atsiranda aktyvus žaidimas.
+
+-->
+
